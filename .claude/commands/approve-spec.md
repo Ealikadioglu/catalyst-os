@@ -13,23 +13,68 @@ Accept the implementation and archive the spec.
 
 - Validation must be complete
 - `validation/sign-off.md` must show "READY FOR APPROVAL"
+- **TDD compliance must be verified** (test-manifest.md exists)
 - User must have manually tested (recommended)
+
+---
+
+## ⚠️ TDD COMPLIANCE REQUIRED
+
+```
+╔═══════════════════════════════════════════════════════════════════╗
+║  Before approving, verify TDD was followed throughout:            ║
+║                                                                    ║
+║  - [ ] test-manifest.md exists and shows red→green transition    ║
+║  - [ ] validation/sign-off.md confirms TDD compliance            ║
+║  - [ ] All tests pass                                             ║
+║                                                                    ║
+║  🚫 DO NOT APPROVE if TDD was skipped                             ║
+╚═══════════════════════════════════════════════════════════════════╝
+```
+
+---
 
 ## Workflow
 
 ### Phase 1: Final Verification
 
-1. Verify all validation checks passed
-2. Confirm no blocking issues
-3. Check user has reviewed
+1. **TDD Compliance Check:**
+   - Read `implementation/test-manifest.md`
+   - Verify red phase was completed (tests failed first)
+   - Verify green phase achieved (all tests pass now)
+   - Check `validation/sign-off.md` shows TDD compliance ✅
+
+2. **Validation Check:**
+   - Verify all validation checks passed
+   - Confirm no blocking issues
+
+3. **User Review:**
+   - Check user has reviewed
+   - Note any user feedback
+
+**If TDD was not followed:**
+```
+❌ APPROVAL BLOCKED
+
+TDD compliance not verified. Cannot approve.
+
+Action: Return to /build-spec and follow TDD process.
+        Then /validate-spec, then /approve-spec.
+```
 
 ### Phase 2: Git Commit (if configured)
 
 1. Stage all changes from the spec
-2. Create structured commit message:
+2. Create structured commit message with TDD stats:
    ```
    feat(stripe): implement subscription integration
 
+   TDD Compliance: ✅ Verified
+   - Tests written first: ✓
+   - Red phase: 45 tests failed initially
+   - Green phase: 45 tests pass now
+
+   Implementation:
    - Add subscription schema and migrations
    - Create Stripe service wrapper
    - Implement subscription API endpoints
@@ -37,7 +82,8 @@ Accept the implementation and archive the spec.
 
    Spec: 2025-11-29-stripe-integration
    Tasks: 7 completed
-   Tests: 45 unit, 12 e2e
+   Tests: 45 unit, 12 e2e (57 total)
+   Coverage: 87%
    ```
 
 ### Phase 3: Archive Spec
@@ -54,6 +100,9 @@ Add completion summary to spec:
 status: completed
 completed_date: YYYY-MM-DD
 commit: abc123 (if git enabled)
+tdd_compliant: true
+tests_written_first: true
+total_tests: 57
 ---
 ```
 
@@ -70,6 +119,13 @@ commit: abc123 (if git enabled)
 
 Spec: 2025-11-29-stripe-integration
 Status: COMPLETED
+
+TDD Compliance: ✅ VERIFIED
+├── Tests written first: ✓
+├── Red phase: 45 tests failed initially
+├── Green phase: 45 tests pass now
+└── Coverage: 87%
+
 Commit: feat(stripe): implement subscription integration
 
 Archived to: .catalyst/specs/completed/
@@ -82,4 +138,3 @@ Summary:
 
 🎉 Feature ready for production!
 ```
-

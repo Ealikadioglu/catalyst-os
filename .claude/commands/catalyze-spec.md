@@ -23,6 +23,20 @@ Shape a new specification from a feature request.
 
 **The main agent coordinates, sub-agents execute.**
 
+### ⚡ PARALLEL EXECUTION
+
+**Spawn research agents in parallel, not sequentially!**
+
+```
+WRONG:  oracle → seer → scout → surveyor (one by one)
+RIGHT:  oracle → [seer + scout + surveyor] (parallel research)
+```
+
+| Independent (Parallelize) | Dependent (Sequential) |
+|---------------------------|------------------------|
+| Seer + Scout + Surveyor | Oracle → All (need requirements first) |
+| All research agents | Research → Scribe (compile after) |
+
 ---
 
 ## Workflow
@@ -147,6 +161,14 @@ Use `documentation-management` skill to create:
 - [ ] Performance: Response time < 200ms
 - [ ] Security: Data encrypted at rest
 
+### Testability Requirements
+- [ ] TEST-001: What tests are needed for this feature?
+- [ ] TEST-002: What edge cases should be tested?
+- [ ] TEST-003: What integration points need testing?
+
+> ⚠️ **Note**: All requirements above will need corresponding tests
+> written BEFORE implementation (TDD mandatory).
+
 ## Technical Approach
 [Based on research findings]
 
@@ -172,6 +194,12 @@ Created: .catalyst/specs/YYYY-MM-DD-{feature}/
 
 [If roadmap was updated:]
 📋 Roadmap updated: .catalyst/main/roadmap.md
+
+⚠️ REMINDER: /build-spec follows strict TDD
+   1. Tests written FIRST (Enforcer)
+   2. Tests must FAIL (red phase)
+   3. Then implement (Builders)
+   4. Tests must PASS (green phase)
 
 Next: Run /build-spec @YYYY-MM-DD-{feature} to implement.
 ```
