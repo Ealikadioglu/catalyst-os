@@ -1,9 +1,9 @@
 ---
 name: requirement-elicitation
 description: >
-  Extract clear requirements from vague feature requests by asking targeted
-  clarifying questions. Use when shaping specs or when user requests are ambiguous.
-agent: oracle
+  Extract clear requirements from vague feature requests. TRIGGERS: feature request,
+  new spec, unclear requirements, /catalyze-spec command. Asks targeted clarifying
+  questions about scope, users, success criteria, and edge cases.
 ---
 
 # Requirement Elicitation

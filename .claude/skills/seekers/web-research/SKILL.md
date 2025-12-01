@@ -2,8 +2,8 @@
 name: web-research
 description: >
   Search the web for implementation examples, best practices, and solutions.
-  Use when needing current information or researching technical problems.
-agent: scout
+  TRIGGERS: researching technical problems, finding best practices, looking up
+  implementation patterns, needing current information.
 ---
 
 # Web Research

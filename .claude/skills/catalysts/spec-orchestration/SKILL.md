@@ -1,10 +1,9 @@
 ---
 name: spec-orchestration
 description: >
-  Orchestrate the spec shaping workflow by coordinating research phases. Use when
-  the /catalyze-spec command is invoked or when a feature request needs to be
-  transformed into a structured specification.
-agent: catalyst
+  Orchestrate the spec shaping workflow by coordinating research phases.
+  TRIGGERS: /catalyze-spec command, feature request needs specification,
+  transforming vague request into structured spec.
 ---
 
 # Spec Orchestration

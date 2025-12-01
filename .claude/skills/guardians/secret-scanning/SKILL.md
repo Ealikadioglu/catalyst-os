@@ -1,9 +1,8 @@
 ---
 name: secret-scanning
 description: >
-  Scan code for exposed secrets and credentials. Use when checking for
-  hardcoded API keys or sensitive data before commit.
-agent: watcher
+  Scan code for exposed secrets and credentials. TRIGGERS: pre-commit checks,
+  PR reviews, /validate-spec command, security audits.
 ---
 
 # Secret Scanning

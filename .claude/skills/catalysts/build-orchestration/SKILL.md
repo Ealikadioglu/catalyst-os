@@ -1,9 +1,8 @@
 ---
 name: build-orchestration
 description: >
-  Orchestrate the build workflow using TDD principles. Use when /build-spec
-  command is invoked or when a specification needs to be implemented.
-agent: forge-master
+  Orchestrate the build workflow using TDD principles. TRIGGERS: /build-spec
+  command, specification ready for implementation, TDD workflow needed.
 ---
 
 # Build Orchestration

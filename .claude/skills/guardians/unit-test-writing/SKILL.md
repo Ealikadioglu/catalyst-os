@@ -1,9 +1,8 @@
 ---
 name: unit-test-writing
 description: >
-  Write unit tests following TDD principles. Use when tests need to be
-  written before code. Tests are written BEFORE implementation.
-agent: enforcer
+  Write unit tests following TDD principles. TRIGGERS: before any implementation,
+  TDD red phase, adding test coverage. Tests MUST be written BEFORE code.
 ---
 
 # Unit Test Writing

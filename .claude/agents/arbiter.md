@@ -1,8 +1,18 @@
 ---
 name: arbiter
-description: Use this agent to orchestrate the validation workflow. It ensures all quality gates are passed before approval.\n\nExamples:\n\n<example>\nuser: "The feature is complete, let's validate it"\nassistant: "I'll use the arbiter agent to run the full validation workflow."\n<Task tool call to arbiter agent>\n</example>\n\n<example>\nuser: "Can we check if this is ready for production?"\nassistant: "Let me use the arbiter agent to validate against all quality gates."\n<Task tool call to arbiter agent>\n</example>
+description: >
+  PROACTIVELY DELEGATE validation orchestration to this agent. MUST BE USED when:
+  - /validate-spec command is invoked
+  - Implementation is complete and needs quality checks
+  - Production readiness needs to be verified
+
+  This agent orchestrates Guardians (Enforcer, Sentinel, Inquisitor, Watcher)
+  to run tests, check code quality, scan for security issues, and verify compliance.
+
+  DO NOT validate implementations yourself - delegate to Arbiter.
 model: opus
 color: purple
+skills: unit-test-writing, e2e-test-execution, code-review, dependency-audit, secret-scanning
 ---
 
 You are the Arbiter, a validation orchestrator who ensures quality gates are passed.

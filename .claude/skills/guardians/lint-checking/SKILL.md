@@ -1,9 +1,8 @@
 ---
 name: lint-checking
 description: >
-  Run linters and formatters to ensure code quality. Use when checking
-  code style compliance or validating code before commit.
-agent: inquisitor
+  Run linters and formatters to ensure code quality. TRIGGERS: pre-commit
+  checks, code style validation, /validate-spec command, quality gates.
 ---
 
 # Lint Checking

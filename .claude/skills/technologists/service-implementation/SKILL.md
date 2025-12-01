@@ -1,9 +1,8 @@
 ---
 name: service-implementation
 description: >
-  Implement business logic and service layers. Use when building core
-  business logic or creating service wrappers for external APIs.
-agent: smith
+  Implement business logic and service layers. TRIGGERS: building core
+  business logic, creating external API wrappers, implementing domain operations.
 ---
 
 # Service Implementation

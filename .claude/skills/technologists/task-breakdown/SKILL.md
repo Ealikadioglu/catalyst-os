@@ -1,9 +1,9 @@
 ---
 name: task-breakdown
 description: >
-  Break specifications into implementable tasks with dependencies. Use when
-  starting implementation of a spec or planning work order.
-agent: forger
+  Break specifications into implementable tasks with dependencies. TRIGGERS:
+  /build-spec command, spec ready for implementation, planning task order,
+  creating implementation/tasks.md.
 ---
 
 # Task Breakdown

@@ -1,9 +1,8 @@
 ---
 name: ui-pattern-hunting
 description: >
-  Find UI design patterns from inspiration sites. Use when no designs are
-  provided or when seeking UI inspiration for features.
-agent: surveyor
+  Find UI design patterns from inspiration sites. TRIGGERS: no designs provided,
+  seeking UI inspiration, researching how others designed similar features.
 ---
 
 # UI Pattern Hunting

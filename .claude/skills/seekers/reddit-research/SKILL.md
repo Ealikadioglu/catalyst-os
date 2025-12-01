@@ -2,8 +2,8 @@
 name: reddit-research
 description: >
   Search Reddit for community discussions and real-world experiences.
-  Use when seeking community consensus or understanding common pain points.
-agent: scout
+  TRIGGERS: seeking community consensus, understanding pain points, finding
+  real-world experiences with a technology.
 ---
 
 # Reddit Research

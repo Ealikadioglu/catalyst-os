@@ -1,9 +1,8 @@
 ---
 name: react-development
 description: >
-  Build React components, hooks, and pages. Use when implementing UI
-  features or creating React components.
-agent: shaper
+  Build React components, hooks, and pages. TRIGGERS: implementing UI features,
+  creating React components, building pages, writing custom hooks.
 ---
 
 # React Development

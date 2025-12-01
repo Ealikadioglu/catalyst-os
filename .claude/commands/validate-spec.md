@@ -14,6 +14,21 @@ Run validation checks on a completed implementation.
 - All tasks in `implementation/tasks.md` marked complete
 - Unit tests passing
 
+---
+
+## ORCHESTRATION MODE
+
+**IMPORTANT**: This command operates in orchestration mode. The main agent DELEGATES work to specialized sub-agents.
+
+**You MUST:**
+- Spawn **Sentinel** agent for E2E testing (not run tests yourself)
+- Spawn **Inquisitor** agent for code review (not review yourself)
+- Spawn **Watcher** agent for security scanning (not scan yourself)
+
+**The main agent coordinates, sub-agents execute.**
+
+---
+
 ## Workflow
 
 The **Arbiter** agent orchestrates the Guardians.

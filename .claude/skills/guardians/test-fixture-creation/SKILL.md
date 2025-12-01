@@ -1,9 +1,8 @@
 ---
 name: test-fixture-creation
 description: >
-  Create test fixtures, mocks, and test data. Use when setting up test
-  environments or creating reusable test data.
-agent: enforcer
+  Create test fixtures, mocks, and test data. TRIGGERS: setting up test
+  environments, creating reusable test data, building mock services.
 ---
 
 # Test Fixture Creation

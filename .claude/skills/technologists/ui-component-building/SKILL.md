@@ -1,9 +1,8 @@
 ---
 name: ui-component-building
 description: >
-  Build UI components from designs. Use when implementing visual components
-  from Figma or creating design system components.
-agent: shaper
+  Build UI components from designs. TRIGGERS: implementing visual components
+  from Figma, creating design system components, building complex UI elements.
 ---
 
 # UI Component Building

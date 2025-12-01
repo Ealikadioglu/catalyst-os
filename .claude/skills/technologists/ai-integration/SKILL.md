@@ -1,9 +1,8 @@
 ---
 name: ai-integration
 description: >
-  Integrate LLM and AI services into applications. Use when adding AI-powered
-  features or integrating with OpenAI/Anthropic APIs.
-agent: necromancer
+  Integrate LLM and AI services into applications. TRIGGERS: adding AI-powered
+  features, integrating OpenAI/Anthropic APIs, implementing RAG, prompt engineering.
 ---
 
 # AI Integration

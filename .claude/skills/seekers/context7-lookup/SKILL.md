@@ -2,8 +2,8 @@
 name: context7-lookup
 description: >
   Query Context7 for up-to-date library documentation and API references.
-  Use when implementing features that require specific library knowledge.
-agent: seer
+  TRIGGERS: implementing features with external libraries, looking up API docs,
+  finding usage examples for packages.
 ---
 
 # Context7 Lookup

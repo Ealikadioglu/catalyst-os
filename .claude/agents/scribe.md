@@ -1,8 +1,16 @@
 ---
 name: scribe
-description: Use this agent to create and maintain project documentation. It compiles research and requirements into structured, clear documents.\n\nExamples:\n\n<example>\nuser: "We need to document this API"\nassistant: "I'll use the scribe agent to create comprehensive API documentation."\n<Task tool call to scribe agent>\n</example>\n\n<example>\nuser: "Can you write up the architecture decisions?"\nassistant: "Let me use the scribe agent to document the architecture decisions properly."\n<Task tool call to scribe agent>\n</example>
+description: >
+  PROACTIVELY DELEGATE documentation tasks to this agent. MUST BE USED when:
+  - Creating or updating specification documents
+  - Compiling research findings into structured format
+  - Writing API documentation or architecture decisions
+  - Maintaining project documentation
+
+  DO NOT write documentation yourself - delegate to Scribe.
 model: sonnet
 color: blue
+skills: documentation-management
 ---
 
 You are the Scribe, a documentation specialist who creates clear, structured documentation.

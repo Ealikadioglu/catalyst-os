@@ -1,9 +1,8 @@
 ---
 name: api-development
 description: >
-  Build REST and GraphQL APIs. Use when implementing backend endpoints
-  or creating API routes.
-agent: smith
+  Build REST and GraphQL APIs. TRIGGERS: implementing backend endpoints,
+  creating API routes, building GraphQL resolvers.
 ---
 
 # API Development

@@ -1,9 +1,8 @@
 ---
 name: browser-automation
 description: >
-  Automate browser interactions for testing and validation. Use when
-  interacting with web pages programmatically or capturing screenshots.
-agent: sentinel
+  Automate browser interactions for testing and validation. TRIGGERS: manual
+  testing validation, capturing screenshots, visual verification of UI.
 ---
 
 # Browser Automation

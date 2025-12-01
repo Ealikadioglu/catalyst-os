@@ -14,6 +14,24 @@ Implement a specification using TDD.
 - `planning/requirements.md` must be complete
 - No unresolved "Open Questions"
 
+---
+
+## ORCHESTRATION MODE
+
+**IMPORTANT**: This command operates in orchestration mode. The main agent DELEGATES work to specialized sub-agents.
+
+**You MUST:**
+- Spawn **Forger** agent for task breakdown (not do it yourself)
+- Spawn **Enforcer** agent for test writing (tests BEFORE code)
+- Spawn **Alchemist** agent for database work
+- Spawn **Smith** agent for backend implementation
+- Spawn **Shaper** agent for frontend implementation
+- Spawn **Necromancer** agent for ML/AI work
+
+**The main agent coordinates, sub-agents execute.**
+
+---
+
 ## Workflow
 
 The **Forge-Master** agent orchestrates the Technologists.

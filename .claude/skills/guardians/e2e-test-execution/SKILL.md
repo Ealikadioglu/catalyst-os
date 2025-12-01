@@ -1,9 +1,8 @@
 ---
 name: e2e-test-execution
 description: >
-  Execute end-to-end tests using browser automation. Use when validating
-  complete user flows or running Playwright/Cypress tests.
-agent: sentinel
+  Execute end-to-end tests using browser automation. TRIGGERS: validating
+  complete user flows, running Playwright/Cypress tests, /validate-spec command.
 ---
 
 # E2E Test Execution

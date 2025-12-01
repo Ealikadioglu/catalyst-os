@@ -1,9 +1,8 @@
 ---
 name: figma-analysis
 description: >
-  Extract design specifications from Figma files. Use when implementing UI
-  from Figma designs or extracting design tokens.
-agent: surveyor
+  Extract design specifications from Figma files. TRIGGERS: user provides Figma
+  link, implementing UI from designs, extracting design tokens and colors.
 ---
 
 # Figma Analysis

@@ -2,8 +2,8 @@
 name: github-research
 description: >
   Search GitHub for reference implementations, similar projects, and code examples.
-  Use when looking for production code examples or discovering libraries.
-agent: scout
+  TRIGGERS: looking for production code examples, discovering libraries, finding
+  how others implemented a feature.
 ---
 
 # GitHub Research

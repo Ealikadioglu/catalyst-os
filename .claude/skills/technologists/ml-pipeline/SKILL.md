@@ -1,9 +1,8 @@
 ---
 name: ml-pipeline
 description: >
-  Build machine learning pipelines and model integrations. Use when
-  implementing ML features or creating data pipelines.
-agent: necromancer
+  Build machine learning pipelines and model integrations. TRIGGERS: implementing
+  ML features, creating data pipelines, model serving, embeddings generation.
 ---
 
 # ML Pipeline

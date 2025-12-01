@@ -1,9 +1,8 @@
 ---
 name: migration-creation
 description: >
-  Create database migrations for schema changes. Use when applying schema
-  designs to the database.
-agent: alchemist
+  Create database migrations for schema changes. TRIGGERS: applying new schema,
+  modifying tables, adding indexes, after schema-design skill.
 ---
 
 # Migration Creation

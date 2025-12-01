@@ -2,8 +2,7 @@
 name: dependency-audit
 description: >
   Audit dependencies for security vulnerabilities and license compliance.
-  Use when checking for vulnerable packages or validating licenses.
-agent: watcher
+  TRIGGERS: security checks, before deployment, /validate-spec command, regular maintenance.
 ---
 
 # Dependency Audit

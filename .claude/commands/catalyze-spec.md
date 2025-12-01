@@ -9,6 +9,22 @@ Shape a new specification from a feature request.
 /catalyze-spec @existing-spec  # Continue shaping an existing spec
 ```
 
+---
+
+## ORCHESTRATION MODE
+
+**IMPORTANT**: This command operates in orchestration mode. The main agent DELEGATES work to specialized sub-agents.
+
+**You MUST:**
+- Spawn **Oracle** agent for requirement gathering (not do it yourself)
+- Spawn **Seer** agent for codebase analysis (not grep yourself)
+- Spawn **Scout** agent for web research (not search yourself)
+- Spawn **Scribe** agent for documentation (not write specs yourself)
+
+**The main agent coordinates, sub-agents execute.**
+
+---
+
 ## Workflow
 
 The **Catalyst** agent orchestrates the Seekers to gather all necessary information.

@@ -1,9 +1,8 @@
 ---
 name: documentation-management
 description: >
-  Create and maintain project documentation. Use when specs need to be written,
-  when compiling research into structured documents, or updating project docs.
-agent: scribe
+  Create and maintain project documentation. TRIGGERS: writing specifications,
+  compiling research findings, creating requirements.md, updating project docs.
 ---
 
 # Documentation Management

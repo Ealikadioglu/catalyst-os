@@ -1,9 +1,8 @@
 ---
 name: schema-design
 description: >
-  Design database schemas and data models. Use when creating new tables
-  or defining relationships.
-agent: alchemist
+  Design database schemas and data models. TRIGGERS: creating new tables,
+  defining relationships, planning data structure for features.
 ---
 
 # Schema Design

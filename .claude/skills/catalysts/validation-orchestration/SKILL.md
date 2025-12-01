@@ -1,9 +1,8 @@
 ---
 name: validation-orchestration
 description: >
-  Orchestrate the validation workflow for completed implementations. Use when
-  /validate-spec command is invoked or when implementation needs quality verification.
-agent: arbiter
+  Orchestrate the validation workflow for completed implementations. TRIGGERS:
+  /validate-spec command, implementation complete, quality verification needed.
 ---
 
 # Validation Orchestration

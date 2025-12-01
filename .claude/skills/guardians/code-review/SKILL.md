@@ -1,9 +1,8 @@
 ---
 name: code-review
 description: >
-  Review code for quality, patterns, and best practices. Use when validating
-  implementation quality or ensuring code meets standards.
-agent: inquisitor
+  Review code for quality, patterns, and best practices. TRIGGERS: after
+  implementation, before merge/commit, /validate-spec command, quality gate check.
 ---
 
 # Code Review

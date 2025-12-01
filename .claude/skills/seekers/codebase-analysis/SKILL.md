@@ -2,8 +2,8 @@
 name: codebase-analysis
 description: >
   Analyze existing codebase for patterns, conventions, and integration points.
-  Use when understanding how a new feature fits into existing code.
-agent: seer
+  TRIGGERS: new feature implementation, understanding existing code, finding patterns,
+  identifying where new code should connect.
 ---
 
 # Codebase Analysis
