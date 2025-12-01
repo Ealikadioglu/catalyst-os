@@ -13,6 +13,41 @@ Shape a new specification from a feature request.
 
 The **Catalyst** agent orchestrates the Seekers to gather all necessary information.
 
+### Phase 0: Roadmap Impact Assessment
+
+**Before** starting the spec process, evaluate if the request impacts the project roadmap.
+
+1. **Read existing roadmap** (if present):
+   - Check `.catalyst/main/roadmap.md`
+   - Understand current goals, priorities, and timeline
+
+2. **Analyze request scope**:
+   - **Small request**: Minor feature, bug fix, or incremental improvement
+     - Examples: "Add dark mode toggle", "Fix login button styling", "Add validation to email field"
+     - Typically: Single component, isolated feature, quick fix
+   - **Large request**: Major feature, architectural change, or strategic initiative
+     - Examples: "Integrate Stripe for subscriptions", "Build user authentication system", "Add real-time collaboration"
+     - Typically: Multiple components, new services, affects multiple areas, strategic importance
+
+3. **Assess roadmap impact**:
+   - Does this align with existing roadmap goals?
+   - Does this conflict with planned priorities?
+   - Does this require reprioritizing existing goals?
+   - Does this introduce new strategic direction?
+
+4. **Update roadmap if needed**:
+   - If **large request** AND impacts roadmap:
+     - Add/update relevant goal in appropriate timeline (Short/Medium/Long-term)
+     - Update priority if needed
+     - Document dependencies
+     - Update changelog with: `| [DATE] | Added/Updated goal: [Title] | /catalyze-spec` 
+   - If **small request** OR doesn't impact roadmap:
+     - Proceed directly to spec creation (no roadmap update needed)
+
+5. **Document decision**:
+   - Note in spec planning whether roadmap was updated
+   - Reference the roadmap goal if applicable
+
 ### Phase 1: Initialize Spec Folder
 
 Create the spec structure:
@@ -42,8 +77,10 @@ Use `requirement-elicitation` skill:
    - User personas ("Who will use this?")
    - Success criteria ("How do we know it's done?")
    - Edge cases ("What happens when...?")
+   - **Roadmap alignment** (if large request): "How does this fit with our current priorities?"
 3. Wait for user responses
 4. Document in `planning/requirements.md`
+5. Include roadmap context if applicable (reference to roadmap goal)
 
 ### Phase 3: Research (Seer + Scout)
 
@@ -117,6 +154,15 @@ Created: .catalyst/specs/YYYY-MM-DD-{feature}/
 ├── planning/research.md ← Research findings
 └── planning/visuals/ ← UI references (if any)
 
+[If roadmap was updated:]
+📋 Roadmap updated: .catalyst/main/roadmap.md
+
 Next: Run /build-spec @YYYY-MM-DD-{feature} to implement.
 ```
+
+## Notes
+
+- **Small requests** typically don't require roadmap updates and proceed directly to spec creation
+- **Large requests** should be evaluated against roadmap and updated if they represent strategic changes
+- Roadmap updates preserve existing goals and priorities unless explicitly reprioritized
 
