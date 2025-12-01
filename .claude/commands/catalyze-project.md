@@ -37,11 +37,35 @@ Based on the mission and codebase analysis:
 
 1. Identify existing features and their maturity
 2. Ask about planned features and priorities
-3. Create `.catalyst/main/roadmap.md`:
-   - Current state assessment
-   - Short-term goals (1-3 months)
-   - Medium-term goals (3-6 months)
-   - Long-term vision
+3. Create `.catalyst/main/roadmap.md` following this structure:
+
+**Current State:**
+- Existing Features table (Status: ✅ Complete / 🚧 In Progress / 📋 Planned, Maturity: MVP / Beta / Stable)
+- Technical Debt list
+
+**Short-Term Goals (1-3 months):**
+For each goal, include:
+- **Goal Title** (e.g., "Goal 1: [Title]")
+- **Objective:** Clear description of what to achieve
+- **Seed Prompt:** Code block with prompt for `/catalyze-spec` command
+  ```
+  Example: "Build user authentication system. Support email/password and OAuth (Google, GitHub). Use Supabase Auth."
+  ```
+- **References:**
+  - 📁 `./relative/path` for internal project files
+  - 🔗 https://... for external URLs
+  - 🎨 https://figma.com/... for Figma designs
+- **Priority:** 🔴 Critical / 🟠 High / 🟡 Medium / 🟢 Low
+- **Dependencies:** List of other goals this depends on (e.g., "[Depends on Goal X]")
+
+**Medium-Term Goals (3-6 months):**
+Same structure as Short-Term Goals
+
+**Long-Term Vision (6+ months):**
+- Vision Goals table with: Goal | Description | Prerequisite Goals
+
+**Changelog:**
+- Table tracking changes: Date | Change | Author
 
 ### Phase 4: Tech Stack Documentation
 
