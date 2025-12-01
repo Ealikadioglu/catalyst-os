@@ -120,6 +120,8 @@ Scout agent
 
 ### Spec Folder Structure
 
+Structure is defined in `.catalyst/specs/spec-config.yaml`:
+
 ```
 .catalyst/specs/YYYY-MM-DD-{feature}/
 ├── planning/

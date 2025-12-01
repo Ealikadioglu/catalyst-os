@@ -50,7 +50,7 @@ The **Catalyst** agent orchestrates the Seekers to gather all necessary informat
 
 ### Phase 1: Initialize Spec Folder
 
-Create the spec structure:
+Create the spec structure (see `.catalyst/specs/spec-config.yaml` for configuration):
 ```
 .catalyst/specs/YYYY-MM-DD-{slug}/
 ├── planning/

@@ -1,0 +1,11 @@
+# Project Foundation Configuration
+
+# Command to initialize project foundation
+command: "/catalyze-project"
+
+# Generated files
+generated_files:
+  mission.md: "Project vision and goals"
+  roadmap.md: "Development phases"
+  tech-stack.md: "Technology decisions"
+

@@ -89,6 +89,8 @@ Created:
 ├── .catalyst/main/roadmap.md
 └── .catalyst/main/tech-stack.md
 
+Configuration: See `.catalyst/main/project-config.yaml` for details.
+
 Next: Run /catalyze-spec "feature description" to shape your first spec.
 ```
 

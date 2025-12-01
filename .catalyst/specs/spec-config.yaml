@@ -1,0 +1,24 @@
+# Specifications Configuration
+
+# Command to create a new spec
+command: "/catalyze-spec \"description\""
+
+# Spec folder structure
+structure:
+  root: "specs/"
+  pattern: "YYYY-MM-DD-{feature}"
+  folders:
+    planning:
+      - requirements.md
+      - research.md
+      - visuals/
+    implementation:
+      - tasks.md
+      - tests/
+      - progress.md
+    validation:
+      - test-results.md
+      - quality-report.md
+      - sign-off.md
+  completed: "completed/"
+
