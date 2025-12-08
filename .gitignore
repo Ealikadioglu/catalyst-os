@@ -1,0 +1,9 @@
+# Agent research files (should be in .catalyst/specs/*/planning/)
+/AGENTS.md
+/RESEARCH_SUMMARY.md
+/GOOGLE_OAUTH_RESEARCH.md
+/WORKSPACE_AUTH_RESEARCH.md
+
+# Specs in progress
+.catalyst/specs/*/planning/*.tmp
+.catalyst/specs/*/implementation/*.tmp

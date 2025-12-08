@@ -23,6 +23,20 @@ Shape a new specification from a feature request.
 
 **The main agent coordinates, sub-agents execute.**
 
+### Output Location Rule
+
+**CRITICAL**: When spawning research agents, you MUST instruct them to save outputs in the spec folder:
+
+```
+.catalyst/specs/YYYY-MM-DD-{slug}/planning/
+```
+
+**In your agent prompts, include:**
+- "Save your findings to `.catalyst/specs/{spec-folder}/planning/research.md`"
+- "Document requirements in `.catalyst/specs/{spec-folder}/planning/requirements.md`"
+
+**Do NOT** allow agents to create files in the root directory (AGENTS.md, RESEARCH_SUMMARY.md, etc.).
+
 ### ⚡ PARALLEL EXECUTION
 
 **Spawn research agents in parallel, not sequentially!**
@@ -99,8 +113,14 @@ Create the spec structure (see `.catalyst/specs/spec-config.yaml` for configurat
 
 ### Phase 2: Requirements Gathering (Oracle)
 
-Use `requirement-elicitation` skill:
+**Spawn Oracle agent** with explicit output location:
 
+```
+"Gather requirements for [feature]. Save findings to:
+.catalyst/specs/{YYYY-MM-DD-slug}/planning/requirements.md"
+```
+
+Oracle will:
 1. Identify the core intent of the request
 2. Ask 3-5 clarifying questions about:
    - Scope boundaries ("Should this include X?")
@@ -109,37 +129,61 @@ Use `requirement-elicitation` skill:
    - Edge cases ("What happens when...?")
    - **Roadmap alignment** (if large request): "How does this fit with our current priorities?"
 3. Wait for user responses
-4. Document in `planning/requirements.md`
+4. Document in `.catalyst/specs/{spec-folder}/planning/requirements.md`
 5. Include roadmap context if applicable (reference to roadmap goal)
 
 ### Phase 3: Research (Seer + Scout)
 
-**Codebase Analysis** (`codebase-analysis` skill):
+**Spawn Seer + Scout agents in parallel** with explicit output location:
+
+```
+Seer: "Analyze codebase for [feature]. Save findings to:
+.catalyst/specs/{YYYY-MM-DD-slug}/planning/research.md (section: Codebase Analysis)"
+
+Scout: "Research best practices for [feature]. Save findings to:
+.catalyst/specs/{YYYY-MM-DD-slug}/planning/research.md (section: Web Research)"
+```
+
+**Codebase Analysis** (Seer):
 - Scan relevant existing code
 - Identify patterns to follow
 - Find integration points
 - Note potential conflicts
 
-**Library Research** (`context7-lookup` skill):
+**Library Research** (Seer with `context7-lookup`):
 - Query Context7 for relevant library docs
 - Document API patterns and best practices
 
-**Web Research** (`web-research`, `github-research` skills):
+**Web Research** (Scout):
 - Search for implementation examples
 - Find common pitfalls
 - Gather best practices
-- Document in `planning/research.md`
+- Document in `.catalyst/specs/{spec-folder}/planning/research.md`
 
 ### Phase 4: UI Research (Surveyor) - If Applicable
 
-Use `ui-pattern-hunting` skill:
+**Spawn Surveyor agent** with explicit output location:
+
+```
+"Research UI patterns for [feature]. Save findings and references to:
+.catalyst/specs/{YYYY-MM-DD-slug}/planning/visuals/"
+```
+
+Surveyor will:
 - Search Dribbble, Mobbin for patterns
 - Analyze competitor implementations
-- Save references to `planning/visuals/`
+- Save references to `.catalyst/specs/{spec-folder}/planning/visuals/`
 
 ### Phase 5: Compile Specification (Scribe)
 
-Use `documentation-management` skill to create:
+**Spawn Scribe agent** with explicit output location:
+
+```
+"Compile specification from gathered research. Create final spec at:
+.catalyst/specs/{YYYY-MM-DD-slug}/planning/requirements.md"
+```
+
+Scribe will create:
 
 `planning/requirements.md`:
 ```markdown
