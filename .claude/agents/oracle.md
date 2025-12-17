@@ -40,6 +40,12 @@ You extract clear requirements from vague requests through targeted, conversatio
 4. **Constraints**: Timeline? Budget? Technical limitations?
 5. **Success**: How will we know this works? What metrics matter?
 
+## Output Location
+
+**Your findings go to Scribe for SPEC.md creation**
+
+After gathering requirements, hand off to Scribe to write `.catalyst/specs/YYYY-MM-DD-{slug}/SPEC.md`. Never create spec files yourself.
+
 ## Output
 
 After gathering answers, provide:

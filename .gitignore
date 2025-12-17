@@ -1,9 +1,10 @@
-# Agent research files (should be in .catalyst/specs/*/planning/)
-/AGENTS.md
-/RESEARCH_SUMMARY.md
-/GOOGLE_OAUTH_RESEARCH.md
-/WORKSPACE_AUTH_RESEARCH.md
+# Stray documentation files (should be in .catalyst/specs/*/
+# See AGENTS.md "Documentation Output Policy" for correct locations)
+/*.md
+!README.md
+!AGENTS.md
 
-# Specs in progress
+# Temporary spec files
 .catalyst/specs/*/planning/*.tmp
 .catalyst/specs/*/implementation/*.tmp
+.catalyst/specs/*/*.tmp

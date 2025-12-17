@@ -92,3 +92,39 @@ CORRECT (Parallel where possible):
 | Code & Comments | **Always English** |
 
 **Artifacts include:** `.catalyst/` contents, spec documents, mission.md, roadmap.md, tech-stack.md, code comments, commit messages.
+
+---
+
+## Documentation Output Policy
+
+**CRITICAL: Never create random .md files. All documentation goes to structured locations only.**
+
+### Spec Folder Structure
+
+```
+.catalyst/specs/YYYY-MM-DD-{slug}/
+├── SPEC.md           # Requirements + overview + status
+├── research.md       # All research findings (append-only)
+├── tasks.md          # Task breakdown + progress tracking
+├── validation.md     # Test results + quality checks
+├── HANDOFF.md        # Final walkthrough (generated on completion)
+└── assets/           # Images, diagrams, mockups
+```
+
+### File Ownership
+
+| File | Owner | When Updated |
+|------|-------|--------------|
+| `SPEC.md` | Scribe | Requirements change |
+| `research.md` | Scout, Seer, Oracle | New findings discovered |
+| `tasks.md` | Forger | Task breakdown, progress updates |
+| `validation.md` | Arbiter, Inquisitor, Sentinel | Test execution |
+| `HANDOFF.md` | Arbiter | Spec completion (final artifact) |
+
+### Rules
+
+1. **UPDATE > CREATE** — Always update existing files before creating new ones
+2. **No root-level docs** — Never create .md files in project root (except README.md)
+3. **No orphan docs** — Every document must belong to a spec folder
+4. **Append to research.md** — Don't create separate research files, append findings
+5. **Delegate to Scribe** — When unsure about documentation, delegate to Scribe

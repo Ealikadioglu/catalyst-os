@@ -11,47 +11,21 @@ Run validation checks on a completed implementation.
 ## Prerequisites
 
 - Spec must be in "build complete" state
-- All tasks in `implementation/tasks.md` marked complete
-- **TDD compliance verified** (test-manifest.md shows all green)
-- Unit tests passing
+- All tasks in `tasks.md` marked complete
+- **TDD compliance verified** (tests pass)
 
 ---
 
-## ⚠️ TDD COMPLIANCE CHECK (FIRST!)
+## TDD COMPLIANCE CHECK (FIRST!)
 
 ```
-╔═══════════════════════════════════════════════════════════════════╗
-║  Before validation begins, verify TDD was followed:               ║
-║                                                                    ║
-║  1. Check implementation/test-manifest.md exists                  ║
-║  2. Verify Red Phase was completed (tests written first)          ║
-║  3. Verify Green Phase achieved (all tests pass)                  ║
-║                                                                    ║
-║  🚫 If TDD was skipped → REJECT and return to /build-spec         ║
-╚═══════════════════════════════════════════════════════════════════╝
-```
+  Before validation begins, verify TDD was followed:
 
-### TDD Compliance Checklist
+  1. Check tasks.md has test locations for each task
+  2. Verify all tests pass
+  3. Verify tests were written before implementation
 
-Before spawning any validation agents, check:
-
-- [ ] `implementation/test-manifest.md` exists
-- [ ] Test manifest shows tests were written BEFORE code
-- [ ] `implementation/progress.md` shows TDD log with red→green transition
-- [ ] All tests pass when run
-
-**If ANY of these fail:**
-```
-❌ VALIDATION BLOCKED
-
-TDD compliance check failed:
-- Missing: test-manifest.md
-
-Action Required:
-1. Return to /build-spec
-2. Write tests first (Enforcer)
-3. Then implement (Builders)
-4. Re-run /validate-spec
+  If TDD was skipped -> REJECT and return to /build-spec
 ```
 
 ---
@@ -60,26 +34,36 @@ Action Required:
 
 **IMPORTANT**: This command operates in orchestration mode. The main agent DELEGATES work to specialized sub-agents.
 
-**You MUST:**
-- First: Check TDD compliance (before spawning agents)
-- Spawn **Enforcer** agent to verify unit test coverage
-- Spawn **Sentinel** agent for E2E testing
-- Spawn **Inquisitor** agent for code review
-- Spawn **Watcher** agent for security scanning
+### Output Location
 
-**The main agent coordinates, sub-agents execute.**
+All outputs go to the spec folder. See AGENTS.md "Documentation Output Policy".
 
-### ⚡ PARALLEL EXECUTION
+```
+.catalyst/specs/YYYY-MM-DD-{slug}/
+├── SPEC.md           # From /catalyze-spec
+├── research.md       # From /catalyze-spec
+├── tasks.md          # From /build-spec
+├── validation.md     # Arbiter creates (this phase)
+├── HANDOFF.md        # Arbiter creates (on success)
+└── assets/
+```
+
+### PARALLEL EXECUTION
 
 **After TDD check passes, spawn ALL validation agents in parallel!**
 
 ```
 TDD Check (sequential, must pass first)
-        ↓
+        |
+        v
 [Enforcer + Sentinel + Inquisitor + Watcher] (all parallel)
+        |
+        v
+Arbiter compiles results -> validation.md
+        |
+        v (if all pass)
+Arbiter generates HANDOFF.md
 ```
-
-All Guardians are independent - spawn them together for faster validation.
 
 ---
 
@@ -91,234 +75,132 @@ The **Arbiter** agent orchestrates the Guardians.
 
 **This phase MUST pass before any validation begins.**
 
-1. Read `implementation/test-manifest.md`
-2. Read `implementation/progress.md`
-3. Verify TDD workflow was followed:
+1. Read `tasks.md`
+2. Verify each task has associated tests
+3. Run all tests to confirm they pass
 
-```markdown
-## TDD Compliance Report
+**If not compliant -> BLOCK and return to /build-spec**
 
-### Checklist
-- [x] test-manifest.md exists
-- [x] Tests written before implementation (timestamp check)
-- [x] Red phase documented (all tests failed initially)
-- [x] Green phase achieved (all tests pass now)
-- [x] No tests were skipped or deleted
+---
 
-### Evidence
-- Test manifest created: 10:00 AM
-- First implementation commit: 10:30 AM (after tests)
-- Red phase tests: 45 failing
-- Green phase tests: 45 passing
+### Phase 1-4: Validation (PARALLEL)
 
-### Result: ✅ TDD COMPLIANT
+**Spawn all Guardians in parallel**:
+
+```
+Enforcer: "Verify test coverage and quality for spec {slug}"
+Sentinel: "Run E2E tests for spec {slug}"
+Inquisitor: "Review code quality for spec {slug}"
+Watcher: "Scan for security issues in spec {slug}"
 ```
 
-**If not compliant:**
-```markdown
-### Result: ❌ TDD NOT COMPLIANT
+**Enforcer** (Unit Tests):
+- Run all unit tests
+- Check coverage thresholds
+- Verify test quality
 
-Issues:
-- Implementation started before tests were written
-- 3 tasks have no corresponding tests
-- Test manifest missing
+**Sentinel** (E2E Tests):
+- Run full E2E test suite
+- Test user flows
+- Capture screenshots on failure
 
-Action: Return to /build-spec and follow TDD process
-```
+**Inquisitor** (Code Quality):
+- Run linters
+- Code review checks
+- Documentation gaps
+
+**Watcher** (Security):
+- Dependency audit
+- Secret scanning
+- Input validation checks
 
 ---
 
-### Phase 1: Unit Test Verification (Enforcer)
+### Phase 5: Compile Results (Arbiter)
 
-Use `unit-test-writing` and `test-fixture-creation` skills:
-
-1. **Run all unit tests** and verify they pass
-2. **Check test coverage**:
-   - Minimum coverage threshold (if configured)
-   - All critical paths tested
-   - Edge cases covered
-
-3. **Verify test quality**:
-   - Tests are meaningful (not just checking true === true)
-   - Tests match requirements
-   - No tests that always pass
-
-4. Document in `validation/unit-test-report.md`:
+**Arbiter creates `validation.md`**:
 
 ```markdown
-# Unit Test Report
+# Validation: {Feature Name}
 
-## Summary
-- Total Tests: 45
-- Passing: 45
-- Failing: 0
-- Skipped: 0
-- Coverage: 87%
-
-## By Category
-| Category | Tests | Pass | Coverage |
-|----------|-------|------|----------|
-| Unit | 25 | 25 | 92% |
-| Integration | 8 | 8 | 85% |
-| Component | 12 | 12 | 82% |
-
-## Quality Check
-- [x] No empty tests
-- [x] No always-passing tests
-- [x] Assertions are meaningful
-- [x] Edge cases covered
-```
-
----
-
-### Phase 2: E2E Testing (Sentinel)
-
-Use `e2e-test-execution` and `browser-automation` skills:
-
-1. Run full E2E test suite
-2. Test real user flows:
-   - Happy paths
-   - Error scenarios
-   - Edge cases
-3. Capture screenshots on failure
-4. Document in `validation/e2e-test-report.md`
-
-```markdown
-# E2E Test Report
-
-## Summary
-- Total Flows: 12
-- Passing: 12
-- Failing: 0
-
-## User Flows Tested
-- [x] User can view pricing page
-- [x] User can select a plan
-- [x] User can complete checkout
-- [x] User can manage subscription
-- [x] System handles payment failures
-- [x] Webhook processes correctly
-```
-
----
-
-### Phase 3: Code Quality (Inquisitor)
-
-Use `lint-checking` and `code-review` skills:
-
-1. **Linting**: Run project linters
-   - ESLint/Prettier (JS/TS)
-   - Pylint/Black (Python)
-   - etc.
-
-2. **Code Review**: Check for:
-   - Naming conventions
-   - Function complexity
-   - DRY violations
-   - Missing error handling
-   - Documentation gaps
-
-3. Document in `validation/quality-report.md`
-
----
-
-### Phase 4: Security Scan (Watcher)
-
-Use `dependency-audit` and `secret-scanning` skills:
-
-1. **Dependency Audit**:
-   - Check for vulnerable packages
-   - Verify license compliance
-
-2. **Secret Scanning**:
-   - Scan for exposed API keys
-   - Check for hardcoded credentials
-
-3. **Input Validation**:
-   - Verify all inputs are sanitized
-   - Check for SQL injection risks
-   - Verify XSS protection
-
----
-
-### Phase 5: Validation Report
-
-Create `validation/sign-off.md`:
-
-```markdown
-# Validation Report
-
-## Spec: {spec-name}
 ## Date: YYYY-MM-DD
 
-## TDD Compliance: ✅ VERIFIED
-- Tests written before code: ✓
-- Red phase completed: ✓
-- Green phase achieved: ✓
+## TDD Compliance
+- [x] Tests written before implementation
+- [x] All tasks have tests
+- [x] All tests pass
 
-## Summary
-| Check | Status | Notes |
-|-------|--------|-------|
-| TDD Compliance | ✅ Pass | Red→Green verified |
-| Unit Tests | ✅ Pass | 45/45, 87% coverage |
-| E2E Tests | ✅ Pass | 12/12 flows |
-| Lint | ✅ Pass | 0 errors |
-| Code Quality | ⚠️ Warn | 2 suggestions |
-| Security | ✅ Pass | No vulnerabilities |
+## Test Results
 
-## Overall Status: ✅ READY FOR APPROVAL
+### Unit Tests (Enforcer)
+- Total: 45
+- Passing: 45
+- Coverage: 87%
 
-## E2E Test Results
-- ✅ User can view pricing page
-- ✅ User can select a plan
-- ✅ User can complete checkout
-- ✅ User can manage subscription
-- ✅ Webhook handles payment failures
+### E2E Tests (Sentinel)
+- Total: 12
+- Passing: 12
 
-## Code Quality Notes
-1. Consider extracting duplicate validation logic
-2. Add JSDoc to public API functions
+## Quality Checks
 
-## Security Notes
-- No exposed secrets
-- All inputs sanitized
-- Dependencies up to date
+### Lint (Inquisitor)
+- Status: PASS
+- Errors: 0
+- Warnings: 2
 
-## Recommendation
-Ready for user review and approval.
+### Code Review (Inquisitor)
+- Status: PASS
+- Suggestions: 2
+
+### Security (Watcher)
+- Dependencies: No vulnerabilities
+- Secrets: None exposed
+- Inputs: Sanitized
+
+## Overall Status: PASS
+
+## Issues Found
+| Issue | Severity | Resolution |
+|-------|----------|------------|
+| Consider extracting validation logic | Low | Suggestion |
 ```
 
 ---
 
-## Failure Handling
+### Phase 6: Generate HANDOFF.md (On Success)
 
-### If TDD Compliance Fails
+**If all validation passes**, Arbiter generates `HANDOFF.md`:
 
+```markdown
+# {Feature Name} - Handoff
+
+> Generated: YYYY-MM-DD
+
+## Summary
+[2-3 sentences: what was built and why]
+
+## What Changed
+- [Key change 1]
+- [Key change 2]
+
+## Key Decisions
+| Decision | Why |
+|----------|-----|
+| [Choice made] | [Reasoning] |
+
+## Files Modified
+- `path/to/file.ts` - [what changed]
+
+## How to Test
+1. [Step-by-step verification]
+2. [Key user flows to check]
+
+## Edge Cases & Gotchas
+- [Important behavior to know]
+
+## Follow-up Items
+- [ ] [Deferred work if any]
 ```
-❌ VALIDATION BLOCKED - TDD NOT FOLLOWED
-
-The implementation did not follow TDD:
-- Tests were written after code
-- OR tests are missing for some tasks
-
-Action Required:
-1. Do NOT proceed with validation
-2. Return to /build-spec
-3. Follow TDD process strictly
-4. Re-run /validate-spec
-
-This is not optional - TDD is mandatory.
-```
-
-### If Any Check Fails
-
-1. **Create issue list** in `validation/issues.md`
-2. **Route back to builders**:
-   - Test failures → Technologists
-   - Quality issues → Inquisitor suggestions
-   - Security issues → STOP, notify immediately
-3. **Re-run** `/build-spec` for fixes
-4. **Re-run** `/validate-spec`
 
 ---
 
@@ -326,42 +208,58 @@ This is not optional - TDD is mandatory.
 
 ### Success
 ```
-✅ Validation complete!
+Validation complete!
 
 Spec: 2025-11-29-stripe-integration
 
-TDD Compliance: ✅ VERIFIED
-├── Tests written first: ✓
-├── Red phase completed: ✓
-└── Green phase achieved: ✓
+TDD Compliance: VERIFIED
 
 Results:
-├── Unit Tests: ✅ 45/45 passing (87% coverage)
-├── E2E Tests: ✅ 12/12 passing
-├── Lint: ✅ No errors
-├── Code Quality: ⚠️ 2 suggestions
-└── Security: ✅ No vulnerabilities
+- Unit Tests: 45/45 passing (87% coverage)
+- E2E Tests: 12/12 passing
+- Lint: No errors
+- Code Quality: 2 suggestions
+- Security: No vulnerabilities
 
 Status: READY FOR APPROVAL
 
-Next: Review and run /approve-spec @2025-11-29-stripe-integration
+Created:
+- .catalyst/specs/{slug}/validation.md
+- .catalyst/specs/{slug}/HANDOFF.md
+
+Next: Review HANDOFF.md and run:
+      /approve-spec @2025-11-29-stripe-integration
       Or /reject-spec @2025-11-29-stripe-integration "reason"
 ```
 
 ### TDD Failure
 ```
-❌ Validation blocked!
+Validation blocked!
 
 Spec: 2025-11-29-stripe-integration
 
-TDD Compliance: ❌ FAILED
-├── test-manifest.md: Missing
-├── Tests written first: Unknown
-└── Evidence of TDD: None found
+TDD Compliance: FAILED
+- Tests missing for tasks: T-003, T-005
+- OR tests written after implementation
 
 Status: BLOCKED - RETURN TO BUILD
 
 Action: Run /build-spec @2025-11-29-stripe-integration
         Follow TDD process (tests BEFORE code)
         Then re-run /validate-spec
+```
+
+### Validation Failure
+```
+Validation failed!
+
+Spec: 2025-11-29-stripe-integration
+
+Failed Checks:
+- E2E Tests: 2 failures
+- Security: 1 vulnerability found
+
+Created: .catalyst/specs/{slug}/validation.md (with details)
+
+Action: Fix issues and re-run /validate-spec
 ```

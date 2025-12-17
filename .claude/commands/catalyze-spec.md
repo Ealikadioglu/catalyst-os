@@ -25,19 +25,25 @@ Shape a new specification from a feature request.
 
 ### Output Location Rule
 
-**CRITICAL**: When spawning research agents, you MUST instruct them to save outputs in the spec folder:
+**CRITICAL**: All outputs go to the spec folder. See AGENTS.md "Documentation Output Policy".
 
 ```
-.catalyst/specs/YYYY-MM-DD-{slug}/planning/
+.catalyst/specs/YYYY-MM-DD-{slug}/
+├── SPEC.md           # Scribe owns
+├── research.md       # Scout, Seer, Oracle append to
+├── tasks.md          # Forger owns (created in /build-spec)
+├── validation.md     # Arbiter owns (created in /validate-spec)
+├── HANDOFF.md        # Arbiter generates on completion
+└── assets/           # Images, diagrams, mockups
 ```
 
-**In your agent prompts, include:**
-- "Save your findings to `.catalyst/specs/{spec-folder}/planning/research.md`"
-- "Document requirements in `.catalyst/specs/{spec-folder}/planning/requirements.md`"
+**In your agent prompts, include the exact file path:**
+- "Append your findings to `.catalyst/specs/{slug}/research.md`"
+- "Create SPEC.md at `.catalyst/specs/{slug}/SPEC.md`"
 
-**Do NOT** allow agents to create files in the root directory (AGENTS.md, RESEARCH_SUMMARY.md, etc.).
+**Do NOT** allow agents to create random files anywhere else.
 
-### ⚡ PARALLEL EXECUTION
+### PARALLEL EXECUTION
 
 **Spawn research agents in parallel, not sequentially!**
 
@@ -68,126 +74,73 @@ The **Catalyst** agent orchestrates the Seekers to gather all necessary informat
 2. **Analyze request scope**:
    - **Small request**: Minor feature, bug fix, or incremental improvement
      - Examples: "Add dark mode toggle", "Fix login button styling", "Add validation to email field"
-     - Typically: Single component, isolated feature, quick fix
    - **Large request**: Major feature, architectural change, or strategic initiative
-     - Examples: "Integrate Stripe for subscriptions", "Build user authentication system", "Add real-time collaboration"
-     - Typically: Multiple components, new services, affects multiple areas, strategic importance
+     - Examples: "Integrate Stripe for subscriptions", "Build user authentication system"
 
-3. **Assess roadmap impact**:
-   - Does this align with existing roadmap goals?
-   - Does this conflict with planned priorities?
-   - Does this require reprioritizing existing goals?
-   - Does this introduce new strategic direction?
-
-4. **Update roadmap if needed**:
-   - If **large request** AND impacts roadmap:
-     - Add/update relevant goal in appropriate timeline (Short/Medium/Long-term)
-     - Update priority if needed
-     - Document dependencies
-     - Update changelog with: `| [DATE] | Added/Updated goal: [Title] | /catalyze-spec` 
-   - If **small request** OR doesn't impact roadmap:
-     - Proceed directly to spec creation (no roadmap update needed)
-
-5. **Document decision**:
-   - Note in spec planning whether roadmap was updated
-   - Reference the roadmap goal if applicable
+3. **Update roadmap if needed**:
+   - If **large request** AND impacts roadmap: Update `.catalyst/main/roadmap.md`
+   - If **small request**: Proceed directly to spec creation
 
 ### Phase 1: Initialize Spec Folder
 
-Create the spec structure (see `.catalyst/specs/spec-config.yaml` for configuration):
+Create the spec structure:
 ```
 .catalyst/specs/YYYY-MM-DD-{slug}/
-├── planning/
-│   ├── requirements.md
-│   ├── research.md
-│   └── visuals/
-├── implementation/
-│   ├── tasks.md
-│   ├── tests/
-│   └── progress.md
-└── validation/
-    ├── test-results.md
-    ├── quality-report.md
-    └── sign-off.md
+├── SPEC.md
+├── research.md
+└── assets/
 ```
 
 ### Phase 2: Requirements Gathering (Oracle)
 
-**Spawn Oracle agent** with explicit output location:
+**Spawn Oracle agent**:
 
 ```
-"Gather requirements for [feature]. Save findings to:
-.catalyst/specs/{YYYY-MM-DD-slug}/planning/requirements.md"
+"Gather requirements for [feature]. Hand off findings to Scribe for SPEC.md creation at:
+.catalyst/specs/{YYYY-MM-DD-slug}/SPEC.md"
 ```
 
 Oracle will:
 1. Identify the core intent of the request
-2. Ask 3-5 clarifying questions about:
-   - Scope boundaries ("Should this include X?")
-   - User personas ("Who will use this?")
-   - Success criteria ("How do we know it's done?")
-   - Edge cases ("What happens when...?")
-   - **Roadmap alignment** (if large request): "How does this fit with our current priorities?"
+2. Ask 3-5 clarifying questions about scope, users, success criteria, edge cases
 3. Wait for user responses
-4. Document in `.catalyst/specs/{spec-folder}/planning/requirements.md`
-5. Include roadmap context if applicable (reference to roadmap goal)
+4. Hand off synthesized requirements to Scribe
 
-### Phase 3: Research (Seer + Scout)
+### Phase 3: Research (Seer + Scout) - PARALLEL
 
-**Spawn Seer + Scout agents in parallel** with explicit output location:
+**Spawn Seer + Scout agents in parallel**:
 
 ```
-Seer: "Analyze codebase for [feature]. Save findings to:
-.catalyst/specs/{YYYY-MM-DD-slug}/planning/research.md (section: Codebase Analysis)"
+Seer: "Analyze codebase for [feature]. Append findings to:
+.catalyst/specs/{YYYY-MM-DD-slug}/research.md under '## Codebase Analysis'"
 
-Scout: "Research best practices for [feature]. Save findings to:
-.catalyst/specs/{YYYY-MM-DD-slug}/planning/research.md (section: Web Research)"
+Scout: "Research best practices for [feature]. Append findings to:
+.catalyst/specs/{YYYY-MM-DD-slug}/research.md under '## External Research'"
 ```
-
-**Codebase Analysis** (Seer):
-- Scan relevant existing code
-- Identify patterns to follow
-- Find integration points
-- Note potential conflicts
-
-**Library Research** (Seer with `context7-lookup`):
-- Query Context7 for relevant library docs
-- Document API patterns and best practices
-
-**Web Research** (Scout):
-- Search for implementation examples
-- Find common pitfalls
-- Gather best practices
-- Document in `.catalyst/specs/{spec-folder}/planning/research.md`
 
 ### Phase 4: UI Research (Surveyor) - If Applicable
 
-**Spawn Surveyor agent** with explicit output location:
+**Spawn Surveyor agent**:
 
 ```
-"Research UI patterns for [feature]. Save findings and references to:
-.catalyst/specs/{YYYY-MM-DD-slug}/planning/visuals/"
+"Research UI patterns for [feature]. Save references to:
+.catalyst/specs/{YYYY-MM-DD-slug}/assets/"
 ```
-
-Surveyor will:
-- Search Dribbble, Mobbin for patterns
-- Analyze competitor implementations
-- Save references to `.catalyst/specs/{spec-folder}/planning/visuals/`
 
 ### Phase 5: Compile Specification (Scribe)
 
-**Spawn Scribe agent** with explicit output location:
+**Spawn Scribe agent**:
 
 ```
-"Compile specification from gathered research. Create final spec at:
-.catalyst/specs/{YYYY-MM-DD-slug}/planning/requirements.md"
+"Compile specification from gathered research. Create SPEC.md at:
+.catalyst/specs/{YYYY-MM-DD-slug}/SPEC.md"
 ```
 
-Scribe will create:
-
-`planning/requirements.md`:
+Scribe will create `SPEC.md`:
 ```markdown
-# {Feature Name} Specification
+# {Feature Name}
+
+> Status: DRAFT
 
 ## Overview
 [Brief description]
@@ -202,22 +155,15 @@ Scribe will create:
 - [ ] REQ-002: Description
 
 ### Non-Functional
-- [ ] Performance: Response time < 200ms
-- [ ] Security: Data encrypted at rest
+- [ ] PERF-001: Response time < 200ms
+- [ ] SEC-001: Data encrypted at rest
 
-### Testability Requirements
-- [ ] TEST-001: What tests are needed for this feature?
-- [ ] TEST-002: What edge cases should be tested?
-- [ ] TEST-003: What integration points need testing?
-
-> ⚠️ **Note**: All requirements above will need corresponding tests
-> written BEFORE implementation (TDD mandatory).
+## Acceptance Criteria
+1. [Verifiable criterion]
+2. [Verifiable criterion]
 
 ## Technical Approach
 [Based on research findings]
-
-## UI/UX
-[If applicable, with visual references]
 
 ## Out of Scope
 - [Explicitly excluded items]
@@ -229,28 +175,21 @@ Scribe will create:
 ## Output
 
 ```
-✅ Spec shaped successfully!
+Spec shaped successfully!
 
-Created: .catalyst/specs/YYYY-MM-DD-{feature}/
-├── planning/requirements.md ← Requirements documented
-├── planning/research.md ← Research findings
-└── planning/visuals/ ← UI references (if any)
+Created: .catalyst/specs/YYYY-MM-DD-{slug}/
+├── SPEC.md      <- Requirements documented
+├── research.md  <- Research findings
+└── assets/      <- UI references (if any)
 
 [If roadmap was updated:]
-📋 Roadmap updated: .catalyst/main/roadmap.md
+Roadmap updated: .catalyst/main/roadmap.md
 
-⚠️ REMINDER: /build-spec follows strict TDD
-   1. Tests written FIRST (Enforcer)
-   2. Tests must FAIL (red phase)
-   3. Then implement (Builders)
-   4. Tests must PASS (green phase)
+REMINDER: /build-spec follows strict TDD
+  1. Tests written FIRST (Enforcer)
+  2. Tests must FAIL (red phase)
+  3. Then implement (Builders)
+  4. Tests must PASS (green phase)
 
-Next: Run /build-spec @YYYY-MM-DD-{feature} to implement.
+Next: Run /build-spec @YYYY-MM-DD-{slug} to implement.
 ```
-
-## Notes
-
-- **Small requests** typically don't require roadmap updates and proceed directly to spec creation
-- **Large requests** should be evaluated against roadmap and updated if they represent strategic changes
-- Roadmap updates preserve existing goals and priorities unless explicitly reprioritized
-
