@@ -88,6 +88,7 @@ Create the spec structure:
 .catalyst/specs/YYYY-MM-DD-{slug}/
 ├── SPEC.md
 ├── research.md
+├── HANDOFF.md    # Created now, updated throughout (living document)
 └── assets/
 ```
 
@@ -180,6 +181,7 @@ Spec shaped successfully!
 Created: .catalyst/specs/YYYY-MM-DD-{slug}/
 ├── SPEC.md      <- Requirements documented
 ├── research.md  <- Research findings
+├── HANDOFF.md   <- Living document (update throughout)
 └── assets/      <- UI references (if any)
 
 [If roadmap was updated:]

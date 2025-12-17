@@ -97,34 +97,35 @@ CORRECT (Parallel where possible):
 
 ## Documentation Output Policy
 
-**CRITICAL: Never create random .md files. All documentation goes to structured locations only.**
+**CRITICAL: All spec documentation MUST go through Scribe agent.**
 
-### Spec Folder Structure
+> **Structure defined in:** `.catalyst/spec-structure.yaml` (single source of truth)
+
+### Enforcement
+
+**NEVER** use Write/Edit tools directly for `.md` files in `.catalyst/specs/`.
+**ALWAYS** delegate documentation tasks to **Scribe** agent.
+
+Scribe is the gatekeeper. This ensures:
+- Correct file locations
+- Consistent formatting
+- No orphan documents
+
+### Quick Reference
 
 ```
 .catalyst/specs/YYYY-MM-DD-{slug}/
-├── SPEC.md           # Requirements + overview + status
-├── research.md       # All research findings (append-only)
-├── tasks.md          # Task breakdown + progress tracking
-├── validation.md     # Test results + quality checks
-├── HANDOFF.md        # Final walkthrough (generated on completion)
-└── assets/           # Images, diagrams, mockups
+├── SPEC.md        → Scribe owns
+├── research.md    → Scribe compiles (researchers hand off findings)
+├── tasks.md       → Forger owns
+├── validation.md  → Arbiter owns
+├── HANDOFF.md     → Scribe owns (living document, updated throughout)
+└── assets/        → Any agent
 ```
-
-### File Ownership
-
-| File | Owner | When Updated |
-|------|-------|--------------|
-| `SPEC.md` | Scribe | Requirements change |
-| `research.md` | Scout, Seer, Oracle | New findings discovered |
-| `tasks.md` | Forger | Task breakdown, progress updates |
-| `validation.md` | Arbiter, Inquisitor, Sentinel | Test execution |
-| `HANDOFF.md` | Arbiter | Spec completion (final artifact) |
 
 ### Rules
 
-1. **UPDATE > CREATE** — Always update existing files before creating new ones
-2. **No root-level docs** — Never create .md files in project root (except README.md)
-3. **No orphan docs** — Every document must belong to a spec folder
-4. **Append to research.md** — Don't create separate research files, append findings
-5. **Delegate to Scribe** — When unsure about documentation, delegate to Scribe
+1. **Scribe is gatekeeper** — All .md writes in specs go through Scribe
+2. **Researchers hand off** — Scout/Seer/Oracle give findings to Scribe, don't write directly
+3. **HANDOFF.md is living** — Updated throughout, not generated at end
+4. **See spec-structure.yaml** — For full structure details

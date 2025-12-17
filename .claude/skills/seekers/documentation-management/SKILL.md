@@ -2,31 +2,39 @@
 name: documentation-management
 description: >
   Create and maintain project documentation. TRIGGERS: writing specifications,
-  compiling research findings, creating requirements.md, updating project docs.
+  compiling research findings, updating project docs.
+  Scribe is the GATEKEEPER - all spec documentation goes through this skill.
 ---
 
 # Documentation Management
 
-Create and maintain structured documentation within the spec folder system.
+Scribe is the **gatekeeper** for all spec documentation. Other agents hand off findings; Scribe writes to files.
+
+> **Structure defined in:** `.catalyst/spec-structure.yaml` (single source of truth)
+
+## Gatekeeper Role
+
+**You are the ONLY agent that writes .md files in `.catalyst/specs/`.**
+
+Other agents (Scout, Seer, Oracle) return structured findings to you. You:
+1. Validate the target path is correct
+2. Format content consistently
+3. Write/update the appropriate file
+4. Maintain changelogs
 
 ## Output Location
 
-**CRITICAL: All documentation goes to `.catalyst/specs/YYYY-MM-DD-{slug}/`**
-
 ```
 .catalyst/specs/YYYY-MM-DD-{slug}/
-├── SPEC.md           # Requirements + overview + status
-├── research.md       # All research findings (append-only)
-├── tasks.md          # Task breakdown + progress tracking
-├── validation.md     # Test results + quality checks
-├── HANDOFF.md        # Final walkthrough (generated on completion)
-└── assets/           # Images, diagrams, mockups
+├── SPEC.md           # You own this
+├── research.md       # You compile this (from researcher findings)
+├── tasks.md          # Forger owns (exception to gatekeeper rule)
+├── validation.md     # Arbiter owns (exception to gatekeeper rule)
+├── HANDOFF.md        # You own this (living document)
+└── assets/           # Any agent can add files
 ```
 
-**Rules:**
-- UPDATE existing files, never create new random .md files
-- Append to research.md, don't create separate research files
-- No .md files outside spec folders (except root README.md)
+**Exceptions:** Forger writes tasks.md, Arbiter writes validation.md directly.
 
 ## Document Templates
 
@@ -40,7 +48,7 @@ Create and maintain structured documentation within the spec folder system.
 > Last Updated: YYYY-MM-DD
 
 ## Overview
-[1-2 sentence description of what this feature does]
+[1-2 sentence description]
 
 ## User Stories
 - As a [user], I want to [action] so that [benefit]
@@ -49,7 +57,6 @@ Create and maintain structured documentation within the spec folder system.
 
 ### Functional
 - [ ] REQ-001: [Testable requirement]
-- [ ] REQ-002: [Testable requirement]
 
 ### Non-Functional
 - [ ] PERF-001: [Performance metric]
@@ -57,7 +64,6 @@ Create and maintain structured documentation within the spec folder system.
 
 ## Acceptance Criteria
 1. [Verifiable criterion]
-2. [Verifiable criterion]
 
 ## Out of Scope
 - [Explicitly excluded items]
@@ -75,13 +81,11 @@ Create and maintain structured documentation within the spec folder system.
 
 ## Codebase Analysis
 [Date: YYYY-MM-DD]
-- [Relevant patterns found]
-- [Existing code to leverage]
+- [From Seer]
 
 ## External Research
 [Date: YYYY-MM-DD]
-- [Best practices discovered]
-- [Library/API findings]
+- [From Scout]
 
 ## Decisions
 | Decision | Alternatives | Rationale |
@@ -89,7 +93,44 @@ Create and maintain structured documentation within the spec folder system.
 | [Choice] | [Options]    | [Why]     |
 ```
 
-### tasks.md
+### HANDOFF.md (Living Document)
+
+**Created at spec start, updated throughout - not generated at end.**
+
+```markdown
+# {Feature} - Handoff
+
+> Created: YYYY-MM-DD
+> Last Updated: YYYY-MM-DD
+
+## Summary
+[What this feature does - update as understanding evolves]
+
+## Key Decisions
+| Date | Decision | Why |
+|------|----------|-----|
+| YYYY-MM-DD | [Choice made] | [Reasoning] |
+
+## Architecture Notes
+[How it fits into the system - add during research/build]
+
+## Files Modified
+[Add as implementation progresses]
+- `path/to/file.ts` - [what changed]
+
+## How to Test
+[Add during build/validation]
+1. [Step-by-step verification]
+
+## Edge Cases & Gotchas
+[Add as discovered]
+- [Important behavior]
+
+## Follow-up Items
+- [ ] [Deferred work]
+```
+
+### tasks.md (Forger owns)
 
 ```markdown
 # Tasks: {Feature}
@@ -100,26 +141,20 @@ Create and maintain structured documentation within the spec folder system.
 
 ### Phase 1: [Name]
 - [ ] TASK-001: [Description]
-- [ ] TASK-002: [Description]
-
-### Phase 2: [Name]
-- [ ] TASK-003: [Description]
 
 ## Cancelled Tasks
-[Tasks removed due to scope changes - keep for history]
+[Scope changes - keep for history]
 
 ## Progress
 | Task | Status | Tests | Notes |
 |------|--------|-------|-------|
-| TASK-001 | Done | unit/task1.test.ts | [Any notes] |
 
 ## Changelog
 | Date | Change |
 |------|--------|
-| YYYY-MM-DD | Initial task breakdown |
 ```
 
-### validation.md
+### validation.md (Arbiter owns)
 
 ```markdown
 # Validation: {Feature}
@@ -130,15 +165,11 @@ Create and maintain structured documentation within the spec folder system.
 ### Unit Tests
 - [ ] [Test name]: PASS/FAIL
 
-### Integration Tests
-- [ ] [Test name]: PASS/FAIL
-
 ### E2E Tests
 - [ ] [Test name]: PASS/FAIL
 
 ## Quality Checks
 - [ ] Lint: PASS/FAIL
-- [ ] Type check: PASS/FAIL
 - [ ] Security scan: PASS/FAIL
 
 ## Issues Found
@@ -146,51 +177,14 @@ Create and maintain structured documentation within the spec folder system.
 |-------|----------|------------|
 ```
 
-### HANDOFF.md
-
-```markdown
-# {Feature} - Handoff
-
-> Generated: YYYY-MM-DD
-
-## Summary
-[2-3 sentences: what was built and why]
-
-## What Changed
-- [Key change 1]
-- [Key change 2]
-- [Key change 3]
-
-## Key Decisions
-| Decision | Why |
-|----------|-----|
-| [Choice made] | [Reasoning] |
-
-## Files Modified
-- `path/to/file.ts` - [what changed]
-
-## How to Test
-1. [Step-by-step verification]
-2. [Key user flows to check]
-3. [Edge cases to verify]
-
-## Edge Cases & Gotchas
-- [Important behavior to know]
-- [Potential pitfalls]
-
-## Follow-up Items
-- [ ] [Deferred work if any]
-- [ ] [Future improvements]
-```
-
-## When to Use Each File
+## When to Update Each File
 
 | Situation | File | Action |
 |-----------|------|--------|
-| New requirements | SPEC.md | Create or update |
-| Scope change | SPEC.md | Update + add to Changelog |
-| Research findings | research.md | Append new section |
-| Task breakdown | tasks.md | Create or update |
-| Task changes | tasks.md | Update + add to Changelog |
-| Test results | validation.md | Append results |
-| Spec complete | HANDOFF.md | Generate summary |
+| New spec | SPEC.md, HANDOFF.md, research.md | Create all three |
+| Requirements from Oracle | SPEC.md | Update requirements |
+| Research from Scout/Seer | research.md | Append findings |
+| Key decision made | HANDOFF.md | Add to Decisions table |
+| Scope change | SPEC.md, HANDOFF.md | Update + changelog |
+| Implementation note | HANDOFF.md | Add to Architecture/Files |
+| Gotcha discovered | HANDOFF.md | Add to Edge Cases |

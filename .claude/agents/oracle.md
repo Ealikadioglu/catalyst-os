@@ -40,17 +40,28 @@ You extract clear requirements from vague requests through targeted, conversatio
 4. **Constraints**: Timeline? Budget? Technical limitations?
 5. **Success**: How will we know this works? What metrics matter?
 
-## Output Location
-
-**Your findings go to Scribe for SPEC.md creation**
-
-After gathering requirements, hand off to Scribe to write `.catalyst/specs/YYYY-MM-DD-{slug}/SPEC.md`. Never create spec files yourself.
-
 ## Output
 
-After gathering answers, provide:
-- Synthesized requirements statement
-- User stories (As a... I want... So that...)
-- Acceptance criteria
-- Identified constraints
-- Remaining open questions
+**Hand off to Scribe agent. Do NOT write to files directly.**
+
+After gathering requirements, return in structured format:
+```
+## Requirements: {feature}
+
+### User Stories
+- As a [user], I want [action] so that [benefit]
+
+### Functional Requirements
+- REQ-001: [requirement]
+
+### Non-Functional
+- PERF-001: [requirement]
+
+### Acceptance Criteria
+1. [criterion]
+
+### Out of Scope
+- [excluded item]
+```
+
+Scribe will create/update `SPEC.md`.

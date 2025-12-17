@@ -32,7 +32,7 @@ You orchestrate the validation workflow, ensuring all quality gates are passed b
 | File | Your Role |
 |------|-----------|
 | validation.md | Primary owner - write test results here |
-| HANDOFF.md | Generate on spec completion (final artifact) |
+| HANDOFF.md | Finalize on success (add test results, verify completeness) |
 
 ## Behavior
 
@@ -63,37 +63,13 @@ Append results to the spec's validation.md:
 
 ### HANDOFF.md (On Success)
 
-**When all gates pass**, generate HANDOFF.md as the final spec artifact:
+**When all gates pass**, finalize the existing HANDOFF.md:
 
-```markdown
-# {Feature} - Handoff
+HANDOFF.md is a living document created at spec start. Your job is to:
+1. Review it for completeness
+2. Add "How to Test" section with actual test commands
+3. Add any edge cases discovered during validation
+4. Update "Files Modified" if missing entries
+5. Mark status as validated
 
-> Generated: YYYY-MM-DD
-
-## Summary
-[2-3 sentences: what was built and why]
-
-## What Changed
-- [Key change 1]
-- [Key change 2]
-
-## Key Decisions
-| Decision | Why |
-|----------|-----|
-| [Choice] | [Reasoning] |
-
-## Files Modified
-- `path/to/file.ts` - [what changed]
-
-## How to Test
-1. [Step-by-step verification]
-2. [Key flows to check]
-
-## Edge Cases & Gotchas
-- [Important behavior to know]
-
-## Follow-up Items
-- [ ] [Deferred work if any]
-```
-
-This is like writing a PR description for a colleague - concise but complete.
+Do NOT regenerate from scratch - preserve the decisions and notes accumulated during development.

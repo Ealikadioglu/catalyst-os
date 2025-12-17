@@ -1,0 +1,56 @@
+# Spec Folder Structure
+# Single source of truth - all agents and commands reference this file
+
+version: 1
+
+folder_pattern: ".catalyst/specs/YYYY-MM-DD-{slug}/"
+
+files:
+  SPEC.md:
+    owner: scribe
+    purpose: Requirements, overview, status, changelog
+    created: catalyze-spec
+    updated_by: [scribe, update-spec]
+
+  research.md:
+    owner: scribe
+    purpose: All research findings (append-only)
+    created: catalyze-spec
+    updated_by: [scout, seer, oracle, scribe]
+    pattern: append  # Never overwrite, always append with date headers
+
+  tasks.md:
+    owner: forger
+    purpose: Task breakdown, progress tracking, changelog
+    created: build-spec
+    updated_by: [forger, status-spec, builders]
+
+  validation.md:
+    owner: arbiter
+    purpose: Test results, quality checks, issues
+    created: validate-spec
+    updated_by: [arbiter, enforcer, sentinel, inquisitor, watcher]
+
+  HANDOFF.md:
+    owner: scribe
+    purpose: Living summary - decisions, changes, how to test
+    created: catalyze-spec  # Created at START, updated throughout
+    updated_by: [scribe, any-agent-making-key-decisions]
+    pattern: living  # Not generated at end - evolves with the spec
+
+  assets/:
+    owner: any
+    purpose: Images, diagrams, mockups
+    created: as-needed
+
+statuses:
+  - DRAFT        # Planning phase
+  - IN_PROGRESS  # Building phase
+  - VALIDATING   # Quality checks
+  - COMPLETE     # Archived
+
+rules:
+  - All spec documentation MUST go through Scribe agent
+  - Researchers append to research.md, don't create new files
+  - HANDOFF.md is updated throughout, not generated at end
+  - No .md files outside spec folders (except root README.md, AGENTS.md)
