@@ -1,6 +1,6 @@
 {
   "name": "catalyst-os",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "AI-native spec-driven development framework for Claude Code",
   "bin": {
     "catalyst-os": "bin/install.js"
