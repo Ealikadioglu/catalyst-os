@@ -240,9 +240,7 @@ Spec: 2025-11-29-stripe-integration
 
 TDD Compliance: FAILED
 - Tests missing for tasks: T-003, T-005
-- OR tests written after implementation
-
-Status: BLOCKED - RETURN TO BUILD
+- OR tests written after implementationStatus: BLOCKED - RETURN TO BUILD
 
 Action: Run /build-spec @2025-11-29-stripe-integration
         Follow TDD process (tests BEFORE code)

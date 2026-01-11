@@ -7,10 +7,10 @@
   },
   "files": [
     "bin",
+    "AGENTS.md",
     ".claude",
     ".claude-plugin",
     ".catalyst/standards",
-    ".catalyst/workflows",
     ".catalyst/spec-structure.yaml",
     ".catalyst/specs/spec-config.yaml",
     ".catalyst/main/project-config.yaml"

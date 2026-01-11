@@ -128,14 +128,6 @@ function install() {
     console.log(`  ${green}✓${reset} Installed .catalyst/standards`);
   }
 
-  // Install .catalyst/workflows
-  const workflowsSrc = path.join(src, '.catalyst', 'workflows');
-  const workflowsDest = path.join(catalystDir, 'workflows');
-  if (fs.existsSync(workflowsSrc)) {
-    copyDir(workflowsSrc, workflowsDest);
-    console.log(`  ${green}✓${reset} Installed .catalyst/workflows`);
-  }
-
   // Install config files
   const configs = [
     ['.catalyst/spec-structure.yaml', '.catalyst/spec-structure.yaml'],
@@ -156,6 +148,13 @@ function install() {
   if (!fs.existsSync(specsDir)) {
     fs.mkdirSync(specsDir, { recursive: true });
     console.log(`  ${green}✓${reset} Created .catalyst/specs/`);
+  }
+
+  // Install AGENTS.md
+  const agentsMdSrc = path.join(src, 'AGENTS.md');
+  const agentsMdDest = path.join(cwd, 'AGENTS.md');
+  if (copyFile(agentsMdSrc, agentsMdDest)) {
+    console.log(`  ${green}✓${reset} Installed AGENTS.md`);
   }
 
   console.log(`
