@@ -1,96 +1,112 @@
 # /catalyze-project
 
-Initialize the project foundation by creating mission, roadmap, and tech-stack documents.
+Initialize the project foundation. Always creates all 6 documents.
 
-## Workflow
+## Usage
 
-This command activates the **Catalyst** agent to orchestrate project initialization.
+```
+/catalyze-project
+```
 
-### Phase 1: Discovery
+---
 
-Scan the existing codebase to understand:
-- Project structure and architecture
-- Package files (package.json, requirements.txt, etc.)
-- Existing documentation (README, docs/)
-- Git history and contribution patterns
-- Configuration files
+## Process
 
-### Phase 2: Mission Creation
+### Phase 1: Detection
 
-Use the **Oracle** skill to gather information:
+Scan the project to determine if greenfield or brownfield:
 
-1. Ask 3-5 clarifying questions about:
-   - What problem does this project solve?
-   - Who are the primary users?
-   - What makes this unique?
-   - What are the key success metrics?
+| Signal | Greenfield | Brownfield |
+|--------|------------|------------|
+| Source files (`src/`, `app/`, `lib/`) | Few or none | Many |
+| Package files | Minimal deps | Established deps |
+| Git history | < 10 commits | > 10 commits |
+| Lines of code | < 500 | > 500 |
 
-2. Create `.catalyst/main/mission.md`:
-   - Project vision
-   - Core value proposition
-   - Target users
-   - Success criteria
+### Phase 2: Gather Information
 
-### Phase 3: Roadmap Creation
+**If Greenfield** - Heavy questioning via Oracle:
 
-Based on the mission and codebase analysis:
+1. What problem are you solving?
+2. Who is the primary user?
+3. What's the core value proposition?
+4. What are the must-have features for v1?
+5. What's explicitly out of scope?
+6. Any technical constraints?
+7. Any existing designs or wireframes?
+8. What's the timeline pressure?
+9. Are there similar products to reference?
 
-1. Identify existing features and their maturity
-2. Ask about planned features and priorities
-3. Create `.catalyst/main/roadmap.md` following this structure:
+**If Brownfield** - Heavy scanning via 3 parallel Explore agents:
 
-**Current State:**
-- Existing Features table (Status: ✅ Complete / 🚧 In Progress / 📋 Planned, Maturity: MVP / Beta / Stable)
-- Technical Debt list
+```
+Agent 1: Architecture + Tech Stack
+Agent 2: Conventions + Patterns
+Agent 3: Concerns + TODOs
+```
 
-**Short-Term Goals (1-3 months):**
-For each goal, include:
-- **Goal Title** (e.g., "Goal 1: [Title]")
-- **Objective:** Clear description of what to achieve
-- **Seed Prompt:** Code block with prompt for `/catalyze-spec` command
-  ```
-  Example: "Build user authentication system. Support email/password and OAuth (Google, GitHub). Use Supabase Auth."
-  ```
-- **References:**
-  - 📁 `./relative/path` for internal project files
-  - 🔗 https://... for external URLs
-  - 🎨 https://figma.com/... for Figma designs
-- **Priority:** 🔴 Critical / 🟠 High / 🟡 Medium / 🟢 Low
-- **Dependencies:** List of other goals this depends on (e.g., "[Depends on Goal X]")
+Then ask only what can't be inferred:
+1. What's the project's mission? (if no README)
+2. What are the current priorities?
 
-**Medium-Term Goals (3-6 months):**
-Same structure as Short-Term Goals
+### Phase 3: Generate All 6 Documents
 
-**Long-Term Vision (6+ months):**
-- Vision Goals table with: Goal | Description | Prerequisite Goals
+Always create all documents in `.catalyst/main/`:
 
-**Changelog:**
-- Table tracking changes: Date | Change | Author
+| Document | Greenfield Source | Brownfield Source |
+|----------|-------------------|-------------------|
+| `mission.md` | Questions | README + questions |
+| `roadmap.md` | Questions | TODOs + questions |
+| `tech-stack.md` | Recommended based on requirements | Detected from code |
+| `architecture.md` | Planned architecture | Analyzed from code |
+| `conventions.md` | Best practice standards | Learned from code |
+| `concerns.md` | Empty (fresh start) | Issues found in code |
 
-### Phase 4: Tech Stack Documentation
+---
 
-Analyze existing code to document:
+## Templates
 
-1. Create `.catalyst/main/tech-stack.md`:
-   - Frontend framework and libraries
-   - Backend framework and services
-   - Database and storage
-   - Infrastructure and deployment
-   - Development tools
-   - Key architectural decisions
+Located at `.catalyst/main/temp/`:
+- `temp-mission.md`
+- `temp-roadmap.md`
+- `temp-tech-stack.md`
+- `temp-architecture.md`
+- `temp-conventions.md`
+- `temp-concerns.md`
+
+---
 
 ## Output
 
 ```
+.catalyst/main/
+├── mission.md
+├── roadmap.md
+├── tech-stack.md
+├── architecture.md
+├── conventions.md
+└── concerns.md
+```
+
+```
 ✅ Project initialized!
 
-Created:
-├── .catalyst/main/mission.md
-├── .catalyst/main/roadmap.md
-└── .catalyst/main/tech-stack.md
-
-Configuration: See `.catalyst/main/project-config.yaml` for details.
+Created 6 documents in .catalyst/main/
+- Architecture: [summary]
+- Conventions: [count] patterns
+- Concerns: [count] issues
 
 Next: Run /catalyze-spec "feature description" to shape your first spec.
 ```
 
+---
+
+## Refresh
+
+To refresh analysis docs after major changes:
+
+```
+/catalyze-project --refresh
+```
+
+Re-analyzes codebase and updates architecture, conventions, concerns.

@@ -57,6 +57,39 @@ Scribe will compile this into `research.md`.
 - Note existing conventions to follow
 - Be thorough but efficient
 
+## Codebase Docs (Check First!)
+
+**CRITICAL**: Before analyzing, check if codebase docs exist:
+
+```
+.catalyst/main/
+├── architecture.md    # System design, patterns, data flow
+├── conventions.md     # Coding standards, naming, formatting
+└── concerns.md        # Tech debt, bugs, fragile areas
+```
+
+### If docs exist:
+1. **Read them first** - they contain pre-analyzed patterns
+2. **Reference them** in your findings
+3. **Only explore further** if docs don't cover the topic
+4. **Flag outdated info** if docs contradict current code
+
+### If docs don't exist:
+1. Recommend running `/catalyze-project` first
+2. Proceed with manual analysis
+3. Your findings will be more valuable as future codebase docs
+
+### Integration with Docs:
+
+| Your Analysis Topic | Read First |
+|--------------------|------------|
+| Architecture | `architecture.md` |
+| Code patterns | `architecture.md` → Key Patterns |
+| Naming conventions | `conventions.md` |
+| Testing patterns | `conventions.md` → Testing |
+| Known issues | `concerns.md` |
+| Fragile areas | `concerns.md` → Fragile Areas |
+
 ## Analysis Areas
 
 1. **Structure**: Project organization, module boundaries

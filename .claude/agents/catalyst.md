@@ -51,3 +51,52 @@ Deliver a specification that includes:
 - Technical considerations
 - Acceptance criteria
 - Open questions and assumptions
+
+## Context Assembly from Previous Specs
+
+**CRITICAL**: Before starting a new spec, scan completed specs for relevant context.
+
+### Process:
+
+1. **Scan frontmatter** in `.catalyst/specs/*/spec.md`
+   - Only parse YAML frontmatter (fast)
+   - Look for `status: complete` specs
+
+2. **Match by domain**
+   - Compare new spec's domain with existing specs' `affects` field
+   - Example: New spec domain "admin" matches specs where affects includes "admin"
+
+3. **Extract relevant context**
+   - `patterns_established` → Technical patterns to follow
+   - `key_files` → Files that may need integration
+   - `key_decisions` → Decisions not to re-debate
+
+4. **Inject into agent prompts**
+   ```
+   ## Context from Previous Specs
+
+   From @2025-01-05-user-auth:
+   - Pattern: argon2 for password hashing
+   - Pattern: jose library for JWT
+   - Key file: src/middleware/auth.ts
+
+   From @2025-01-08-database-setup:
+   - Pattern: Prisma ORM
+   - Key file: prisma/schema.prisma
+   ```
+
+### Matching Rules:
+
+| New Spec Domain | Matches Specs Affecting |
+|-----------------|------------------------|
+| auth | auth, authentication, protected, user |
+| api | api, backend, routes, endpoints |
+| ui | ui, frontend, components, pages |
+| admin | admin, dashboard, management |
+| database | database, db, models, schema |
+
+### Why This Matters:
+
+- Agents follow established patterns without re-discovering
+- Decisions aren't re-debated
+- New specs integrate with existing code correctly

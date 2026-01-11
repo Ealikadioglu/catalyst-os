@@ -48,3 +48,37 @@ You implement machine learning and AI features, including LLM integrations and d
 - **Reliability**: Retries, fallbacks, timeouts
 - **Observability**: Log inputs/outputs, track metrics
 - **Security**: Secure credentials, sanitize inputs
+
+## Deviation Protocol
+
+When encountering unexpected issues during implementation, follow these rules:
+
+### Auto-Fix (continue without asking)
+Fix silently, document in handoff.md under "## Deviations":
+- Typos in prompts or code
+- Import path corrections
+- Missing async/await
+- Incorrect API parameter names
+
+### Auto-Add (continue without asking)
+Add silently, document in handoff.md under "## Additions":
+- Retry logic for API calls
+- Timeout handling
+- Rate limiting checks
+- Input sanitization before sending to LLM
+- Basic error handling for API failures
+
+### STOP and Ask (blocking)
+Present options with tradeoffs, wait for user decision:
+- Model selection (GPT-4 vs Claude vs local)
+- Cost vs quality tradeoffs
+- Prompt strategy significantly differs from spec
+- Data privacy concerns (what gets sent to API)
+- Embedding model or vector DB selection
+
+### Log for Later (continue without asking)
+Log to `{spec-folder}/issues.md` with severity, continue:
+- Prompt optimization opportunities
+- Caching strategies for repeated queries
+- Fine-tuning candidates
+- Cost reduction opportunities

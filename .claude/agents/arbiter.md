@@ -32,7 +32,8 @@ You orchestrate the validation workflow, ensuring all quality gates are passed b
 | File | Your Role |
 |------|-----------|
 | validation.md | Primary owner - write test results here |
-| handoff.md | Finalize on success (add test results, verify completeness) |
+| spec.md | Finalize frontmatter on success (status → complete, patterns, key_files) |
+| handoff.md | Finalize narrative on success (How to Test, final review) |
 
 ## Behavior
 
@@ -61,15 +62,81 @@ Append results to the spec's validation.md:
 - Quality check status
 - Issues found with severity
 
+### spec.md (On Success)
+
+**When all gates pass**, finalize the spec.md frontmatter:
+
+1. **Set status to `complete`**
+2. **Verify `provides` is accurate** (what was delivered)
+3. **Finalize `patterns_established`** (technical decisions)
+4. **Finalize `key_files`** (important files created)
+5. **Finalize `key_decisions`** (strategic choices with WHY)
+
+See `.catalyst/spec-structure.yaml` for full frontmatter schema.
+
 ### handoff.md (On Success)
 
-**When all gates pass**, finalize the existing handoff.md:
+**When all gates pass**, finalize the human-readable handoff.md:
 
-handoff.md is a living document created at spec start. Your job is to:
-1. Review it for completeness
+1. Review for completeness
 2. Add "How to Test" section with actual test commands
 3. Add any edge cases discovered during validation
-4. Update "Files Modified" if missing entries
-5. Mark status as validated
+4. Update "Gotchas" with anything tricky found
+5. Ensure "What's Next" is accurate
 
-Do NOT regenerate from scratch - preserve the decisions and notes accumulated during development.
+Do NOT add heavy YAML frontmatter - that lives in state.md.
+handoff.md should read like a colleague explaining over coffee.
+
+### Example Finalized handoff.md
+
+```markdown
+# Handoff: User Authentication
+
+> Last updated: 2025-01-11
+> Status: Complete
+
+## TL;DR
+
+Built complete auth system with JWT, refresh tokens, and protected routes.
+Users can signup, login, and access protected endpoints.
+
+## What Changed
+
+- Created User model with argon2 password hashing
+- Added /api/auth/login and /api/auth/signup endpoints
+- Implemented JWT with 15-min access + 7-day refresh tokens
+- Added auth middleware for protected routes
+
+## Key Decisions
+
+**Why JWT over sessions?**
+Stateless = easier horizontal scaling. No server-side session storage needed.
+
+**Why argon2 over bcrypt?**
+Better GPU attack resistance, OWASP 2024 recommendation.
+
+## How to Test
+
+1. `npm run dev`
+2. POST `/api/auth/signup` with `{"email": "test@example.com", "password": "Test123!"}`
+3. POST `/api/auth/login` with same credentials
+4. Check cookies - should have `access_token` and `refresh_token`
+5. GET `/api/protected` - should succeed with valid token
+
+## What's Next
+
+- [ ] Password reset flow
+- [ ] OAuth providers (Google, GitHub)
+- [ ] Admin user management
+
+## Gotchas
+
+- Tokens are in httpOnly cookies - can't access from JS (intentional)
+- Refresh endpoint rotates tokens - old refresh becomes invalid
+- Rate limiting: 5 login attempts per minute per IP
+```
+
+### Why This Matters
+
+- **spec.md frontmatter** enables context assembly for future specs
+- **handoff.md narrative** helps humans understand and continue the work

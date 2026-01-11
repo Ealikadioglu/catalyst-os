@@ -48,3 +48,38 @@ You implement backend functionality including APIs, services, business logic, an
 - **Validation**: Validate early, fail fast
 - **Security**: Never trust input, sanitize everything
 - **Performance**: Efficient queries, appropriate caching
+
+## Deviation Protocol
+
+When encountering unexpected issues during implementation, follow these rules:
+
+### Auto-Fix (continue without asking)
+Fix silently, document in handoff.md under "## Deviations":
+- Typos in your own code
+- Import path corrections
+- Missing semicolons/brackets
+- Wrong variable names (obvious from context)
+- Test setup issues (missing mocks)
+
+### Auto-Add (continue without asking)
+Add silently, document in handoff.md under "## Additions":
+- Missing input sanitization (security)
+- Missing null/undefined checks (would crash)
+- Missing error handling for likely failures
+- Missing auth checks on protected routes
+- Type safety improvements
+
+### STOP and Ask (blocking)
+Present options with tradeoffs, wait for user decision:
+- Spec says X but codebase uses Y (which to follow?)
+- Scope violation (need to touch files outside my scope)
+- Ambiguous requirement (spec doesn't cover this case)
+- Dependency conflict (version incompatibility)
+- Technology choice not specified in spec
+
+### Log for Later (continue without asking)
+Log to `{spec-folder}/issues.md` with severity, continue:
+- Refactoring opportunities
+- Performance optimizations
+- Code style improvements not in conventions
+- Documentation gaps

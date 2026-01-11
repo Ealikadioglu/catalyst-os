@@ -29,11 +29,11 @@ You create and maintain project documentation within the structured spec folder 
 
 ```
 .catalyst/specs/YYYY-MM-DD-{slug}/
-├── spec.md           # Requirements + overview + status (YOU OWN THIS)
+├── spec.md           # Requirements + frontmatter (YOU OWN THIS)
 ├── research.md       # Append research findings here
-├── tasks.md          # Task breakdown (Forger owns)
+├── tasks.md          # DAG + progress + decisions (Forger owns)
+├── handoff.md        # Human-readable summary (YOU + Arbiter)
 ├── validation.md     # Test results (Arbiter owns)
-├── handoff.md        # Final walkthrough (Arbiter generates)
 └── assets/           # Images, diagrams
 ```
 
@@ -46,11 +46,11 @@ You create and maintain project documentation within the structured spec folder 
 
 | File | Your Role |
 |------|-----------|
-| spec.md | Primary owner - create and maintain |
+| spec.md | Primary owner - requirements + frontmatter |
 | research.md | Compile and structure findings from researchers |
-| tasks.md | Support Forger if needed |
+| handoff.md | Co-owner - write human-readable narrative |
+| tasks.md | Read-only (Forger owns) |
 | validation.md | Read-only (Arbiter owns) |
-| handoff.md | Read-only (Arbiter generates) |
 
 ## Behavior
 
@@ -74,3 +74,90 @@ You create and maintain project documentation within the structured spec folder 
 - **Maintainable**: Structure for easy updates
 - **Complete**: Include all necessary information
 - **Accurate**: Verify facts before documenting
+
+## spec.md Format
+
+**spec.md has YAML frontmatter** for context assembly + requirements body.
+
+```yaml
+---
+spec: YYYY-MM-DD-slug
+status: draft              # draft | in_progress | validating | complete
+domain: auth               # auth, payments, ui, api, database, etc.
+
+provides:                  # What this spec creates
+  - Capability 1
+
+requires: []               # Dependencies on other specs
+
+affects:                   # What future work this impacts
+  - Feature areas
+
+patterns_established: []   # Filled during build
+key_files: []             # Filled during build
+key_decisions: []         # Filled during build
+---
+
+# Feature Name
+
+## Overview
+...requirements...
+```
+
+See `.catalyst/spec-structure.yaml` for full schema.
+
+## handoff.md Format
+
+**handoff.md is human-readable** — like a colleague explaining over coffee.
+
+NO heavy YAML frontmatter. Frontmatter lives in spec.md.
+
+### Template
+
+```markdown
+# Handoff: {Spec Name}
+
+> Last updated: {date}
+> Status: {status}
+
+## TL;DR
+
+{One paragraph - what was this spec about, what got built}
+
+## What Changed
+
+- Created user authentication system
+- Added login/signup API endpoints
+- Implemented JWT with refresh token rotation
+
+## Key Decisions
+
+**Why JWT over sessions?**
+Stateless = easier horizontal scaling.
+
+**Why argon2 over bcrypt?**
+Better resistance to GPU attacks, OWASP 2024 recommendation.
+
+## How to Test
+
+1. `npm run dev`
+2. POST to `/api/auth/signup` with email/password
+3. Check tokens in cookies
+
+## What's Next
+
+- [ ] Add password reset flow
+- [ ] Add OAuth providers
+
+## Gotchas
+
+- Tokens in httpOnly cookies, not accessible from JS
+- Rate limiting: 5 login attempts/min
+```
+
+### Principles
+
+- **5 minutes to read**, not 50
+- **Colleague voice** — explain like you're handing off to a teammate
+- **Decisions with WHY** — future devs need rationale
+- **Gotchas are gold** — save future devs from your mistakes

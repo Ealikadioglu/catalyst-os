@@ -165,7 +165,84 @@ Update `spec.md` status:
 
 ---
 
-### Phase 7: Library Extraction (Optional)
+### Phase 7: Self-Documentation (Automatic)
+
+**Propagate learnings from completed spec back to project docs.**
+
+This makes Catalyst-OS a self-documenting system. After each spec completes, the main project documents are automatically updated with new knowledge.
+
+#### Step 1: Read Spec Frontmatter
+
+Parse `handoff.md` YAML frontmatter:
+```yaml
+patterns_established:
+  - "Use Zod for API validation"
+  - "Repository pattern for data access"
+key_files:
+  - src/api/auth/login.ts
+  - src/middleware/auth.ts
+key_decisions:
+  - decision: "JWT over sessions"
+    reason: "Stateless, works with microservices"
+```
+
+#### Step 2: Update conventions.md
+
+If `patterns_established` has entries:
+
+1. Read `.catalyst/main/conventions.md`
+2. Find or create `## Patterns from Specs` section
+3. Append new patterns (avoid duplicates):
+
+```markdown
+## Patterns from Specs
+
+### From 2025-01-11-user-auth
+- Use Zod for API validation
+- Repository pattern for data access
+```
+
+#### Step 3: Update architecture.md
+
+If `key_files` has entries:
+
+1. Read `.catalyst/main/architecture.md`
+2. Find or create `## Key Files Reference` section
+3. Add new key files with spec context:
+
+```markdown
+## Key Files Reference
+
+| File | Purpose | Added By |
+|------|---------|----------|
+| src/api/auth/login.ts | Authentication endpoint | 2025-01-11-user-auth |
+| src/middleware/auth.ts | JWT middleware | 2025-01-11-user-auth |
+```
+
+#### Step 4: Update concerns.md
+
+If `issues_resolved` has entries:
+
+1. Read `.catalyst/main/concerns.md`
+2. For each ID in `issues_resolved`, find matching issue
+3. Mark resolved with date and spec reference:
+
+```markdown
+### [MED-001] Missing input validation on auth endpoints
+**Status**: ✅ RESOLVED (2025-01-11-user-auth)
+```
+
+#### Step 5: Log Update
+
+Add entry to bottom of each updated doc:
+```markdown
+---
+*Auto-updated by spec: 2025-01-11-user-auth on YYYY-MM-DD*
+```
+
+---
+
+### Phase 8: Library Extraction (Optional)
 
 Extract reusable patterns into the knowledge library for future projects.
 
@@ -285,6 +362,11 @@ Commits:
 - <repo.name>: <commit-message>
 
 Archived to: <config.specs.completed_path>/
+
+Self-Documentation:
+- conventions.md: +X patterns added
+- architecture.md: +Y key files added
+- concerns.md: Z issues marked resolved
 
 Library: Added to .catalyst/library/<pattern-name>.md
          (or "Skipped - project-specific")

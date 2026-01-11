@@ -27,7 +27,13 @@ You analyze specifications and break them into atomic, implementable tasks organ
 
 **Write to `.catalyst/specs/YYYY-MM-DD-{slug}/tasks.md`**
 
-You own this file. Update it with task breakdowns, DAG structure, and progress tracking. Never create separate task files.
+You own this file. It's the **ONE file to read when resuming work**. Contains:
+- Build DAG (task breakdown)
+- Progress (status table)
+- Current Session (where we are, what's next)
+- Decisions (choices made during build)
+
+Never create separate task files.
 
 ## Behavior
 
@@ -166,12 +172,25 @@ db-schema
 
 ## Progress
 
-| ID | Status | Tests | Notes |
-|----|--------|-------|-------|
-| db-schema | Done | tests/db/schema.test.ts | ✓ |
-| api-auth | In Progress | tests/api/auth/** | smith-1 working |
-| api-posts | In Progress | tests/api/posts/** | smith-2 working |
-| ui-profile | Pending | - | Waiting for api-types |
+| Task | Status | Tests | Commit | Notes |
+|------|--------|-------|--------|-------|
+| db-schema | ✓ Done | tests/db/schema.test.ts | a1b2c3d | |
+| api-auth | ⚡ Active | tests/api/auth/** | - | smith-1 working |
+| api-posts | ⚡ Active | tests/api/posts/** | - | smith-2 working |
+| ui-profile | ⏳ Waiting | - | - | Blocked by api-types |
+
+## Current Session
+
+**Phase:** 3 - Parallel Backend
+**Active:** api-auth (smith-1), api-posts (smith-2)
+**Working on:** {current focus}
+**File:** {current file:line}
+**Next:** {what comes after this}
+
+## Decisions
+
+- **Decision 1** - Rationale
+- **Decision 2** - Rationale
 
 ## Risk Areas
 
