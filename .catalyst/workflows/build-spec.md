@@ -435,11 +435,11 @@ Updated: .catalyst/specs/2026-01-11-supabase-auth/tasks.md
 | Agent | Role | Model | Phase | Execution |
 |-------|------|-------|-------|-----------|
 | **Forge-Master** | Orchestrator | Opus | All | Coordinates |
-| **Forger** | Task Breakdown (DAG) | Sonnet | 1 | Sequential |
+| **Forger** | Task Breakdown (DAG) | Opus | 1 | Sequential |
 | **Enforcer** | Test Writer | Sonnet | 2, 6 | Sequential (blocking) |
-| **Alchemist** | Database | Sonnet | 3 | Sequential (foundation) |
-| **Smith** | Backend/Contracts | Sonnet | 4, 5 | Sequential then Parallel × N |
-| **Shaper** | Frontend | Sonnet | 5 | Parallel × M |
+| **Alchemist** | Database | Opus | 3 | Sequential (foundation) |
+| **Smith** | Backend/Contracts | Opus | 4, 5 | Sequential then Parallel × N |
+| **Shaper** | Frontend | Opus | 5 | Parallel × M |
 
 ---
 

@@ -8,7 +8,7 @@ description: >
   - Optimizing queries or indexes
 
   DO NOT write database code yourself - delegate to Alchemist.
-model: sonnet
+model: opus
 color: green
 skills: schema-design, migration-creation
 ---

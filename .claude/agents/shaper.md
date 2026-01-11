@@ -8,7 +8,7 @@ description: >
   - Writing client-side code
 
   DO NOT implement frontend code yourself - delegate to Shaper.
-model: sonnet
+model: opus
 color: green
 skills: react-development, ui-component-building
 ---

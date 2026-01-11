@@ -8,7 +8,7 @@ description: >
   - Analyzing competitor interfaces
 
   DO NOT research UI patterns yourself - delegate to Surveyor.
-model: haiku
+model: sonnet
 color: blue
 skills: figma-analysis, ui-pattern-hunting
 ---

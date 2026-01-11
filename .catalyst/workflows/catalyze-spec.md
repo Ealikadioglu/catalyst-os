@@ -241,8 +241,8 @@ Created: .catalyst/specs/2026-01-11-supabase-auth/
 | **Catalyst** | Orchestrator | Opus | Coordinates all |
 | **Oracle** | Requirements | Sonnet | Sequential (first) |
 | **Seer** | Codebase | Sonnet | Parallel |
-| **Scout** | Web Research | Haiku | Parallel |
-| **Surveyor** | UI Research | Haiku | Parallel |
+| **Scout** | Web Research | Sonnet | Parallel |
+| **Surveyor** | UI Research | Sonnet | Parallel |
 | **Scribe** | Documentation | Sonnet | Sequential (last) |
 
 ---

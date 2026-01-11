@@ -8,7 +8,7 @@ description: >
   - Planning the build sequence
 
   DO NOT break down tasks yourself - delegate to Forger.
-model: sonnet
+model: opus
 color: green
 skills: task-breakdown
 ---

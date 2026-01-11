@@ -8,7 +8,7 @@ description: >
   - Gathering community insights from GitHub, Reddit, blogs
 
   DO NOT search the web yourself - delegate to Scout.
-model: haiku
+model: sonnet
 color: blue
 skills: web-research, github-research, reddit-research
 ---

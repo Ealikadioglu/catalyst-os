@@ -8,7 +8,7 @@ description: >
   - Creating prompt engineering solutions
 
   DO NOT implement AI features yourself - delegate to Necromancer.
-model: sonnet
+model: opus
 color: green
 skills: ml-pipeline, ai-integration
 ---

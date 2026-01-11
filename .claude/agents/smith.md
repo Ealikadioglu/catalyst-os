@@ -8,7 +8,7 @@ description: >
   - Writing server-side code
 
   DO NOT implement backend code yourself - delegate to Smith.
-model: sonnet
+model: opus
 color: green
 skills: api-development, service-implementation
 ---
