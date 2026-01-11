@@ -18,7 +18,11 @@
 
 ## Installation
 
-Copy `.claude/` and `.catalyst/` folders to your project root.
+```bash
+npx catalyst-os
+```
+
+This installs `.claude/` and `.catalyst/` folders to your project root.
 
 Your project keeps its own `CLAUDE.md` — Catalyst OS lives entirely within these two folders.
 

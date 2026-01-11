@@ -1,0 +1,40 @@
+{
+  "name": "catalyst-os",
+  "version": "0.1.0",
+  "description": "AI-native spec-driven development framework for Claude Code",
+  "bin": {
+    "catalyst-os": "bin/install.js"
+  },
+  "files": [
+    "bin",
+    ".claude",
+    ".claude-plugin",
+    ".catalyst/standards",
+    ".catalyst/workflows",
+    ".catalyst/spec-structure.yaml",
+    ".catalyst/specs/spec-config.yaml",
+    ".catalyst/main/project-config.yaml"
+  ],
+  "keywords": [
+    "claude",
+    "claude-code",
+    "ai",
+    "agents",
+    "specification",
+    "tdd",
+    "orchestration"
+  ],
+  "author": "ealikadioglu",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Ealikadioglu/catalyst-os.git"
+  },
+  "homepage": "https://github.com/Ealikadioglu/catalyst-os#readme",
+  "bugs": {
+    "url": "https://github.com/Ealikadioglu/catalyst-os/issues"
+  },
+  "engines": {
+    "node": ">=16.0.0"
+  }
+}
