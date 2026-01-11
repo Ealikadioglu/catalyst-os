@@ -15,30 +15,76 @@ Quick reference for all agents and their skills.
 | Scenario | Run Together |
 |----------|--------------|
 | Research phase | Oracle + Seer + Scout + Surveyor |
-| Build phase | Smith + Shaper (backend + frontend) |
+| Build phase | Smith × N + Shaper × M (multiple instances) |
 | Validation phase | Inquisitor + Watcher + Sentinel |
 
 ### ❌ Run Sequentially (Has Dependencies)
 
 | First | Then | Why |
 |-------|------|-----|
-| Forger | All builders | Need task breakdown first |
-| Alchemist | Smith | DB schema before API that uses it |
+| Forger | All builders | Need task breakdown (DAG) first |
+| Alchemist | Smith/Shaper | DB schema before API/UI that uses it |
 | Enforcer | Builders | TDD: tests before implementation |
+| Contracts | Parallel work | Shared types before parallel divergence |
 
-### Example: Build Phase
+### Multi-Instance Parallelization (DAG-Based)
+
+Forger creates a **Build DAG** that identifies:
+- **Scope boundaries** — exclusive file ownership per agent instance
+- **Dependencies** — which tasks block others
+- **Parallel opportunities** — tasks that can run simultaneously
 
 ```
-WRONG (Sequential):
-  alchemist → smith → shaper → enforcer
+OLD (Single instance per type):
+  alchemist → smith → shaper
 
-CORRECT (Parallel where possible):
-  alchemist (DB) ─────────────────────────►
-                  ├── smith (Backend) ────► } PARALLEL
-                  └── shaper (Frontend) ──► } PARALLEL
+NEW (Multiple instances with scope isolation):
+  alchemist (DB) ─────────────────────────────────────►
+                  │
+                  └── contracts (shared types) ───────►
+                          │
+                          ├── smith-1 (api/auth/**) ──► }
+                          ├── smith-2 (api/posts/**) ─► } PARALLEL
+                          ├── shaper-1 (pages/profile) ► } (5 agents)
+                          ├── shaper-2 (pages/feed) ───► }
+                          └── shaper-3 (pages/settings) ►
 ```
 
-**When in doubt**: If two agents don't share data dependencies, spawn them in parallel.
+### Scope Isolation Rules
+
+Each parallel agent has:
+- **Scope**: Files it can write (exclusive)
+- **Reads**: Files it can read but NOT modify (shared)
+
+```yaml
+# Example from tasks.md
+api-auth:
+  agent: smith-1
+  scope: [src/api/auth/**, tests/api/auth/**]
+  reads: [src/types/**]
+
+api-posts:
+  agent: smith-2
+  scope: [src/api/posts/**, tests/api/posts/**]
+  reads: [src/types/**]
+```
+
+**CRITICAL**: Parallel tasks MUST have non-overlapping scopes. If scopes overlap → make sequential.
+
+### Phase Gates
+
+```
+Phase 1: Foundation (alchemist)
+    └── GATE: schema tests pass
+Phase 2: Contracts (smith single)
+    └── GATE: type-check passes
+Phase 3: Parallel (smith × N, shaper × M)
+    └── GATE: ALL parallel tests pass
+Phase 4: Integration (enforcer)
+    └── GATE: integration tests pass
+```
+
+**When in doubt**: If two agents don't share data dependencies AND have non-overlapping scopes, spawn them in parallel.
 
 ---
 
@@ -115,11 +161,11 @@ Scribe is the gatekeeper. This ensures:
 
 ```
 .catalyst/specs/YYYY-MM-DD-{slug}/
-├── SPEC.md        → Scribe owns
+├── spec.md        → Scribe owns
 ├── research.md    → Scribe compiles (researchers hand off findings)
 ├── tasks.md       → Forger owns
 ├── validation.md  → Arbiter owns
-├── HANDOFF.md     → Scribe owns (living document, updated throughout)
+├── handoff.md     → Scribe owns (living document, updated throughout)
 └── assets/        → Any agent
 ```
 
@@ -127,5 +173,5 @@ Scribe is the gatekeeper. This ensures:
 
 1. **Scribe is gatekeeper** — All .md writes in specs go through Scribe
 2. **Researchers hand off** — Scout/Seer/Oracle give findings to Scribe, don't write directly
-3. **HANDOFF.md is living** — Updated throughout, not generated at end
+3. **handoff.md is living** — Updated throughout, not generated at end
 4. **See spec-structure.yaml** — For full structure details

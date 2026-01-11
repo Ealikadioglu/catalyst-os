@@ -22,11 +22,11 @@ Updates go to existing spec files. See AGENTS.md "Documentation Output Policy".
 
 ```
 .catalyst/specs/YYYY-MM-DD-{slug}/
-├── SPEC.md           # Update requirements here
+├── spec.md           # Update requirements here
 ├── research.md       # Append new research if needed
 ├── tasks.md          # Update tasks if scope changed
 ├── validation.md     # (unchanged unless re-validating)
-└── HANDOFF.md        # (regenerated on completion)
+└── handoff.md        # (regenerated on completion)
 ```
 
 ---
@@ -48,7 +48,7 @@ Updates go to existing spec files. See AGENTS.md "Documentation Output Policy".
 ### Phase 1: Assess Current State
 
 1. **Read existing spec files:**
-   - `SPEC.md` - current requirements and status
+   - `spec.md` - current requirements and status
    - `tasks.md` - current task breakdown (if exists)
    - `research.md` - existing research
 
@@ -71,7 +71,7 @@ Updates go to existing spec files. See AGENTS.md "Documentation Output Policy".
 "Review the update request for spec {slug}:
 '{update description}'
 
-Current requirements are in SPEC.md. Ask clarifying questions if needed.
+Current requirements are in spec.md. Ask clarifying questions if needed.
 Hand off refined requirements to Scribe."
 ```
 
@@ -80,7 +80,7 @@ Hand off refined requirements to Scribe."
 **Spawn Scribe agent**:
 
 ```
-"Update SPEC.md for spec {slug} with the following change:
+"Update spec.md for spec {slug} with the following change:
 '{update description}'
 
 - Add/remove/modify requirements as needed
@@ -88,7 +88,7 @@ Hand off refined requirements to Scribe."
 - Keep Status as IN_PROGRESS if implementation started"
 ```
 
-Scribe updates `SPEC.md`:
+Scribe updates `spec.md`:
 
 ```markdown
 # {Feature Name}
@@ -201,7 +201,7 @@ Spec: 2025-11-29-stripe-integration
 Change: Added annual billing support
 
 Updated files:
-- SPEC.md: Added REQ-009, REQ-010 for annual billing
+- spec.md: Added REQ-009, REQ-010 for annual billing
 - research.md: Added billing cycle research
 - tasks.md: Added T-007, T-008 (2 new tasks)
 
@@ -221,7 +221,7 @@ Spec: 2025-11-29-stripe-integration
 Change: Removed crypto payment option
 
 Updated files:
-- SPEC.md: Removed REQ-005 (crypto payments)
+- spec.md: Removed REQ-005 (crypto payments)
 - tasks.md: Cancelled T-005 (crypto integration)
 
 Impact:
@@ -240,7 +240,7 @@ Spec: 2025-11-29-stripe-integration
 Change: Clarified refund policy requirements
 
 Updated files:
-- SPEC.md: Updated REQ-003 with detailed refund rules
+- spec.md: Updated REQ-003 with detailed refund rules
 
 Impact:
 - 0 new requirements

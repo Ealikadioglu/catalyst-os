@@ -6,7 +6,7 @@ version: 1
 folder_pattern: ".catalyst/specs/YYYY-MM-DD-{slug}/"
 
 files:
-  SPEC.md:
+  spec.md:
     owner: scribe
     purpose: Requirements, overview, status, changelog
     created: catalyze-spec
@@ -31,7 +31,7 @@ files:
     created: validate-spec
     updated_by: [arbiter, enforcer, sentinel, inquisitor, watcher]
 
-  HANDOFF.md:
+  handoff.md:
     owner: scribe
     purpose: Living summary - decisions, changes, how to test
     created: catalyze-spec  # Created at START, updated throughout
@@ -52,5 +52,5 @@ statuses:
 rules:
   - All spec documentation MUST go through Scribe agent
   - Researchers append to research.md, don't create new files
-  - HANDOFF.md is updated throughout, not generated at end
+  - handoff.md is updated throughout, not generated at end
   - No .md files outside spec folders (except root README.md, AGENTS.md)

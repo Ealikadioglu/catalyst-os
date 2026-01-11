@@ -15,12 +15,12 @@ Coordinate the spec shaping workflow from feature request to documented specific
 1. **Initialize spec folder** (structure defined in `.catalyst/specs/spec-config.yaml`)
    ```
    .catalyst/specs/YYYY-MM-DD-{slug}/
-   ├── planning/
-   │   ├── requirements.md
-   │   ├── research.md
-   │   └── visuals/
-   ├── implementation/
-   └── validation/
+   ├── spec.md        # Main specification (Scribe)
+   ├── research.md    # Research findings (Scribe)
+   ├── tasks.md       # Build DAG (Forger) - created by /build-spec
+   ├── validation.md  # Quality results (Arbiter) - created by /validate-spec
+   ├── handoff.md     # Completion summary (Arbiter)
+   └── assets/        # Images, diagrams
    ```
 
 2. **Gather requirements** (use `requirement-elicitation`)

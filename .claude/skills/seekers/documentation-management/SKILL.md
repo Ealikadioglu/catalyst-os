@@ -26,11 +26,11 @@ Other agents (Scout, Seer, Oracle) return structured findings to you. You:
 
 ```
 .catalyst/specs/YYYY-MM-DD-{slug}/
-├── SPEC.md           # You own this
+├── spec.md           # You own this
 ├── research.md       # You compile this (from researcher findings)
 ├── tasks.md          # Forger owns (exception to gatekeeper rule)
 ├── validation.md     # Arbiter owns (exception to gatekeeper rule)
-├── HANDOFF.md        # You own this (living document)
+├── handoff.md        # You own this (living document)
 └── assets/           # Any agent can add files
 ```
 
@@ -38,7 +38,7 @@ Other agents (Scout, Seer, Oracle) return structured findings to you. You:
 
 ## Document Templates
 
-### SPEC.md
+### spec.md
 
 ```markdown
 # {Feature Name}
@@ -93,7 +93,7 @@ Other agents (Scout, Seer, Oracle) return structured findings to you. You:
 | [Choice] | [Options]    | [Why]     |
 ```
 
-### HANDOFF.md (Living Document)
+### handoff.md (Living Document)
 
 **Created at spec start, updated throughout - not generated at end.**
 
@@ -181,10 +181,10 @@ Other agents (Scout, Seer, Oracle) return structured findings to you. You:
 
 | Situation | File | Action |
 |-----------|------|--------|
-| New spec | SPEC.md, HANDOFF.md, research.md | Create all three |
-| Requirements from Oracle | SPEC.md | Update requirements |
+| New spec | spec.md, handoff.md, research.md | Create all three |
+| Requirements from Oracle | spec.md | Update requirements |
 | Research from Scout/Seer | research.md | Append findings |
-| Key decision made | HANDOFF.md | Add to Decisions table |
-| Scope change | SPEC.md, HANDOFF.md | Update + changelog |
-| Implementation note | HANDOFF.md | Add to Architecture/Files |
-| Gotcha discovered | HANDOFF.md | Add to Edge Cases |
+| Key decision made | handoff.md | Add to Decisions table |
+| Scope change | spec.md, handoff.md | Update + changelog |
+| Implementation note | handoff.md | Add to Architecture/Files |
+| Gotcha discovered | handoff.md | Add to Edge Cases |

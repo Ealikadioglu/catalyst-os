@@ -64,4 +64,4 @@ After gathering requirements, return in structured format:
 - [excluded item]
 ```
 
-Scribe will create/update `SPEC.md`.
+Scribe will create/update `spec.md`.

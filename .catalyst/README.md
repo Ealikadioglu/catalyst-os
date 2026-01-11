@@ -123,19 +123,25 @@ Scout agent
 Structure is defined in `.catalyst/specs/spec-config.yaml`:
 
 ```
-.catalyst/specs/YYYY-MM-DD-{feature}/
-├── planning/
-│   ├── requirements.md
-│   ├── research.md
-│   └── visuals/
-├── implementation/
-│   ├── tasks.md
-│   ├── tests/
-│   └── progress.md
-└── validation/
-    ├── test-results.md
-    ├── quality-report.md
-    └── sign-off.md
+.catalyst/specs/YYYY-MM-DD-{slug}/
+├── spec.md        # Main specification (Scribe)
+├── research.md    # Research findings (Scribe)
+├── tasks.md       # Build DAG with task breakdown (Forger)
+├── validation.md  # Quality validation results (Arbiter)
+├── handoff.md     # Living document, completion summary (Arbiter)
+└── assets/        # Images, diagrams, visual references
+```
+
+### Pattern Library
+
+Reusable implementation patterns extracted from completed specs:
+
+```
+.catalyst/library/
+├── README.md
+├── payment-integration.md
+├── authentication.md
+└── ...
 ```
 
 ---

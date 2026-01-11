@@ -40,11 +40,11 @@ All outputs go to the spec folder. See AGENTS.md "Documentation Output Policy".
 
 ```
 .catalyst/specs/YYYY-MM-DD-{slug}/
-├── SPEC.md           # From /catalyze-spec
+├── spec.md           # From /catalyze-spec
 ├── research.md       # From /catalyze-spec
 ├── tasks.md          # From /build-spec
 ├── validation.md     # Arbiter creates (this phase)
-├── HANDOFF.md        # Arbiter creates (on success)
+├── handoff.md        # Arbiter creates (on success)
 └── assets/
 ```
 
@@ -62,7 +62,7 @@ TDD Check (sequential, must pass first)
 Arbiter compiles results -> validation.md
         |
         v (if all pass)
-Arbiter generates HANDOFF.md
+Arbiter generates handoff.md
 ```
 
 ---
@@ -167,9 +167,9 @@ Watcher: "Scan for security issues in spec {slug}"
 
 ---
 
-### Phase 6: Generate HANDOFF.md (On Success)
+### Phase 6: Generate handoff.md (On Success)
 
-**If all validation passes**, Arbiter generates `HANDOFF.md`:
+**If all validation passes**, Arbiter generates `handoff.md`:
 
 ```markdown
 # {Feature Name} - Handoff
@@ -225,9 +225,9 @@ Status: READY FOR APPROVAL
 
 Created:
 - .catalyst/specs/{slug}/validation.md
-- .catalyst/specs/{slug}/HANDOFF.md
+- .catalyst/specs/{slug}/handoff.md
 
-Next: Review HANDOFF.md and run:
+Next: Review handoff.md and run:
       /approve-spec @2025-11-29-stripe-integration
       Or /reject-spec @2025-11-29-stripe-integration "reason"
 ```

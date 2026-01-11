@@ -25,7 +25,7 @@ Resume work on a spec after being away. This command:
 ### Phase 1: Read Spec State
 
 Read all spec files:
-- `SPEC.md` → Feature overview, requirements, status
+- `spec.md` → Feature overview, requirements, status
 - `tasks.md` → Task breakdown, marked progress
 - `research.md` → Context and decisions made
 - `validation.md` → If validation has run
@@ -72,7 +72,7 @@ Output a clear summary:
 ```
 STATUS: {spec-slug}
 
-Feature: {name from SPEC.md}
+Feature: {name from spec.md}
 Phase: {DRAFT | BUILDING | VALIDATING | COMPLETE}
 Last Activity: {date from git log or file modification}
 
@@ -235,7 +235,7 @@ VALIDATION STATUS
 NEXT STEPS
 ----------
 1. Complete validation: /validate-spec @slug
-2. Review HANDOFF.md when ready
+2. Review handoff.md when ready
 3. Approve: /approve-spec @slug
 ```
 

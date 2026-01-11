@@ -11,7 +11,7 @@ Implement a specification using **strict TDD**.
 ## Prerequisites
 
 - Spec must exist in `.catalyst/specs/`
-- `SPEC.md` must be complete
+- `spec.md` must be complete
 - No unresolved "Open Questions"
 
 ---
@@ -41,40 +41,55 @@ All outputs go to the spec folder. See AGENTS.md "Documentation Output Policy".
 
 ```
 .catalyst/specs/YYYY-MM-DD-{slug}/
-├── SPEC.md           # Already exists from /catalyze-spec
+├── spec.md           # Already exists from /catalyze-spec
 ├── research.md       # Already exists from /catalyze-spec
 ├── tasks.md          # Forger creates (this phase)
 ├── validation.md     # Arbiter creates (in /validate-spec)
-├── HANDOFF.md        # Arbiter creates (on completion)
+├── handoff.md        # Arbiter creates (on completion)
 └── assets/
 ```
 
-### Execution Order (STRICT - NO PARALLEL UNTIL GATE 2)
+### Execution Order (DAG-Based Parallel Execution)
 
 ```
-Phase 1: Forger (task breakdown -> tasks.md)
+Phase 1: Forger (task breakdown -> tasks.md with Build DAG)
               |
 Phase 2: Enforcer (write ALL failing tests)
               |
-         GATE: RED PHASE CHECK
-         All tests must FAIL
-         If any pass -> STOP
+         GATE 1: RED PHASE - All tests must FAIL
               |
-              v (only after gate passes)
-Phase 3: [Alchemist + Smith + Shaper] (parallel implementation)
+Phase 3: Foundation (Alchemist - sequential)
               |
-         GATE: GREEN PHASE
-         All tests must PASS
+         GATE 2: Foundation tests pass
+              |
+Phase 4: Contracts (Smith - shared types, sequential)
+              |
+         GATE 3: Type-check passes
+              |
+Phase 5: Parallel Implementation (Smith × N + Shaper × M)
+         [smith-1, smith-2, shaper-1, shaper-2, ...] <- scope-isolated
+              |
+         GATE 4: GREEN PHASE - All tests must PASS
+              |
+Phase 6: Integration (Enforcer - cross-boundary tests)
 ```
 
 ### PARALLEL EXECUTION RULES
 
 | Phase | Agents | Parallel? |
 |-------|--------|-----------|
-| Task Breakdown | Forger | No (must complete first) |
+| Task Breakdown | Forger | No (creates DAG first) |
 | Test Writing | Enforcer | No (must complete before impl) |
-| Implementation | Smith + Shaper | Yes (after tests exist) |
-| Implementation | Alchemist -> Smith | Sequential if API needs DB |
+| Foundation | Alchemist | No (DB schema first) |
+| Contracts | Smith (single) | No (shared types before parallel) |
+| Implementation | Smith × N + Shaper × M | **Yes - multiple instances** |
+| Integration | Enforcer | No (after all parallel complete) |
+
+**Multi-Instance Rules:**
+- Each parallel agent has **exclusive scope** (files it can write)
+- Each parallel agent has **read-only access** to shared types
+- Scopes MUST NOT overlap between parallel agents
+- Forge-Master spawns all ready agents in ONE message
 
 **WRONG:**
 ```
@@ -83,7 +98,7 @@ forger -> [enforcer + smith + shaper]  <- Tests parallel with code = NO TDD!
 
 **CORRECT:**
 ```
-forger -> enforcer -> GATE -> [smith + shaper]  <- Tests BEFORE code
+forger -> enforcer -> GATE -> alchemist -> contracts -> [smith-1 + smith-2 + shaper-1 + shaper-2]
 ```
 
 ---
@@ -97,35 +112,49 @@ The **Forge-Master** agent orchestrates the Technologists.
 **Spawn Forger agent**:
 
 ```
-"Break down SPEC.md into implementable tasks. Write to:
-.catalyst/specs/{slug}/tasks.md"
+"Break down spec.md into implementable tasks with Build DAG. Write to:
+.catalyst/specs/{slug}/tasks.md
+
+Include: phases, scope boundaries, dependencies, parallel opportunities."
 ```
 
-Forger creates `tasks.md`:
+Forger creates `tasks.md` with **Build DAG**:
 
 ```markdown
 # Tasks: {Feature Name}
 
-## Task Breakdown
+## Build DAG
 
-### Group 1: Database Setup (Alchemist)
-- [ ] T-001: Create subscription schema
-- [ ] T-002: Add migration for plans table
-Dependencies: None
+### Phase 1: Foundation (Sequential)
+| ID | Agent | Scope | Blocks | Est |
+|----|-------|-------|--------|-----|
+| db-schema | alchemist | prisma/*, src/db/* | api-*, ui-* | 1h |
 
-### Group 2: Backend API (Smith)
-- [ ] T-003: Create Stripe service wrapper
-- [ ] T-004: Implement subscription endpoints
-Dependencies: Group 1
+### Phase 2: Contracts (Sequential)
+| ID | Agent | Scope | Depends On | Blocks | Est |
+|----|-------|-------|------------|--------|-----|
+| api-types | smith | src/types/api.ts | db-schema | api-*, ui-* | 30m |
 
-### Group 3: Frontend (Shaper)
-- [ ] T-005: Create pricing page
-- [ ] T-006: Build subscription management UI
-Dependencies: Group 2
+### Phase 3: Parallel Backend (smith × 2)
+| ID | Agent | Scope | Reads | Depends On | Est |
+|----|-------|-------|-------|------------|-----|
+| api-auth | smith-1 | src/api/auth/** | src/types/** | api-types | 1.5h |
+| api-billing | smith-2 | src/api/billing/** | src/types/** | api-types | 1.5h |
+
+### Phase 4: Parallel Frontend (shaper × 2)
+| ID | Agent | Scope | Reads | Depends On | Est |
+|----|-------|-------|-------|------------|-----|
+| ui-pricing | shaper-1 | src/pages/pricing/** | src/types/** | api-billing | 1h |
+| ui-dashboard | shaper-2 | src/pages/dashboard/** | src/types/** | api-types | 1.5h |
+
+### Phase 5: Integration (Sequential)
+| ID | Agent | Scope | Depends On | Est |
+|----|-------|-------|------------|-----|
+| integration | enforcer | tests/integration/** | api-*, ui-* | 1h |
 
 ## Progress
-| Task | Status | Tests | Notes |
-|------|--------|-------|-------|
+| ID | Status | Agent | Tests | Notes |
+|----|--------|-------|-------|-------|
 ```
 
 ---
@@ -171,19 +200,75 @@ npm test  # or appropriate test command
 
 ---
 
-### Phase 3: Implementation - GREEN PHASE
+### Phase 3-4: Foundation & Contracts (Sequential)
 
-**Only start this phase AFTER Gate 1 passes!**
+**Only start this phase AFTER Gate 1 (Red Phase) passes!**
 
-**Spawn builders in parallel** (where dependencies allow):
+**Spawn Alchemist** (foundation):
 
 ```
-Alchemist: "Implement T-001, T-002. Run tests after each to verify progress."
-Smith: "Implement T-003, T-004 (after DB tasks complete)."
-Shaper: "Implement T-005, T-006 (after API tasks complete)."
+"Implement db-schema task.
+SCOPE (write): prisma/*, src/db/*
+Run tests after to verify progress."
 ```
+
+**Spawn Smith** (contracts - after foundation completes):
+
+```
+"Implement api-types task.
+SCOPE (write): src/types/api.ts
+Defines shared types for all parallel agents."
+```
+
+---
+
+### Phase 5: Parallel Implementation (DAG-Driven)
+
+**Only start AFTER contracts phase completes!**
+
+**Spawn ALL ready agents in ONE message with scope boundaries:**
+
+```
+Smith-1: "Implement api-auth task.
+         SCOPE (write): src/api/auth/**, tests/api/auth/**
+         READS (no modify): src/types/**
+         Run tests after each change."
+
+Smith-2: "Implement api-billing task.
+         SCOPE (write): src/api/billing/**, tests/api/billing/**
+         READS (no modify): src/types/**
+         Run tests after each change."
+
+Shaper-1: "Implement ui-pricing task.
+          SCOPE (write): src/pages/pricing/**, src/components/pricing/**
+          READS (no modify): src/types/**, src/components/shared/**
+          Run tests after each change."
+
+Shaper-2: "Implement ui-dashboard task.
+          SCOPE (write): src/pages/dashboard/**, src/components/dashboard/**
+          READS (no modify): src/types/**, src/components/shared/**
+          Run tests after each change."
+```
+
+**CRITICAL**: Include scope in every agent prompt. Agents must NOT modify files outside their scope.
 
 Each builder updates `tasks.md` Progress section as they complete tasks.
+
+---
+
+### Phase 6: Integration (Sequential)
+
+**Only start AFTER all parallel tasks complete!**
+
+**Spawn Enforcer**:
+
+```
+"Run integration tests for cross-boundary functionality.
+SCOPE: tests/integration/**
+Verify all components work together."
+```
+
+---
 
 ### Implementation Rules
 
@@ -199,6 +284,7 @@ FOR EACH TASK:
 
 NEVER write code without a failing test first
 NEVER write more code than needed to pass the test
+NEVER modify files outside your SCOPE
 ```
 
 ---
@@ -229,8 +315,15 @@ TDD Compliance: VERIFIED
 - Red Phase: 45 tests written, all failed
 - Green Phase: 45 tests passing
 
+DAG Execution:
+- Foundation: 1 task (alchemist)
+- Contracts: 1 task (smith)
+- Parallel: 4 tasks (smith-1, smith-2, shaper-1, shaper-2)
+- Integration: 1 task (enforcer)
+
 Tasks: 7/7 completed
 Tests: 45 passing, 0 failing
+Scope Violations: 0
 
 Updated: .catalyst/specs/2025-11-29-stripe-integration/tasks.md
 
@@ -256,4 +349,33 @@ ACTION:  STOP immediately
          Delete any code written
          Return to Phase 2
          Write tests first
+```
+
+### If Scope Violation Detected
+
+```
+PROBLEM: Agent modified files outside its scope
+ACTION:  STOP that agent
+         Revert out-of-scope changes (git checkout)
+         Re-run task with stricter prompt
+         Report violation to user
+```
+
+### If Parallel Agents Conflict
+
+```
+PROBLEM: Two agents wrote to same file
+ACTION:  STOP build immediately
+         Revert conflicting changes
+         Return to Forger
+         Re-structure DAG with non-overlapping scopes
+```
+
+### If Dependency Deadlock
+
+```
+PROBLEM: Circular dependency detected in DAG
+ACTION:  STOP all execution
+         Report to user
+         Request Forger to restructure DAG
 ```

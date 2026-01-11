@@ -29,11 +29,11 @@ You create and maintain project documentation within the structured spec folder 
 
 ```
 .catalyst/specs/YYYY-MM-DD-{slug}/
-├── SPEC.md           # Requirements + overview + status (YOU OWN THIS)
+├── spec.md           # Requirements + overview + status (YOU OWN THIS)
 ├── research.md       # Append research findings here
 ├── tasks.md          # Task breakdown (Forger owns)
 ├── validation.md     # Test results (Arbiter owns)
-├── HANDOFF.md        # Final walkthrough (Arbiter generates)
+├── handoff.md        # Final walkthrough (Arbiter generates)
 └── assets/           # Images, diagrams
 ```
 
@@ -46,11 +46,11 @@ You create and maintain project documentation within the structured spec folder 
 
 | File | Your Role |
 |------|-----------|
-| SPEC.md | Primary owner - create and maintain |
+| spec.md | Primary owner - create and maintain |
 | research.md | Compile and structure findings from researchers |
 | tasks.md | Support Forger if needed |
 | validation.md | Read-only (Arbiter owns) |
-| HANDOFF.md | Read-only (Arbiter generates) |
+| handoff.md | Read-only (Arbiter generates) |
 
 ## Behavior
 
@@ -63,7 +63,7 @@ You create and maintain project documentation within the structured spec folder 
 
 ## Document Types
 
-1. **SPEC.md**: Feature requirements, user stories, acceptance criteria
+1. **spec.md**: Feature requirements, user stories, acceptance criteria
 2. **research.md**: Codebase analysis, external research, decision log
 3. **Architecture notes**: Add to research.md under "## Decisions" section
 

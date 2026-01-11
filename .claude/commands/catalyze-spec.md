@@ -29,17 +29,17 @@ Shape a new specification from a feature request.
 
 ```
 .catalyst/specs/YYYY-MM-DD-{slug}/
-├── SPEC.md           # Scribe owns
+├── spec.md           # Scribe owns
 ├── research.md       # Scout, Seer, Oracle append to
 ├── tasks.md          # Forger owns (created in /build-spec)
 ├── validation.md     # Arbiter owns (created in /validate-spec)
-├── HANDOFF.md        # Arbiter generates on completion
+├── handoff.md        # Arbiter generates on completion
 └── assets/           # Images, diagrams, mockups
 ```
 
 **In your agent prompts, include the exact file path:**
 - "Append your findings to `.catalyst/specs/{slug}/research.md`"
-- "Create SPEC.md at `.catalyst/specs/{slug}/SPEC.md`"
+- "Create spec.md at `.catalyst/specs/{slug}/spec.md`"
 
 **Do NOT** allow agents to create random files anywhere else.
 
@@ -86,9 +86,9 @@ The **Catalyst** agent orchestrates the Seekers to gather all necessary informat
 Create the spec structure:
 ```
 .catalyst/specs/YYYY-MM-DD-{slug}/
-├── SPEC.md
+├── spec.md
 ├── research.md
-├── HANDOFF.md    # Created now, updated throughout (living document)
+├── handoff.md    # Created now, updated throughout (living document)
 └── assets/
 ```
 
@@ -97,8 +97,8 @@ Create the spec structure:
 **Spawn Oracle agent**:
 
 ```
-"Gather requirements for [feature]. Hand off findings to Scribe for SPEC.md creation at:
-.catalyst/specs/{YYYY-MM-DD-slug}/SPEC.md"
+"Gather requirements for [feature]. Hand off findings to Scribe for spec.md creation at:
+.catalyst/specs/{YYYY-MM-DD-slug}/spec.md"
 ```
 
 Oracle will:
@@ -133,11 +133,11 @@ Scout: "Research best practices for [feature]. Append findings to:
 **Spawn Scribe agent**:
 
 ```
-"Compile specification from gathered research. Create SPEC.md at:
-.catalyst/specs/{YYYY-MM-DD-slug}/SPEC.md"
+"Compile specification from gathered research. Create spec.md at:
+.catalyst/specs/{YYYY-MM-DD-slug}/spec.md"
 ```
 
-Scribe will create `SPEC.md`:
+Scribe will create `spec.md`:
 ```markdown
 # {Feature Name}
 
@@ -179,9 +179,9 @@ Scribe will create `SPEC.md`:
 Spec shaped successfully!
 
 Created: .catalyst/specs/YYYY-MM-DD-{slug}/
-├── SPEC.md      <- Requirements documented
+├── spec.md      <- Requirements documented
 ├── research.md  <- Research findings
-├── HANDOFF.md   <- Living document (update throughout)
+├── handoff.md   <- Living document (update throughout)
 └── assets/      <- UI references (if any)
 
 [If roadmap was updated:]

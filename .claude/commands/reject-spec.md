@@ -60,7 +60,7 @@ Based on rejection reason:
 
 ### Phase 3: Update Status
 
-Update `SPEC.md` status:
+Update `spec.md` status:
 ```markdown
 > Status: CHANGES_REQUESTED
 ```
