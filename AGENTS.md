@@ -161,11 +161,11 @@ Scribe is the gatekeeper. This ensures:
 
 ```
 .catalyst/specs/YYYY-MM-DD-{slug}/
-├── spec.md        → Scribe owns
+├── spec.md        → Scribe owns (requirements + frontmatter)
 ├── research.md    → Scribe compiles (researchers hand off findings)
-├── tasks.md       → Forger owns
+├── tasks.md       → Forger owns (THE living document)
 ├── validation.md  → Arbiter owns
-├── handoff.md     → Scribe owns (living document, updated throughout)
+├── handoff.md     → Scribe owns (human-readable summary)
 └── assets/        → Any agent
 ```
 
@@ -173,5 +173,60 @@ Scribe is the gatekeeper. This ensures:
 
 1. **Scribe is gatekeeper** — All .md writes in specs go through Scribe
 2. **Researchers hand off** — Scout/Seer/Oracle give findings to Scribe, don't write directly
-3. **handoff.md is living** — Updated throughout, not generated at end
-4. **See spec-structure.yaml** — For full structure details
+3. **tasks.md is THE living document** — ONE file to read when resuming work
+4. **handoff.md is colleague summary** — Human-readable walkthrough, finalized at end
+5. **See spec-structure.yaml** — For full structure details
+
+---
+
+## Context Assembly
+
+**spec.md has YAML frontmatter** for cross-spec knowledge transfer:
+
+```yaml
+---
+spec: YYYY-MM-DD-slug
+status: draft | in-progress | complete
+domain: auth | payments | etc
+provides: [what this spec creates]
+requires: [specs this depends on]
+affects: [specs this impacts]
+patterns_established: [reusable patterns created]
+key_files: [important files created/modified]
+key_decisions: [major choices made]
+---
+```
+
+Catalyst reads frontmatter from all specs to understand project context before shaping new specs.
+
+---
+
+## Living Document Structure
+
+**tasks.md is THE file to read when resuming work.** Contains:
+
+```markdown
+# Tasks: {Feature Name}
+
+## Build DAG
+[Phase tables with task breakdown]
+
+## Progress
+| Task | Status | Tests | Commit | Notes |
+|------|--------|-------|--------|-------|
+| db-schema | ✓ Done | ... | a1b2c3d | |
+| api-auth | ⚡ Active | ... | - | smith-1 working |
+
+## Current Session
+**Phase:** 3 - Parallel Backend
+**Active:** api-auth (smith-1), api-posts (smith-2)
+**Working on:** {current focus}
+**File:** {current file:line}
+**Next:** {what comes after this}
+
+## Decisions
+- **Decision 1** - Rationale
+- **Decision 2** - Rationale
+```
+
+**Forge-Master updates this file throughout the build.**
