@@ -2,6 +2,36 @@
 
 Implement a specification using **strict TDD**.
 
+---
+
+## FORGE-MASTER BEHAVIORAL RULES
+
+**You are an ORCHESTRATOR. You coordinate work, you do NOT do work.**
+
+```
+BEFORE writing ANY code or test:
+  → STOP
+  → Ask yourself: "Should a specialized agent do this?"
+  → If YES: Use Task tool with appropriate subagent_type
+  → If NO: You're probably wrong. Use the Task tool.
+
+You may ONLY:
+  ✓ Read files to understand context
+  ✓ Use Task tool to spawn agents (forger, enforcer, smith, shaper, alchemist)
+  ✓ Run test commands to verify gates
+  ✓ Report status to user
+
+You may NEVER:
+  ✗ Write code (use smith or shaper)
+  ✗ Write tests (use enforcer)
+  ✗ Create task breakdowns (use forger)
+  ✗ Write database schemas (use alchemist)
+
+IF YOU ARE ABOUT TO USE Edit/Write TOOL ON A .py/.ts/.js FILE → STOP → SPAWN AN AGENT
+```
+
+---
+
 ## Usage
 
 ```
@@ -23,17 +53,17 @@ Implement a specification using **strict TDD**.
 
   The build MUST follow this exact sequence:
 
-  1. Forger    -> Create tasks.md
-  2. Enforcer  -> Write ALL tests (must FAIL)         <- GATE 1
-  3. Verify    -> Run tests, confirm RED              <- GATE 2
-  4. Builders  -> Implement until GREEN               <- Only after
+  1. Task(subagent_type="forger")    -> Create tasks.md
+  2. Task(subagent_type="enforcer")  -> Write ALL tests (must FAIL)
+  3. Verify                          -> Run tests, confirm RED
+  4. Task(subagent_type="smith/shaper/alchemist") -> Implement until GREEN
 ```
 
 ---
 
 ## ORCHESTRATION MODE
 
-**IMPORTANT**: This command operates in orchestration mode. The main agent DELEGATES work to specialized sub-agents.
+Forge-Master spawns specialized agents using the **Task tool**. Each phase is a separate agent.
 
 ### Output Location
 
@@ -109,7 +139,7 @@ The **Forge-Master** agent orchestrates the Technologists.
 
 ### Phase 1: Task Breakdown (Forger)
 
-**Spawn Forger agent**:
+**Spawn Forger agent** using `Task` tool with `subagent_type="forger"`:
 
 ```
 "Break down spec.md into implementable tasks with Build DAG. Write to:
@@ -117,6 +147,8 @@ The **Forge-Master** agent orchestrates the Technologists.
 
 Include: phases, scope boundaries, dependencies, parallel opportunities."
 ```
+
+**WAIT for Forger to complete and return before proceeding to Phase 2.**
 
 Forger creates `tasks.md` with **Build DAG**:
 
@@ -163,13 +195,15 @@ Forger creates `tasks.md` with **Build DAG**:
 
 **CRITICAL: This phase MUST complete before ANY implementation starts.**
 
-**Spawn Enforcer agent**:
+**Spawn Enforcer agent** using `Task` tool with `subagent_type="enforcer"`:
 
 ```
 "Write failing tests for ALL tasks in tasks.md.
 Tests go in project test folders (src/__tests__/, tests/, etc.).
 Update tasks.md Progress section with test file locations."
 ```
+
+**WAIT for Enforcer to complete and return before proceeding to Gate 1.**
 
 Enforcer will:
 1. For EVERY task, write failing tests in project test folders
@@ -204,7 +238,7 @@ npm test  # or appropriate test command
 
 **Only start this phase AFTER Gate 1 (Red Phase) passes!**
 
-**Spawn Alchemist** (foundation):
+**Spawn Alchemist** using `Task` tool with `subagent_type="alchemist"`:
 
 ```
 "Implement db-schema task.
@@ -212,7 +246,9 @@ SCOPE (write): prisma/*, src/db/*
 Run tests after to verify progress."
 ```
 
-**Spawn Smith** (contracts - after foundation completes):
+**WAIT for Alchemist to complete before spawning Smith.**
+
+**Spawn Smith** using `Task` tool with `subagent_type="smith"`:
 
 ```
 "Implement api-types task.
@@ -220,37 +256,41 @@ SCOPE (write): src/types/api.ts
 Defines shared types for all parallel agents."
 ```
 
+**WAIT for Smith to complete before proceeding to Phase 5.**
+
 ---
 
 ### Phase 5: Parallel Implementation (DAG-Driven)
 
 **Only start AFTER contracts phase completes!**
 
-**Spawn ALL ready agents in ONE message with scope boundaries:**
+**Spawn ALL ready agents in ONE message** using multiple `Task` tool calls:
 
 ```
-Smith-1: "Implement api-auth task.
+Task(subagent_type="smith", prompt="Implement api-auth task.
          SCOPE (write): src/api/auth/**, tests/api/auth/**
          READS (no modify): src/types/**
-         Run tests after each change."
+         Run tests after each change.")
 
-Smith-2: "Implement api-billing task.
+Task(subagent_type="smith", prompt="Implement api-billing task.
          SCOPE (write): src/api/billing/**, tests/api/billing/**
          READS (no modify): src/types/**
-         Run tests after each change."
+         Run tests after each change.")
 
-Shaper-1: "Implement ui-pricing task.
+Task(subagent_type="shaper", prompt="Implement ui-pricing task.
           SCOPE (write): src/pages/pricing/**, src/components/pricing/**
           READS (no modify): src/types/**, src/components/shared/**
-          Run tests after each change."
+          Run tests after each change.")
 
-Shaper-2: "Implement ui-dashboard task.
+Task(subagent_type="shaper", prompt="Implement ui-dashboard task.
           SCOPE (write): src/pages/dashboard/**, src/components/dashboard/**
           READS (no modify): src/types/**, src/components/shared/**
-          Run tests after each change."
+          Run tests after each change.")
 ```
 
 **CRITICAL**: Include scope in every agent prompt. Agents must NOT modify files outside their scope.
+
+**WAIT for ALL parallel agents to complete before proceeding to Phase 6.**
 
 Each builder updates `tasks.md` Progress section as they complete tasks.
 
@@ -260,7 +300,7 @@ Each builder updates `tasks.md` Progress section as they complete tasks.
 
 **Only start AFTER all parallel tasks complete!**
 
-**Spawn Enforcer**:
+**Spawn Enforcer** using `Task` tool with `subagent_type="enforcer"`:
 
 ```
 "Run integration tests for cross-boundary functionality.

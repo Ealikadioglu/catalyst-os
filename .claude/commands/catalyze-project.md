@@ -12,9 +12,9 @@ Initialize the project foundation. Always creates all 6 documents.
 
 ## Process
 
-### Phase 1: Detection
+### Phase 1: Detection (Silent)
 
-Scan the project to determine if greenfield or brownfield:
+**Do not announce this phase to the user.** Silently scan the project to determine if greenfield or brownfield:
 
 | Signal | Greenfield | Brownfield |
 |--------|------------|------------|
@@ -22,6 +22,8 @@ Scan the project to determine if greenfield or brownfield:
 | Package files | Minimal deps | Established deps |
 | Git history | < 10 commits | > 10 commits |
 | Lines of code | < 500 | > 500 |
+
+Run these checks in the background and proceed directly to Phase 2 based on the result.
 
 ### Phase 2: Gather Information
 
@@ -37,12 +39,12 @@ Scan the project to determine if greenfield or brownfield:
 8. What's the timeline pressure?
 9. Are there similar products to reference?
 
-**If Brownfield** - Heavy scanning via 3 parallel Explore agents:
+**If Brownfield** - Heavy scanning via 3 parallel Seer agents (subagent_type="seer"):
 
 ```
-Agent 1: Architecture + Tech Stack
-Agent 2: Conventions + Patterns
-Agent 3: Concerns + TODOs
+Seer 1: Architecture + Tech Stack
+Seer 2: Conventions + Patterns
+Seer 3: Concerns + TODOs
 ```
 
 Then ask only what can't be inferred:

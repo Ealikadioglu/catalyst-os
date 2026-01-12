@@ -251,9 +251,7 @@ Action: Run /build-spec @2025-11-29-stripe-integration
 ```
 Validation failed!
 
-Spec: 2025-11-29-stripe-integration
-
-Failed Checks:
+Spec: 2025-11-29-stripe-integrationFailed Checks:
 - E2E Tests: 2 failures
 - Security: 1 vulnerability found
 
