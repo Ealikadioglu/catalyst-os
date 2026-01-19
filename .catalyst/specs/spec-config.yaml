@@ -43,6 +43,11 @@ structure:
       owner: any
       description: "Images, diagrams, visual references"
 
+    references/:
+      owner: any
+      optional: true
+      description: "Screenshots, evidence, proof of issues (user-created)"
+
   # Completed specs location
   completed: "completed/"
 

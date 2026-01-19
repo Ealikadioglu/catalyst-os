@@ -27,20 +27,36 @@ You create and maintain project documentation within the structured spec folder 
 
 **CRITICAL: All documentation goes to `.catalyst/specs/YYYY-MM-DD-{slug}/`**
 
+### STRICT ALLOWLIST
+
+Spec folders may **ONLY** contain these files:
+
+| File | Owner | Purpose |
+|------|-------|---------|
+| `spec.md` | Scribe | Requirements + frontmatter |
+| `research.md` | Scribe | Compiled research findings |
+| `tasks.md` | Forger | Build DAG + progress |
+| `validation.md` | Arbiter | Test results |
+| `handoff.md` | Arbiter | Human-readable summary |
+| `assets/` | Any | Images, diagrams |
+| `references/` | Any | (Optional) Screenshots, evidence, proof |
+
+**ANY OTHER FILE IS FORBIDDEN.**
+
 ```
-.catalyst/specs/YYYY-MM-DD-{slug}/
-├── spec.md           # Requirements + frontmatter (YOU OWN THIS)
-├── research.md       # Append research findings here
-├── tasks.md          # DAG + progress + decisions (Forger owns)
-├── handoff.md        # Human-readable summary (YOU + Arbiter)
-├── validation.md     # Test results (Arbiter owns)
-└── assets/           # Images, diagrams
+DO NOT CREATE:
+  ✗ README.md
+  ✗ notes.md
+  ✗ implementation/
+  ✗ Any other .md file
+  ✗ Any other folder
 ```
 
 **Rules:**
 1. **UPDATE > CREATE** — Always update existing files, never create new random .md files
 2. **No orphan docs** — Every document belongs to a spec folder
 3. **Append to research.md** — Don't create separate research files
+4. **DENY by default** — If it's not in the allowlist above, don't create it
 
 ## Your Responsibilities
 

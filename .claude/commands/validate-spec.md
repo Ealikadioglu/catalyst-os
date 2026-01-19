@@ -255,7 +255,5 @@ Spec: 2025-11-29-stripe-integrationFailed Checks:
 - E2E Tests: 2 failures
 - Security: 1 vulnerability found
 
-Created: .catalyst/specs/{slug}/validation.md (with details)
-
-Action: Fix issues and re-run /validate-spec
+Created: .catalyst/specs/{slug}/validation.md (with details)Action: Fix issues and re-run /validate-spec
 ```

@@ -157,25 +157,29 @@ Scribe is the gatekeeper. This ensures:
 - Consistent formatting
 - No orphan documents
 
-### Quick Reference
+### STRICT ALLOWLIST
 
-```
-.catalyst/specs/YYYY-MM-DD-{slug}/
-├── spec.md        → Scribe owns (requirements + frontmatter)
-├── research.md    → Scribe compiles (researchers hand off findings)
-├── tasks.md       → Forger owns (THE living document)
-├── validation.md  → Arbiter owns
-├── handoff.md     → Scribe owns (human-readable summary)
-└── assets/        → Any agent
-```
+Spec folders may **ONLY** contain:
+
+| File | Owner | Purpose |
+|------|-------|---------|
+| `spec.md` | Scribe | Requirements + frontmatter |
+| `research.md` | Scribe | Compiled research findings |
+| `tasks.md` | Forger | Build DAG + progress |
+| `validation.md` | Arbiter | Test results |
+| `handoff.md` | Arbiter | Human-readable summary |
+| `assets/` | Any | Images, diagrams |
+| `references/` | Any | (Optional) Screenshots, evidence |
+
+**ANY OTHER FILE IS FORBIDDEN.** No README.md, no notes.md, no implementation/.
 
 ### Rules
 
 1. **Scribe is gatekeeper** — All .md writes in specs go through Scribe
-2. **Researchers hand off** — Scout/Seer/Oracle give findings to Scribe, don't write directly
-3. **tasks.md is THE living document** — ONE file to read when resuming work
-4. **handoff.md is colleague summary** — Human-readable walkthrough, finalized at end
-5. **See spec-structure.yaml** — For full structure details
+2. **DENY by default** — If not in allowlist, don't create it
+3. **Researchers hand off** — Scout/Seer/Oracle give findings to Scribe, don't write directly
+4. **tasks.md is THE living document** — ONE file to read when resuming work
+5. **handoff.md is colleague summary** — Human-readable walkthrough, finalized at end
 
 ---
 
