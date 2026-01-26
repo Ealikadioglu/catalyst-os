@@ -46,6 +46,30 @@ IF YOU ARE ABOUT TO USE Edit/Write TOOL ON A .py/.ts/.js FILE → STOP → SPAWN
 
 ---
 
+## GIT WORKFLOW
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│  GIT CHECKPOINTS                                                │
+│  ───────────────                                                │
+│                                                                 │
+│  PHASE 0: Setup                                                 │
+│  ├── Read .catalyst/main/project-config.yaml                    │
+│  ├── Checkout to development_branch (default: main)             │
+│  └── Create branch: {branch_prefix}/{spec-slug}                 │
+│                                                                 │
+│  GATE 1: RED FLAG                                               │
+│  └── Commit: "test({scope}): write failing tests for {spec}"    │
+│                                                                 │
+│  GATE 2: GREEN FLAG                                             │
+│  └── Commit: "feat({scope}): implement {spec}"                  │
+│                                                                 │
+│  Then: User runs /validate-spec and /approve-spec               │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+---
+
 ## TDD IS MANDATORY - NO EXCEPTIONS
 
 ```
@@ -137,6 +161,41 @@ forger -> enforcer -> GATE -> alchemist -> contracts -> [smith-1 + smith-2 + sha
 
 The **Forge-Master** agent orchestrates the Technologists.
 
+### Phase 0: Git Setup
+
+**Before any work begins, set up the git branch for this spec.**
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│  📍 GIT SETUP                                                   │
+│  ───────────                                                    │
+│                                                                 │
+│  1. Read git config from project-config.yaml:                   │
+│     $ cat .catalyst/main/project-config.yaml                    │
+│                                                                 │
+│     Extract:                                                    │
+│     - development_branch (default: "main")                      │
+│     - branch_prefix (default: "feat")                           │
+│                                                                 │
+│  2. Checkout to development branch:                             │
+│     $ git checkout {development_branch}                         │
+│     $ git pull origin {development_branch}                      │
+│                                                                 │
+│  3. Create spec feature branch:                                 │
+│     $ git checkout -b {branch_prefix}/{spec-slug}               │
+│                                                                 │
+│     Example: git checkout -b feat/2026-01-11-stripe-integration │
+│                                                                 │
+│  4. Confirm branch creation to user:                            │
+│     "Created branch: feat/{spec-slug} from {development_branch}"│
+│                                                                 │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+**WAIT for git setup to complete before proceeding to Phase 1.**
+
+---
+
 ### Phase 1: Task Breakdown (Forger)
 
 **Spawn Forger agent** using `Task` tool with `subagent_type="forger"`:
@@ -212,7 +271,7 @@ Enforcer will:
 
 ---
 
-### GATE 1: Red Phase Verification
+### GATE 1: Red Phase Verification (RED FLAG)
 
 **STOP! Before proceeding to implementation:**
 
@@ -231,6 +290,28 @@ npm test  # or appropriate test command
 - [ ] All tests FAIL (none pass)
 
 **If ANY test passes -> STOP and investigate**
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│  🚩 RED FLAG COMMIT                                             │
+│  ─────────────────                                              │
+│                                                                 │
+│  After Gate 1 passes, commit the test suite:                    │
+│                                                                 │
+│  $ git add .                                                    │
+│  $ git commit -m "test({scope}): write failing tests for {spec}"│
+│                                                                 │
+│  Example:                                                       │
+│  git commit -m "test(auth): write failing tests for supabase-auth"
+│                                                                 │
+│  This checkpoint captures:                                      │
+│  - All test files                                               │
+│  - tasks.md with test locations                                 │
+│  - Any test fixtures or mocks                                   │
+│                                                                 │
+│  ✅ Checkpoint saved. Proceeding to implementation.             │
+└─────────────────────────────────────────────────────────────────┘
+```
 
 ---
 
@@ -329,7 +410,7 @@ NEVER modify files outside your SCOPE
 
 ---
 
-### GATE 2: Green Phase Verification
+### GATE 2: Green Phase Verification (GREEN FLAG)
 
 **Before completing build:**
 
@@ -342,6 +423,28 @@ npm test
 # Status: GREEN
 ```
 
+```
+┌─────────────────────────────────────────────────────────────────┐
+│  🟢 GREEN FLAG COMMIT                                           │
+│  ───────────────────                                            │
+│                                                                 │
+│  After Gate 2 passes, commit the implementation:                │
+│                                                                 │
+│  $ git add .                                                    │
+│  $ git commit -m "feat({scope}): implement {spec}"              │
+│                                                                 │
+│  Example:                                                       │
+│  git commit -m "feat(auth): implement supabase-auth"            │
+│                                                                 │
+│  This checkpoint captures:                                      │
+│  - All implementation files                                     │
+│  - Updated tasks.md with progress                               │
+│  - Any configuration changes                                    │
+│                                                                 │
+│  ✅ Implementation committed. Ready for validation.             │
+└─────────────────────────────────────────────────────────────────┘
+```
+
 ---
 
 ## Output
@@ -350,6 +453,13 @@ npm test
 Build complete!
 
 Spec: 2025-11-29-stripe-integration
+Branch: feat/2025-11-29-stripe-integration
+
+Git Commits:
+┌────────────────────────────────────────────────────────────────┐
+│ 🚩 abc1234 test(payment): write failing tests for stripe-integration
+│ 🟢 def5678 feat(payment): implement stripe-integration
+└────────────────────────────────────────────────────────────────┘
 
 TDD Compliance: VERIFIED
 - Red Phase: 45 tests written, all failed
@@ -368,6 +478,7 @@ Scope Violations: 0
 Updated: .catalyst/specs/2025-11-29-stripe-integration/tasks.md
 
 Next: Run /validate-spec @2025-11-29-stripe-integration
+      Then /approve-spec for final review and merge
 ```
 
 ---

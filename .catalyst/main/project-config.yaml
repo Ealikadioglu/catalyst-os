@@ -9,3 +9,24 @@ generated_files:
   roadmap.md: "Development phases"
   tech-stack.md: "Technology decisions"
 
+# Git Configuration
+git:
+  # Base branch for spec development (checkout from this branch)
+  # Common names: "development", "develop", "staging", "testing", "pre-prod"
+  # This is set during /catalyze-project based on user preference
+  development_branch: "development"
+
+  # Branch prefix for spec feature branches
+  # Example: "feat" creates branches like "feat/2026-01-11-supabase-auth"
+  branch_prefix: "feat"
+
+  # Protected branches (cannot commit directly)
+  protected_branches:
+    - "main"
+    - "master"
+
+  # Commit message templates
+  commit_templates:
+    red_phase: "test({scope}): write failing tests for {spec}"
+    green_phase: "feat({scope}): implement {spec}"
+

@@ -11,7 +11,10 @@ Command:      /approve-spec @2026-01-11-supabase-auth
               /approve-spec @2026-01-11-supabase-auth "Great work!"
 Orchestrator: Main Agent
 Agents:       Scribe (for library extraction, optional)
-Output:       Commit + Archive to .catalyst/completed/ + Library item (optional)
+Output:       Archive to .catalyst/completed/ + Library item (optional)
+
+Note: Git commits are made during /build-spec (RED FLAG and GREEN FLAG commits).
+      This workflow verifies commits exist and handles archiving.
 ```
 
 ---
@@ -67,69 +70,58 @@ Output:       Commit + Archive to .catalyst/completed/ + Library item (optional)
                                        │
                                        ▼
               ┌─────────────────────────────────────────┐
-              │  PHASE 2: LOAD CONFIG                   │
+              │  PHASE 2: VERIFY GIT STATE              │
+              │  ─────────────────────────              │
+              │                                         │
+              │  1. Verify on spec feature branch       │
+              │     $ git branch --show-current         │
+              │     Expected: feat/{spec-slug}          │
+              │                                         │
+              │  2. Verify commits exist                │
+              │     $ git log --oneline -5              │
+              │     Expected:                           │
+              │     - 🚩 test(...): write failing tests │
+              │     - 🟢 feat(...): implement ...       │
+              │                                         │
+              │  3. Check for uncommitted changes       │
+              │     $ git status --porcelain            │
+              │                                         │
+              │  If uncommitted: warn user, offer to    │
+              │  commit or stash                        │
+              └─────────────────────────────────────────┘
+                                       │
+                                       ▼
+              ┌─────────────────────────────────────────┐
+              │  PHASE 3: USER REVIEW                   │
               │  ────────────────────                   │
               │                                         │
-              │  Read project-config.yaml:              │
-              │  ├── git.protected_branches             │
-              │  ├── git.branch_prefix                  │
-              │  └── specs.completed_path               │
+              │  Show commit summary to user:           │
+              │                                         │
+              │  Branch: feat/supabase-auth             │
+              │  Commits:                               │
+              │  ├── abc1234 test(auth): write tests   │
+              │  └── def5678 feat(auth): implement     │
+              │                                         │
+              │  Ask: "Ready to approve and archive?"   │
               └─────────────────────────────────────────┘
                                        │
                                        ▼
               ┌─────────────────────────────────────────┐
-              │  PHASE 3: DETECT CHANGES                │
-              │  ───────────────────────                │
-              │                                         │
-              │  $ git status --porcelain               │
-              │                                         │
-              │  Show user: "12 files changed"          │
-              └─────────────────────────────────────────┘
-                                       │
-                                       ▼
-              ┌─────────────────────────────────────────┐
-              │  PHASE 4: BRANCH MANAGEMENT             │
-              │  ──────────────────────────             │
-              │                                         │
-              │  Check current branch                   │
-              │           │                             │
-              │    ┌──────┴──────┐                      │
-              │    ▼             ▼                      │
-              │  On main?     On feature?               │
-              │    │             │                      │
-              │    ▼             ▼                      │
-              │  Ask user     Skip branch               │
-              │  for branch   creation                  │
-              │  name                                   │
-              │    │                                    │
-              │    ▼                                    │
-              │  Create new                             │
-              │  branch                                 │
-              └─────────────────────────────────────────┘
-                                       │
-                                       ▼
-              ┌─────────────────────────────────────────┐
-              │  PHASE 5: GIT COMMIT                    │
-              │  ──────────────────                     │
-              │                                         │
-              │  $ git add .                            │
-              │  $ git commit -m "..."                  │
-              └─────────────────────────────────────────┘
-                                       │
-                                       ▼
-              ┌─────────────────────────────────────────┐
-              │  PHASE 6: ARCHIVE SPEC                  │
+              │  PHASE 4: ARCHIVE SPEC                  │
               │  ────────────────────                   │
               │                                         │
               │  Move to completed:                     │
               │  .catalyst/specs/... → .catalyst/completed/...│
               │                                         │
               │  Update spec.md status                  │
+              │                                         │
+              │  Commit archive change:                 │
+              │  "chore: archive {spec-slug}"           │
               └─────────────────────────────────────────┘
                                        │
                                        ▼
               ┌─────────────────────────────────────────┐
-              │  PHASE 7: LIBRARY EXTRACTION (Optional) │
+              │  PHASE 5: LIBRARY EXTRACTION (Optional) │
               │  ──────────────────────────────────     │
               │                                         │
               │  Auto-detect reusable patterns          │
@@ -192,72 +184,77 @@ Output:       Commit + Archive to .catalyst/completed/ + Library item (optional)
 └─────────────────────────────────────────────────────────────────┘
 ```
 
-### Phase 4: Branch Management
+### Phase 2: Verify Git State
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
-│  📍 BRANCH MANAGEMENT                                           │
-│  ────────────────────                                           │
+│  📍 VERIFY GIT STATE                                            │
+│  ───────────────────                                            │
 │                                                                 │
-│  1. Check current branch:                                       │
+│  Note: Commits were made during /build-spec workflow.           │
+│  This phase verifies the expected state exists.                 │
+│                                                                 │
+│  1. Verify current branch:                                      │
 │     $ git branch --show-current                                 │
 │                                                                 │
-│  2. If on protected branch (main/master):                       │
+│     Expected: feat/{spec-slug}                                  │
+│     (e.g., feat/2026-01-11-supabase-auth)                       │
 │                                                                 │
 │     ┌──────────────────────────────────────────────────────┐    │
-│     │  🙋 ASK USER                                         │    │
+│     │  ❌ IF ON WRONG BRANCH                               │    │
 │     │                                                      │    │
-│     │  "Which branch name would you like to use?"          │    │
+│     │  "Expected branch feat/{spec-slug} but found {x}"    │    │
+│     │  "Did /build-spec complete successfully?"            │    │
 │     │                                                      │    │
-│     │  Suggested: feat/supabase-auth (Recommended)         │    │
-│     │  Or enter custom name                                │    │
+│     │  Action: Return to /build-spec                       │    │
 │     └──────────────────────────────────────────────────────┘    │
 │                                                                 │
-│     Then create branch:                                         │
-│     $ git checkout -b feat/supabase-auth                        │
+│  2. Verify commits exist:                                       │
+│     $ git log --oneline -5                                      │
 │                                                                 │
-│  3. If already on feature branch:                               │
-│     └── Skip branch creation, continue to Phase 5               │
+│     Look for:                                                   │
+│     - test({scope}): write failing tests for {spec}  [RED]      │
+│     - feat({scope}): implement {spec}                [GREEN]    │
+│                                                                 │
+│  3. Check for uncommitted changes:                              │
+│     $ git status --porcelain                                    │
+│                                                                 │
+│     If changes exist:                                           │
+│     └── Warn user, ask how to handle                            │
 │                                                                 │
 └─────────────────────────────────────────────────────────────────┘
 ```
 
-### Phase 5: Git Commit
+### Phase 3: User Review
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
-│  📍 GIT COMMIT                                                  │
-│  ────────────                                                   │
+│  📍 USER REVIEW                                                 │
+│  ─────────────                                                  │
 │                                                                 │
-│  1. Stage changes:                                              │
-│     $ git add .                                                 │
-│                                                                 │
-│  2. Create structured commit message:                           │
+│  Display commit summary for user approval:                      │
 │                                                                 │
 │  ┌──────────────────────────────────────────────────────────┐   │
-│  │  feat(auth): implement supabase authentication           │   │
+│  │  Branch: feat/2026-01-11-supabase-auth                   │   │
 │  │                                                          │   │
-│  │  TDD Compliance: Verified                                │   │
-│  │  - Tests written first                                   │   │
-│  │  - All tests pass                                        │   │
+│  │  Commits:                                                │   │
+│  │  ├── 🚩 abc1234 test(auth): write failing tests for ...  │   │
+│  │  └── 🟢 def5678 feat(auth): implement supabase-auth      │   │
 │  │                                                          │   │
-│  │  Implementation:                                         │   │
-│  │  - Login/Signup pages with Supabase Auth                 │   │
-│  │  - OAuth support (Google)                                │   │
-│  │  - Protected route middleware                            │   │
-│  │  - Session management                                    │   │
-│  │                                                          │   │
-│  │  Spec: 2026-01-11-supabase-auth                          │   │
+│  │  Files changed: 24                                       │   │
 │  │  Tests: 45 passing                                       │   │
 │  └──────────────────────────────────────────────────────────┘   │
 │                                                                 │
-│  3. Commit:                                                     │
-│     $ git commit -m "..."                                       │
+│  Ask user: "Ready to approve and archive this spec?"            │
+│                                                                 │
+│  Options:                                                       │
+│  ○ Yes, approve and archive (Recommended)                       │
+│  ○ No, need more review                                         │
 │                                                                 │
 └─────────────────────────────────────────────────────────────────┘
 ```
 
-### Phase 6: Archive Spec
+### Phase 4: Archive Spec
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
@@ -274,13 +271,17 @@ Output:       Commit + Archive to .catalyst/completed/ + Library item (optional)
 │     ┌──────────────────────────────────────────────────────┐    │
 │     │  > Status: COMPLETE                                  │    │
 │     │  > Completed: 2026-01-11                             │    │
-│     │  > Commit: abc1234                                   │    │
+│     │  > Branch: feat/2026-01-11-supabase-auth             │    │
 │     └──────────────────────────────────────────────────────┘    │
+│                                                                 │
+│  3. Commit the archive:                                         │
+│     $ git add .                                                 │
+│     $ git commit -m "chore: archive {spec-slug}"                │
 │                                                                 │
 └─────────────────────────────────────────────────────────────────┘
 ```
 
-### Phase 7: Library Extraction (Optional)
+### Phase 5: Library Extraction (Optional)
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
@@ -366,21 +367,18 @@ Output:       Commit + Archive to .catalyst/completed/ + Library item (optional)
 Spec: 2026-01-11-supabase-auth
 Status: COMPLETED
 
-TDD Compliance: VERIFIED
+Branch: feat/2026-01-11-supabase-auth
 
-Branch: feat/supabase-auth
-
-Commit: abc1234
+Commits (from /build-spec):
 ┌────────────────────────────────────────────────────────────────┐
-│ feat(auth): implement supabase authentication                  │
-│                                                                │
-│ TDD Compliance: Verified                                       │
-│ - Tests written first                                          │
-│ - All tests pass                                               │
-│                                                                │
-│ Spec: 2026-01-11-supabase-auth                                 │
-│ Tests: 45 passing                                              │
+│ 🚩 abc1234 test(auth): write failing tests for supabase-auth   │
+│ 🟢 def5678 feat(auth): implement supabase-auth                 │
+│ 📦 ghi9012 chore: archive supabase-auth                        │
 └────────────────────────────────────────────────────────────────┘
+
+TDD Compliance: VERIFIED
+├── Red Phase: Tests written first
+└── Green Phase: All tests pass
 
 Archived to: .catalyst/completed/2026-01-11-supabase-auth/
 
@@ -392,9 +390,11 @@ Summary:
 ├── Tasks: 8 completed
 └── Tests: 45 passing
 
-🎉 Feature ready for production!
+🎉 Feature ready for review!
 
-➡️  Next: git push -u origin feat/supabase-auth
+➡️  Next steps:
+    1. git push -u origin feat/2026-01-11-supabase-auth
+    2. Create PR to merge into development/main
 ```
 
 ---
@@ -404,10 +404,13 @@ Summary:
 ```
 SEQUENTIAL EXECUTION
 
-Verify ──▶ Config ──▶ Detect ──▶ Branch ──▶ Commit ──▶ Archive ──▶ Library ──▶ Done!
-  │          │          │          │          │           │           │
-  │          │          │          │          │           │           │
-TDD +      load       git        create     git add    move to     extract
-validation config    status      branch    + commit   completed/  pattern
-                                                                  (optional)
+Verify ──▶ Git State ──▶ User Review ──▶ Archive ──▶ Library ──▶ Done!
+  │            │              │             │           │
+  │            │              │             │           │
+TDD +      verify        show commits    move to     extract
+validation branch &      ask approval   completed/  pattern
+           commits                      + commit    (optional)
+
+Note: Git commits (RED FLAG, GREEN FLAG) happen during /build-spec
+      This workflow verifies and finalizes.
 ```

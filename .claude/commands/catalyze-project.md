@@ -1,6 +1,6 @@
 # /catalyze-project
 
-Initialize the project foundation. Always creates all 6 documents.
+Initialize the project foundation. Creates project config and all 6 foundation documents.
 
 ## Usage
 
@@ -51,9 +51,55 @@ Then ask only what can't be inferred:
 1. What's the project's mission? (if no README)
 2. What are the current priorities?
 
-### Phase 3: Generate All 6 Documents
+### Phase 3: Git Branch Setup
 
-Always create all documents in `.catalyst/main/`:
+**Ask the user about their development branch preference:**
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│  🙋 ASK USER: Development Branch                                │
+│  ───────────────────────────────                                │
+│                                                                 │
+│  "What should we name the development branch for spec work?"    │
+│                                                                 │
+│  Options:                                                       │
+│  ○ development (Recommended)                                    │
+│  ○ develop                                                      │
+│  ○ staging                                                      │
+│  ○ Other (custom name)                                          │
+│                                                                 │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+**After user responds:**
+
+1. Check if branch exists:
+   ```bash
+   git branch --list {branch_name}
+   ```
+
+2. If branch doesn't exist, create it from main:
+   ```bash
+   git checkout -b {branch_name}
+   git push -u origin {branch_name}  # Optional: ask user if they want to push
+   git checkout main  # Return to main for now
+   ```
+
+3. Store preference in `project-config.yaml`:
+   ```yaml
+   git:
+     development_branch: "{user_choice}"
+   ```
+
+---
+
+### Phase 4: Generate Config and Documents
+
+Always create in `.catalyst/main/`:
+
+| File | Source |
+|------|--------|
+| `project-config.yaml` | User preferences from Phase 3 |
 
 | Document | Greenfield Source | Brownfield Source |
 |----------|-------------------|-------------------|
@@ -67,6 +113,9 @@ Always create all documents in `.catalyst/main/`:
 ---
 
 ## Templates
+
+Located at `.catalyst/main/`:
+- `project-config.yaml` (git and project settings template)
 
 Located at `.catalyst/main/temp/`:
 - `temp-mission.md`
@@ -82,6 +131,7 @@ Located at `.catalyst/main/temp/`:
 
 ```
 .catalyst/main/
+├── project-config.yaml
 ├── mission.md
 ├── roadmap.md
 ├── tech-stack.md
@@ -93,7 +143,12 @@ Located at `.catalyst/main/temp/`:
 ```
 ✅ Project initialized!
 
-Created 6 documents in .catalyst/main/
+Git Setup:
+- Development branch: {branch_name} (created/verified)
+- Feature branches will be: feat/{spec-slug}
+
+Created 7 files in .catalyst/main/
+- project-config.yaml: Git workflow settings
 - Architecture: [summary]
 - Conventions: [count] patterns
 - Concerns: [count] issues
