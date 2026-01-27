@@ -1,18 +1,18 @@
 {
   "name": "catalyst-os",
-  "version": "0.2.2",
+  "version": "0.2.4",
+  "scripts": {
+    "postinstall": "node .catalyst/bin/install.js"
+  },
   "description": "AI-native spec-driven development framework for Claude Code",
   "bin": {
-    "catalyst-os": "bin/install.js"
+    "catalyst-os": ".catalyst/bin/install.js"
   },
   "files": [
-    "bin",
     "AGENTS.md",
     ".claude",
-    ".claude-plugin",
     ".catalyst/standards",
     ".catalyst/spec-structure.yaml",
-    ".catalyst/specs/spec-config.yaml",
     ".catalyst/main/project-config.yaml"
   ],
   "keywords": [

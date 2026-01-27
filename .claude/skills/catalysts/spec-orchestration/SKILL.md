@@ -12,7 +12,7 @@ Coordinate the spec shaping workflow from feature request to documented specific
 
 ## Process
 
-1. **Initialize spec folder** (structure defined in `.catalyst/specs/spec-config.yaml`)
+1. **Initialize spec folder** (structure defined in `.catalyst/spec-structure.yaml`)
    ```
    .catalyst/specs/YYYY-MM-DD-{slug}/
    ├── spec.md        # Main specification (Scribe)

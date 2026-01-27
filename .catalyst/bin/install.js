@@ -131,7 +131,6 @@ function install() {
   // Install config files
   const configs = [
     ['.catalyst/spec-structure.yaml', '.catalyst/spec-structure.yaml'],
-    ['.catalyst/specs/spec-config.yaml', '.catalyst/specs/spec-config.yaml'],
     ['.catalyst/main/project-config.yaml', '.catalyst/main/project-config.yaml']
   ];
 
