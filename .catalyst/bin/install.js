@@ -11,7 +11,7 @@ const dim = '\x1b[2m';
 const reset = '\x1b[0m';
 
 // Get version from package.json
-const pkg = require('../package.json');
+const pkg = require('../../package.json');
 
 const banner = `
 ${cyan}   ██████╗ █████╗ ████████╗ █████╗ ██╗  ██╗   ██╗███████╗████████╗
@@ -90,7 +90,7 @@ function copyFile(src, dest) {
  * Install catalyst-os to current directory
  */
 function install() {
-  const src = path.join(__dirname, '..');
+  const src = path.join(__dirname, '../..');
   const cwd = process.cwd();
 
   console.log(`  Installing to ${cyan}${cwd}${reset}\n`);
