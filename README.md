@@ -10,6 +10,7 @@
 /catalyze-project              # Initialize project foundation
 /catalyze-spec "description"   # Shape a feature specification
 /build-spec @spec-name         # Implement with TDD
+/iterate-spec @spec-name "improvement"  # Add improvements mid-build
 /validate-spec @spec-name      # Run quality checks
 /approve-spec @spec-name       # Accept and archive
 ```
@@ -32,19 +33,14 @@ Your project keeps its own `CLAUDE.md` — Catalyst OS lives entirely within the
 
 ```
 .claude/
-├── commands/           # User-invoked slash commands
-└── skills/             # Model-invoked capabilities (HOW)
-    ├── catalysts/      # Orchestration skills
-    ├── seekers/        # Research skills
-    ├── technologists/  # Builder skills
-    └── guardians/      # Quality skills
-
-.catalyst/
 ├── agents/             # Agent definitions (WHO)
 │   ├── catalysts/      # Orchestrators
 │   ├── seekers/        # Research agents
 │   ├── technologists/  # Builder agents
 │   └── guardians/      # Quality agents
+└── commands/           # User-invoked slash commands
+
+.catalyst/
 ├── main/               # Mission, roadmap, tech-stack
 ├── specs/              # Active specifications
 ├── tasks/              # Independent task files
@@ -62,21 +58,36 @@ Your project keeps its own `CLAUDE.md` — Catalyst OS lives entirely within the
 
 | Component | Contains | Location |
 |-----------|----------|----------|
-| **Agent** | WHO - Persona, behavior | `.catalyst/agents/` |
-| **Skill** | HOW - Process, procedure | `.claude/skills/` |
-| **Command** | WHEN - User trigger | `.claude/commands/` |
+| **Agent** | WHO - Persona, behavior | `.claude/agents/` |
+| **Command** | WHEN - User trigger, orchestration | `.claude/commands/` |
 
-### 1 Agent → N Skills
+### Agent Specialization
 
 ```
-Seer agent
-├── codebase-analysis skill
-└── context7-lookup skill
+Catalysts (Orchestrators)
+├── Catalyst      → Spec orchestration
+├── Forge-Master  → Build orchestration
+└── Arbiter       → Validation orchestration
 
-Scout agent
-├── web-research skill
-├── github-research skill
-└── reddit-research skill
+Seekers (Research)
+├── Oracle   → Requirements gathering
+├── Seer     → Codebase analysis
+├── Scout    → Web research
+├── Surveyor → UI/UX research
+└── Scribe   → Documentation
+
+Technologists (Builders)
+├── Forger     → Task breakdown
+├── Alchemist  → Database
+├── Smith      → Backend
+├── Shaper     → Frontend
+└── Necromancer → ML/AI
+
+Guardians (Quality)
+├── Enforcer   → Unit tests
+├── Sentinel   → E2E tests
+├── Inquisitor → Code review
+└── Watcher    → Security
 ```
 
 ---
@@ -101,6 +112,21 @@ Scout agent
   │  spec.md     │     │  tasks.md    │     │ validation.md│     │   Commit +   │
   │  research.md │     │  (updated)   │     │  handoff.md  │     │   Archive    │
   └──────────────┘     └──────────────┘     └──────────────┘     └──────────────┘
+                              │
+                              ▼
+                       ┌──────────────┐
+                       │  🔄 ITERATE  │ ◀─── New idea during build?
+                       │              │
+                       │ /iterate-    │      Updates spec + tasks
+                       │    spec      │      Continues building
+                       └──────────────┘
+
+  ┌─────────────────────────────────────────────────────────────────────────────┐
+  │  💡 CONTEXT RECOVERY                                                        │
+  │                                                                             │
+  │  Context full? New conversation?                                            │
+  │  Run /primer-spec @slug to restore awareness before continuing.             │
+  └─────────────────────────────────────────────────────────────────────────────┘
 ```
 
 ---
@@ -171,27 +197,27 @@ Scout agent
 └─────────────────────────────────────────────────────────────────────────────┘
 ```
 
-### Agent Skills
+### Agent Capabilities
 
-| Order | Agent | Skills |
-|-------|-------|--------|
-| **CATALYSTS** | Catalyst | `spec-orchestration` |
-| | Forge-Master | `build-orchestration` |
-| | Arbiter | `validation-orchestration` |
-| **SEEKERS** | Oracle | `requirement-elicitation` |
-| | Scribe | `documentation-management` |
-| | Seer | `codebase-analysis`, `context7-lookup` |
-| | Scout | `web-research`, `github-research`, `reddit-research` |
-| | Surveyor | `figma-analysis`, `ui-pattern-hunting` |
-| **TECHNOLOGISTS** | Forger | `task-breakdown` |
-| | Smith | `api-development`, `service-implementation` |
-| | Shaper | `react-development`, `ui-component-building` |
-| | Alchemist | `schema-design`, `migration-creation` |
-| | Necromancer | `ml-pipeline`, `ai-integration` |
-| **GUARDIANS** | Enforcer | `unit-test-writing`, `test-fixture-creation` |
-| | Sentinel | `e2e-test-execution`, `browser-automation` |
-| | Inquisitor | `lint-checking`, `code-review` |
-| | Watcher | `dependency-audit`, `secret-scanning` |
+| Order | Agent | Responsibility |
+|-------|-------|----------------|
+| **CATALYSTS** | Catalyst | Spec orchestration, spawns Seekers |
+| | Forge-Master | Build orchestration, spawns Technologists |
+| | Arbiter | Validation orchestration, spawns Guardians |
+| **SEEKERS** | Oracle | Gather requirements from user |
+| | Scribe | Write and manage documentation |
+| | Seer | Analyze codebase patterns |
+| | Scout | Research web, GitHub, Reddit |
+| | Surveyor | Research UI/UX patterns |
+| **TECHNOLOGISTS** | Forger | Break down specs into tasks |
+| | Smith | Implement backend/API code |
+| | Shaper | Implement frontend/UI code |
+| | Alchemist | Design schemas, create migrations |
+| | Necromancer | Implement ML/AI features |
+| **GUARDIANS** | Enforcer | Write and run unit tests |
+| | Sentinel | Run E2E tests |
+| | Inquisitor | Code review, linting |
+| | Watcher | Security audit, dependency scan |
 
 ---
 
@@ -202,12 +228,14 @@ Scout agent
 | `/catalyze-project` | Start new project | mission.md, roadmap.md, tech-stack.md |
 | `/catalyze-spec "feature"` | New feature request | spec.md, research.md |
 | `/build-spec @slug` | Implement feature | tasks.md (updated) |
+| `/iterate-spec @slug "idea"` | Add improvements mid-build | Updated spec + tasks, continues building |
+| `/primer-spec @slug` | Restore context (new conversation) | Brief status summary |
 | `/build-task "description"` | Modify existing code | task.md in .catalyst/tasks/ |
 | `/validate-spec @slug` | Quality checks | validation.md, handoff.md |
 | `/approve-spec @slug` | Finalize | Commit + Archive |
 | `/reject-spec @slug "reason"` | Reject implementation | Status: REJECTED |
 | `/status-spec @slug` | Check progress | Current status |
-| `/update-spec @slug` | Modify spec | Updated spec.md |
+| `/update-spec @slug "change"` | Modify spec (planning phase) | Updated spec.md |
 | `/mission` | Create/update mission.md | mission.md |
 | `/roadmap` | Create/update roadmap.md | roadmap.md |
 | `/tech-stack` | Create/update tech-stack.md | tech-stack.md |
@@ -390,24 +418,21 @@ What this agent does.
 - Guidelines
 - Constraints
 
-## Skills
-| Skill | Purpose |
-|-------|---------|
-| `skill-name` | Description |
+## Capabilities
+What this agent can do.
 ```
 
-### Skill File
+### Command File
 
-```yaml
----
-name: skill-name
-description: When to use this skill...
-agent: agent-name
----
+```markdown
+# /command-name
 
-# Skill Name
+Description of what this command does.
 
-## Process
+## Usage
+/command-name @spec-slug "optional args"
+
+## Workflow
 1. Step one
 2. Step two
 
