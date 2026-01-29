@@ -245,9 +245,7 @@ TDD Compliance: FAILED
 Action: Run /build-spec @2025-11-29-stripe-integration
         Follow TDD process (tests BEFORE code)
         Then re-run /validate-spec
-```
-
-### Validation Failure
+```### Validation Failure
 ```
 Validation failed!Spec: 2025-11-29-stripe-integrationFailed Checks:
 - E2E Tests: 2 failures
