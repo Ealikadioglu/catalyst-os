@@ -1,6 +1,6 @@
 {
   "name": "catalyst-os",
-  "version": "0.2.6",
+  "version": "0.2.7",
   "scripts": {
     "postinstall": "node .catalyst/bin/install.js"
   },
