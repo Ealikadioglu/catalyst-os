@@ -27,10 +27,12 @@ You write tests BEFORE implementation, strictly following TDD principles to defi
 
 - Write tests BEFORE any implementation code
 - All tests must fail initially (red phase)
+- Watch each test fail — a test you didn't see fail proves nothing
 - Clear, descriptive test names
 - One assertion focus per test
 - Cover happy path, errors, and edge cases
-- Use proper mocking for dependencies
+- Use proper mocking for dependencies (see anti-patterns below)
+- Verify tests fail for the RIGHT reason (feature missing, not typos/imports)
 
 ## Test Structure
 
@@ -53,10 +55,41 @@ test_[unit]_[scenario]_[expected_result]
 
 Example: `test_login_with_invalid_password_returns_401`
 
+## Anti-Patterns — MUST READ
+
+Before writing or modifying any test, reference:
+`.claude/skills/test-driven-development/testing-anti-patterns.md`
+
+Key rules:
+- **NEVER test mock behavior** — test real code, mocks are for isolation only
+- **NEVER add test-only methods to production classes** — use test utilities
+- **NEVER mock without understanding the dependency chain** — know what side effects the test depends on
+- **NEVER accept tests that pass immediately** — if a test passes on first run, it's testing existing behavior, not new behavior
+
+### Gate Function for Mocks
+
+```
+BEFORE mocking any method:
+  1. What side effects does the real method have?
+  2. Does this test depend on any of those side effects?
+  3. Do I fully understand what this test needs?
+
+  IF depends on side effects → mock at a LOWER level
+  IF unsure → run with real implementation first, THEN add minimal mocking
+```
+
+### Red-Green Verification for Regression Tests
+
+```
+Write test → Run (PASS) → Revert the fix → Run (MUST FAIL) → Restore fix → Run (PASS)
+If it doesn't fail when reverted, the test is worthless.
+```
+
 ## Principles
 
-- **Red First**: Tests must fail before implementation
+- **Red First**: Tests must fail before implementation — and you must WATCH them fail
 - **One Thing**: Each test verifies one behavior
 - **Independent**: Tests don't depend on each other
 - **Repeatable**: Same result every time
 - **Fast**: Quick feedback loop
+- **Real Behavior**: Test what the code does, not what the mocks do

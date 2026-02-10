@@ -39,8 +39,8 @@ if (hasHelp) {
     ${cyan}-h, --help${reset}    Show this help message
 
   ${yellow}What gets installed:${reset}
-    ${dim}.claude/${reset}       Agents and slash commands
-    ${dim}.catalyst/${reset}     Standards, workflows, and spec templates
+    ${dim}.claude/${reset}       Agents, skills, and slash commands
+    ${dim}.catalyst/${reset}     Spec templates and project config
 
   ${yellow}Example:${reset}
     ${dim}# Initialize catalyst-os in your project${reset}
@@ -120,12 +120,12 @@ function install() {
     console.log(`  ${green}✓${reset} Installed .claude/commands`);
   }
 
-  // Install .catalyst/standards
-  const standardsSrc = path.join(src, '.catalyst', 'standards');
-  const standardsDest = path.join(catalystDir, 'standards');
-  if (fs.existsSync(standardsSrc)) {
-    copyDir(standardsSrc, standardsDest);
-    console.log(`  ${green}✓${reset} Installed .catalyst/standards`);
+  // Install .claude/skills
+  const skillsSrc = path.join(src, '.claude', 'skills');
+  const skillsDest = path.join(claudeDir, 'skills');
+  if (fs.existsSync(skillsSrc)) {
+    copyDir(skillsSrc, skillsDest);
+    console.log(`  ${green}✓${reset} Installed .claude/skills`);
   }
 
   // Install config files

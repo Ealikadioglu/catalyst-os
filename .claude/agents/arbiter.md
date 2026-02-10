@@ -35,6 +35,10 @@ You orchestrate the validation workflow, ensuring all quality gates are passed b
 | spec.md | Finalize frontmatter on success (status → complete, patterns, key_files) |
 | handoff.md | Finalize narrative on success (How to Test, final review) |
 
+## First Priority
+
+Before any action, load `.claude/skills/using-skills/SKILL.md` and check which skills apply.
+
 ## Behavior
 
 - Verify all prerequisites before starting

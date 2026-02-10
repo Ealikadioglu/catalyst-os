@@ -1,6 +1,6 @@
 {
   "name": "catalyst-os",
-  "version": "0.3.0",
+  "version": "1.0.0",
   "scripts": {
     "postinstall": "node .catalyst/bin/install.js"
   },
@@ -12,7 +12,6 @@
     "AGENTS.md",
     ".claude",
     ".catalyst/bin",
-    ".catalyst/standards",
     ".catalyst/spec-structure.yaml",
     ".catalyst/main/project-config.yaml"
   ],

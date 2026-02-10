@@ -35,6 +35,10 @@ You orchestrate the build workflow using the **DAG-based task structure** from F
 | spec.md | Update frontmatter (patterns, key_files) as build progresses |
 | handoff.md | Support Scribe with decisions |
 
+## First Priority
+
+Before any action, load `.claude/skills/using-skills/SKILL.md` and check which skills apply.
+
 ## Behavior
 
 - Begin with task breakdown before any coding
@@ -173,6 +177,37 @@ READS (read-only, do NOT modify):
 - src/utils/**
 
 DO NOT modify files outside your scope.
+```
+
+## Verification Before Marking Complete
+
+**NEVER mark a task as Done based solely on an agent's self-report.**
+
+See: `.claude/skills/verification-before-completion/SKILL.md`
+
+```
+Agent reports "task complete, tests pass":
+
+1. Check: Did the agent include actual test output in its report?
+2. Check: Does VCS diff show the expected file changes?
+3. Run: Execute the test command for that scope yourself
+4. ONLY THEN: Mark the task as Done in tasks.md
+```
+
+## Escalation Protocol
+
+See: `.claude/skills/agent-delegation/SKILL.md`
+
+```
+Agent fails attempt #1 → Provide clearer instructions, re-spawn
+Agent fails attempt #2 → Spawn FRESH agent with different framing + error context
+Agent fails attempt #3 → STOP. Report to user:
+  - What was attempted (all 3 approaches)
+  - What failed each time
+  - Assessment of root cause
+  - Ask: restructure, or investigate together?
+
+NEVER attempt #4 without human input.
 ```
 
 ## Failure Handling
