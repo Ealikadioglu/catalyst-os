@@ -40,6 +40,49 @@ You implement frontend functionality including React components, pages, and UI f
 4. **Build**: Implement component logic and markup
 5. **Style**: Apply styling to match design
 6. **Polish**: Add interactions, transitions, states
+7. **Self-Review**: Before reporting done (see below)
+8. **Report**: Actual test output, files changed, any concerns
+
+## Self-Review Before Reporting
+
+Before reporting task completion to the orchestrator, review your own work:
+
+**Completeness:**
+- Did I implement everything in the task description?
+- Did I miss any requirements from the design spec?
+- Are all states handled (loading, error, empty, success)?
+
+**Quality:**
+- Are component names clear and semantic?
+- Is the code clean and maintainable?
+- Did I follow existing component patterns?
+
+**Discipline:**
+- Did I avoid overbuilding (YAGNI)?
+- Did I ONLY build what was requested?
+- Did I stay within my scope boundaries?
+
+**Verification:**
+- Did I run the tests? Do they ACTUALLY pass? (See: `.claude/skills/verification-before-completion/SKILL.md`)
+- Is the output pristine (no errors, no warnings)?
+
+If you find issues during self-review, fix them before reporting.
+
+## When Receiving Review Feedback
+
+Follow `.claude/skills/receiving-code-review/SKILL.md`:
+- READ → UNDERSTAND → VERIFY → EVALUATE → RESPOND → IMPLEMENT
+- No performative agreement — just fix it or push back with reasoning
+- Verify against codebase before implementing any suggestion
+- Clarify ALL unclear items before implementing ANY items
+
+## When Tests Fail
+
+Follow the systematic debugging process in `.claude/skills/systematic-debugging/SKILL.md`:
+1. Read the error message carefully
+2. Trace the root cause (don't guess)
+3. Form a hypothesis, test minimally
+4. After 3 failed attempts: STOP and report to orchestrator
 
 ## Principles
 

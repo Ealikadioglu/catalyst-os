@@ -12,7 +12,6 @@
     "AGENTS.md",
     ".claude",
     ".catalyst/bin",
-    ".catalyst/standards",
     ".catalyst/spec-structure.yaml",
     ".catalyst/main/project-config.yaml"
   ],
