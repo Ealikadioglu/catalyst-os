@@ -7,12 +7,13 @@
 ## Quick Start
 
 ```bash
-/catalyze-project              # Initialize project foundation
-/catalyze-spec "description"   # Shape a feature specification
-/build-spec @spec-name         # Implement with TDD
-/iterate-spec @spec-name "improvement"  # Add improvements mid-build
-/validate-spec @spec-name      # Run quality checks
-/approve-spec @spec-name       # Accept and archive
+npx catalyst-os                        # Install to your project
+/catalyze-project                      # Initialize project foundation
+/catalyze-spec "description"           # Shape a feature specification
+/build-spec @spec-name                 # Implement with TDD
+/iterate-spec @spec-name "improvement" # Add improvements mid-build
+/validate-spec @spec-name              # Run quality checks
+/approve-spec @spec-name               # Accept and archive
 ```
 
 ---
@@ -23,9 +24,9 @@
 npx catalyst-os
 ```
 
-This installs `.claude/` and `.catalyst/` folders to your project root.
+This installs `.claude/` (agents, skills, commands) to your project root.
 
-Your project keeps its own `CLAUDE.md` — Catalyst OS lives entirely within these two folders.
+Then run `/catalyze-project` to initialize — this detects your workspace type, generates foundation docs, and bootstraps `CLAUDE.md` with the skill enforcement directive.
 
 ---
 
@@ -33,33 +34,86 @@ Your project keeps its own `CLAUDE.md` — Catalyst OS lives entirely within the
 
 ```
 .claude/
-├── agents/             # Agent definitions (WHO)
-│   ├── catalysts/      # Orchestrators
-│   ├── seekers/        # Research agents
-│   ├── technologists/  # Builder agents
-│   └── guardians/      # Quality agents
-└── commands/           # User-invoked slash commands
+├── agents/              # WHO - Agent personas and behavior
+├── skills/              # HOW - Process knowledge and workflows
+│   ├── using-skills/    # Bootstrap: enforces skill loading
+│   ├── brainstorming/
+│   ├── test-driven-development/
+│   ├── systematic-debugging/
+│   ├── verification-before-completion/
+│   ├── agent-delegation/
+│   ├── receiving-code-review/
+│   ├── workspace-detection/
+│   ├── spec-shaping/
+│   ├── build-orchestration/
+│   ├── spec-iteration/
+│   ├── spec-validation/
+│   ├── spec-approval/
+│   ├── project-initialization/
+│   ├── task-building/
+│   └── spec-update/
+└── commands/            # WHEN - Thin triggers (invoke skills)
 
 .catalyst/
-├── main/               # Mission, roadmap, tech-stack
-├── specs/              # Active specifications
-├── tasks/              # Independent task files
-├── completed/          # Archived specs
-├── library/            # Reusable patterns
-├── workflows/          # Visual workflow documentation
-└── standards/          # Coding standards
+├── main/                # Mission, roadmap, tech-stack, project-config
+├── specs/               # Active specifications
+├── completed/           # Archived specs
+└── library/             # Reusable patterns
 ```
 
 ---
 
-## Core Concepts
+## Three-Layer Separation
 
-### Separation of Concerns
+| Layer | Contains | Location | Role |
+|-------|----------|----------|------|
+| **Command** | WHEN - User trigger | `.claude/commands/` | Thin wrapper (16-18 lines) |
+| **Skill** | HOW - Process knowledge | `.claude/skills/` | Rich workflow logic |
+| **Agent** | WHO - Persona + behavior | `.claude/agents/` | Specialized executor |
 
-| Component | Contains | Location |
-|-----------|----------|----------|
-| **Agent** | WHO - Persona, behavior | `.claude/agents/` |
-| **Command** | WHEN - User trigger, orchestration | `.claude/commands/` |
+Commands invoke skills. Skills define process. Agents execute within skill boundaries.
+
+### Skill Enforcement
+
+`CLAUDE.md` bootstraps the system by loading `using-skills` at conversation start. This skill contains the full index and the hard rule:
+
+> **If there is even a 1% chance a skill applies, you MUST load it.**
+
+Without this, skills are optional documentation. With it, they're mandatory process gates.
+
+---
+
+## Skills
+
+### Process Skills (cross-cutting)
+
+| Skill | Purpose |
+|-------|---------|
+| `using-skills` | Bootstrap — enforces all other skill loading |
+| `brainstorming` | One-question-at-a-time requirement gathering |
+| `test-driven-development` | Red-Green-Refactor with mandatory test failure verification |
+| `systematic-debugging` | Root cause investigation before fixes |
+| `verification-before-completion` | Evidence before completion claims |
+| `agent-delegation` | Orchestrators never implement, verify agent claims |
+| `receiving-code-review` | Technical evaluation over performative agreement |
+| `workspace-detection` | Detect single_repo, monorepo, or multirepo structure |
+
+### Orchestration Skills (workflow-specific)
+
+| Skill | Command | Purpose |
+|-------|---------|---------|
+| `spec-shaping` | `/catalyze-spec` | Shape feature requests into specifications |
+| `build-orchestration` | `/build-spec` | DAG-based TDD implementation |
+| `spec-iteration` | `/iterate-spec` | Update and continue mid-build |
+| `spec-validation` | `/validate-spec` | Quality checks via Guardian agents |
+| `spec-approval` | `/approve-spec` | Final verification and archival |
+| `project-initialization` | `/catalyze-project` | Workspace detection + foundation docs |
+| `task-building` | `/build-task` | Single task (brownfield) |
+| `spec-update` | `/update-spec` | Modify spec during planning phase |
+
+---
+
+## The Four Orders
 
 ### Agent Specialization
 
@@ -90,113 +144,6 @@ Guardians (Quality)
 └── Watcher    → Security
 ```
 
----
-
-## Complete Lifecycle
-
-```
-┌─────────────────────────────────────────────────────────────────────────────┐
-│                         CATALYST OS LIFECYCLE                               │
-└─────────────────────────────────────────────────────────────────────────────┘
-
-  ┌──────────────┐     ┌──────────────┐     ┌──────────────┐     ┌──────────────┐
-  │              │     │              │     │              │     │              │
-  │ 🔍 CATALYZE  │────▶│   🔨 BUILD   │────▶│  ✓ VALIDATE  │────▶│  ✅ APPROVE  │
-  │              │     │              │     │              │     │              │
-  │ /catalyze-   │     │ /build-spec  │     │ /validate-   │     │ /approve-    │
-  │    spec      │     │              │     │    spec      │     │    spec      │
-  └──────────────┘     └──────────────┘     └──────────────┘     └──────────────┘
-         │                    │                    │                    │
-         ▼                    ▼                    ▼                    ▼
-  ┌──────────────┐     ┌──────────────┐     ┌──────────────┐     ┌──────────────┐
-  │  spec.md     │     │  tasks.md    │     │ validation.md│     │   Commit +   │
-  │  research.md │     │  (updated)   │     │  handoff.md  │     │   Archive    │
-  └──────────────┘     └──────────────┘     └──────────────┘     └──────────────┘
-                              │
-                              ▼
-                       ┌──────────────┐
-                       │  🔄 ITERATE  │ ◀─── New idea during build?
-                       │              │
-                       │ /iterate-    │      Updates spec + tasks
-                       │    spec      │      Continues building
-                       └──────────────┘
-
-  ┌─────────────────────────────────────────────────────────────────────────────┐
-  │  💡 CONTEXT RECOVERY                                                        │
-  │                                                                             │
-  │  Context full? New conversation?                                            │
-  │  Run /primer-spec @slug to restore awareness before continuing.             │
-  └─────────────────────────────────────────────────────────────────────────────┘
-```
-
----
-
-## The Four Orders
-
-### Agent Registry
-
-```
-┌─────────────────────────────────────────────────────────────────────────────┐
-│                              AGENT REGISTRY                                 │
-└─────────────────────────────────────────────────────────────────────────────┘
-
-┌─────────────────────────────────────────────────────────────────────────────┐
-│  🎯 CATALYSTS (Orchestrators)                                               │
-│  ─────────────────────────────                                              │
-│                                                                             │
-│  ┌─────────────┐   ┌─────────────┐   ┌─────────────┐                        │
-│  │  Catalyst   │   │Forge-Master │   │   Arbiter   │                        │
-│  │   (Opus)    │   │   (Opus)    │   │   (Opus)    │                        │
-│  │             │   │             │   │             │                        │
-│  │ Spec        │   │ Build       │   │ Validation  │                        │
-│  │ orchestr.   │   │ orchestr.   │   │ orchestr.   │                        │
-│  └─────────────┘   └─────────────┘   └─────────────┘                        │
-│                                                                             │
-└─────────────────────────────────────────────────────────────────────────────┘
-
-┌─────────────────────────────────────────────────────────────────────────────┐
-│  🔍 SEEKERS (Research)                                                      │
-│  ─────────────────────                                                      │
-│                                                                             │
-│  ┌─────────┐ ┌─────────┐ ┌─────────┐ ┌─────────┐ ┌─────────┐               │
-│  │ Oracle  │ │  Seer   │ │  Scout  │ │Surveyor │ │ Scribe  │               │
-│  │(Sonnet) │ │(Sonnet) │ │(Sonnet) │ │(Sonnet) │ │(Sonnet) │               │
-│  │         │ │         │ │         │ │         │ │         │               │
-│  │Require- │ │Codebase │ │  Web    │ │   UI    │ │  Docs   │               │
-│  │ments    │ │Analysis │ │Research │ │Research │ │         │               │
-│  └─────────┘ └─────────┘ └─────────┘ └─────────┘ └─────────┘               │
-│                                                                             │
-└─────────────────────────────────────────────────────────────────────────────┘
-
-┌─────────────────────────────────────────────────────────────────────────────┐
-│  🔨 TECHNOLOGISTS (Builders)                                                │
-│  ───────────────────────────                                                │
-│                                                                             │
-│  ┌─────────┐ ┌─────────┐ ┌─────────┐ ┌─────────┐ ┌───────────┐             │
-│  │ Forger  │ │Alchemist│ │  Smith  │ │ Shaper  │ │Necromancer│             │
-│  │ (Opus)  │ │ (Opus)  │ │ (Opus)  │ │ (Opus)  │ │  (Opus)   │             │
-│  │         │ │         │ │         │ │         │ │           │             │
-│  │  Task   │ │Database │ │Backend  │ │Frontend │ │   ML/AI   │             │
-│  │Breakdown│ │         │ │         │ │         │ │           │             │
-│  └─────────┘ └─────────┘ └─────────┘ └─────────┘ └───────────┘             │
-│                                                                             │
-└─────────────────────────────────────────────────────────────────────────────┘
-
-┌─────────────────────────────────────────────────────────────────────────────┐
-│  🛡️ GUARDIANS (Quality)                                                     │
-│  ──────────────────────                                                     │
-│                                                                             │
-│  ┌──────────┐ ┌──────────┐ ┌──────────┐ ┌──────────┐                        │
-│  │ Enforcer │ │ Sentinel │ │Inquisitor│ │ Watcher  │                        │
-│  │ (Sonnet) │ │ (Sonnet) │ │ (Sonnet) │ │ (Sonnet) │                        │
-│  │          │ │          │ │          │ │          │                        │
-│  │  Unit    │ │   E2E    │ │  Code    │ │ Security │                        │
-│  │  Tests   │ │  Tests   │ │ Quality  │ │  Audit   │                        │
-│  └──────────┘ └──────────┘ └──────────┘ └──────────┘                        │
-│                                                                             │
-└─────────────────────────────────────────────────────────────────────────────┘
-```
-
 ### Agent Capabilities
 
 | Order | Agent | Responsibility |
@@ -218,6 +165,37 @@ Guardians (Quality)
 | | Sentinel | Run E2E tests |
 | | Inquisitor | Code review, linting |
 | | Watcher | Security audit, dependency scan |
+
+---
+
+## Complete Lifecycle
+
+```
+  ┌──────────────┐     ┌──────────────┐     ┌──────────────┐     ┌──────────────┐
+  │              │     │              │     │              │     │              │
+  │   CATALYZE   │────>│    BUILD     │────>│   VALIDATE   │────>│   APPROVE    │
+  │              │     │              │     │              │     │              │
+  │ /catalyze-   │     │ /build-spec  │     │ /validate-   │     │ /approve-    │
+  │    spec      │     │              │     │    spec      │     │    spec      │
+  └──────────────┘     └──────────────┘     └──────────────┘     └──────────────┘
+         │                    │                    │                    │
+         v                    v                    v                    v
+  ┌──────────────┐     ┌──────────────┐     ┌──────────────┐     ┌──────────────┐
+  │  spec.md     │     │  tasks.md    │     │ validation.md│     │   Commit +   │
+  │  research.md │     │  (updated)   │     │  handoff.md  │     │   Archive    │
+  └──────────────┘     └──────────────┘     └──────────────┘     └──────────────┘
+                              │
+                              v
+                       ┌──────────────┐
+                       │   ITERATE    │ <--- New idea during build?
+                       │              │
+                       │ /iterate-    │      Updates spec + tasks
+                       │    spec      │      Continues building
+                       └──────────────┘
+
+  Context full? New conversation?
+  Run /primer-spec @slug to restore awareness before continuing.
+```
 
 ---
 
@@ -246,12 +224,12 @@ Guardians (Quality)
 
 ```
 .catalyst/specs/YYYY-MM-DD-{slug}/
-├── spec.md           ← Requirements (Scribe owns)
-├── research.md       ← Research findings (Scribe compiles)
-├── tasks.md          ← Task breakdown (Forger owns)
-├── validation.md     ← Test results (Arbiter owns)
-├── handoff.md        ← Living documentation (Scribe owns)
-└── assets/           ← Images, diagrams, mockups
+├── spec.md           <- Requirements (Scribe owns)
+├── research.md       <- Research findings (Scribe compiles)
+├── tasks.md          <- Task breakdown + progress (Forger owns)
+├── validation.md     <- Test results (Arbiter owns)
+├── handoff.md        <- Human-readable summary (Scribe owns)
+└── assets/           <- Images, diagrams, mockups
 ```
 
 ---
@@ -259,207 +237,76 @@ Guardians (Quality)
 ## TDD Enforcement
 
 ```
-╔═══════════════════════════════════════════════════════════════════════════╗
-║                                                                           ║
-║   ⚠️  TDD IS MANDATORY - NO EXCEPTIONS                                    ║
-║                                                                           ║
-║   ┌─────────────────────────────────────────────────────────────────────┐ ║
-║   │                                                                     │ ║
-║   │   1. FORGER creates tasks.md                                        │ ║
-║   │          │                                                          │ ║
-║   │          ▼                                                          │ ║
-║   │   2. ENFORCER writes ALL tests                                      │ ║
-║   │          │                                                          │ ║
-║   │          ▼                                                          │ ║
-║   │   ┌──────────────────────────────────────────┐                      │ ║
-║   │   │  🚧 GATE 1: RED PHASE                    │                      │ ║
-║   │   │  All tests must FAIL                     │                      │ ║
-║   │   │  If any pass → STOP                      │                      │ ║
-║   │   └──────────────────────────────────────────┘                      │ ║
-║   │          │                                                          │ ║
-║   │          ▼ (only after gate passes)                                 │ ║
-║   │   3. BUILDERS implement (Alchemist, Smith, Shaper)                  │ ║
-║   │          │                                                          │ ║
-║   │          ▼                                                          │ ║
-║   │   ┌──────────────────────────────────────────┐                      │ ║
-║   │   │  🚧 GATE 2: GREEN PHASE                  │                      │ ║
-║   │   │  All tests must PASS                     │                      │ ║
-║   │   └──────────────────────────────────────────┘                      │ ║
-║   │                                                                     │ ║
-║   └─────────────────────────────────────────────────────────────────────┘ ║
-║                                                                           ║
-╚═══════════════════════════════════════════════════════════════════════════╝
+  1. FORGER creates tasks.md
+         │
+         v
+  2. ENFORCER writes ALL tests
+         │
+         v
+  ┌──────────────────────────────────────────┐
+  │  GATE 1: RED PHASE                       │
+  │  All tests must FAIL                     │
+  │  If any pass -> STOP                     │
+  └──────────────────────────────────────────┘
+         │
+         v (only after gate passes)
+  3. BUILDERS implement (Alchemist, Smith, Shaper)
+         │
+         v
+  ┌──────────────────────────────────────────┐
+  │  GATE 2: GREEN PHASE                     │
+  │  All tests must PASS                     │
+  └──────────────────────────────────────────┘
 ```
+
+---
+
+## Workspace Support
+
+Catalyst OS detects and adapts to your workspace structure:
+
+| Type | Detection | Example |
+|------|-----------|---------|
+| **Single Repo** | `.git/` in CWD, no workspace config | Standard project |
+| **Monorepo** | `.git/` + pnpm-workspace.yaml / turbo.json / etc. | apps/ + packages/ |
+| **Multirepo** | No `.git/` in CWD, subdirs have `.git/` | Workspace with 3 repos |
+
+Detected during `/catalyze-project` and stored in `project-config.yaml`. Affects scoping, branching, and build strategy.
 
 ---
 
 ## Parallelization Rules
 
 ```
-┌─────────────────────────────────────────────────────────────────────────────┐
-│  ⚡ PARALLEL EXECUTION RULES                                                │
-└─────────────────────────────────────────────────────────────────────────────┘
+PARALLELIZE (No Dependencies)
+──────────────────────────────
+Research phase  │ Seer + Scout + Surveyor
+Build phase     │ Smith + Shaper (backend + frontend)
+Validation      │ Enforcer + Sentinel + Inquisitor + Watcher
 
-✅ PARALLELIZE THESE (No Dependencies)
-───────────────────────────────────────
-┌───────────────────┬────────────────────────────────────────┐
-│ Scenario          │ Run Together                           │
-├───────────────────┼────────────────────────────────────────┤
-│ Research phase    │ Seer + Scout + Surveyor                │
-│ Build phase       │ Smith + Shaper (backend + frontend)    │
-│ Validation phase  │ Enforcer + Sentinel + Inquisitor +     │
-│                   │ Watcher                                │
-└───────────────────┴────────────────────────────────────────┘
-
-❌ RUN SEQUENTIALLY (Has Dependencies)
-───────────────────────────────────────
-┌───────────────────┬──────────────┬─────────────────────────┐
-│ First             │ Then         │ Why                     │
-├───────────────────┼──────────────┼─────────────────────────┤
-│ Oracle            │ All research │ Need requirements first │
-│ Forger            │ All builders │ Need task breakdown     │
-│ Alchemist         │ Smith        │ DB schema before API    │
-│ Enforcer          │ Builders     │ TDD: tests before code  │
-└───────────────────┴──────────────┴─────────────────────────┘
-
-
-EXAMPLE: Research Phase
-─────────────────────────
-
-  WRONG (Sequential):
-  Oracle → Seer → Scout → Surveyor → Scribe
-
-  CORRECT (Parallel where possible):
-  Oracle → [Seer + Scout + Surveyor] → Scribe
-              ▲         ▲         ▲
-              └─────────┴─────────┘
-                  (parallel)
-
-
-EXAMPLE: Build Phase
-──────────────────────
-
-  WRONG (Sequential):
-  Alchemist → Smith → Shaper
-
-  CORRECT (Parallel where possible):
-                  ┌── Smith ──┐
-  Alchemist ──────┤           ├──▶ Done
-      (DB)        └── Shaper ─┘
-                    (parallel)
+RUN SEQUENTIALLY (Has Dependencies)
+────────────────────────────────────
+Oracle     -> All research  │ Need requirements first
+Forger     -> All builders  │ Need task breakdown
+Alchemist  -> Smith         │ DB schema before API
+Enforcer   -> Builders      │ TDD: tests before code
 ```
 
 ---
 
 ## Pattern Library
 
-Reusable implementation patterns extracted from completed specs.
+Reusable implementation patterns extracted from completed specs via `/approve-spec`.
 
 **Location:** `.catalyst/library/`
 
-### How It Works
-
-1. When a spec is approved via `/approve-spec`, you're prompted to extract reusable patterns
-2. **Not every spec becomes a library item** — project-specific implementations are skipped
-3. Browse library items before starting new features for guidance
-
-### Library Item Format
-
-```markdown
-# Pattern Name
-
-> Category: <category>
-> Complexity: Low | Medium | High
-> Last Updated: YYYY-MM-DD
-> Based on: N implementations
-
-## Overview
-## When to Use
-## Key Considerations
-## Architecture Pattern
-## Common Pitfalls
-## Dependencies
-## Testing Strategy
-## Database Considerations
-## Related Specs
-```
-
-### Categories
-
-| Category | Description |
-|----------|-------------|
-| Payments | Stripe, billing, subscriptions |
-| Authentication | OAuth, SSO, JWT, login flows |
-| File Storage | S3, uploads, media handling |
-| Real-time | WebSockets, live updates |
-| Notifications | Email, push, SMS |
-| Search | Full-text search, Elasticsearch |
-| Caching | Redis, performance optimization |
-| Background Jobs | Queues, workers, async processing |
-
----
-
-## File Formats
-
-### Agent File
-
-```markdown
-# Agent Name
-
-*Role Title*
-
-## Opening
-*"Opening line"*
-
-## Role
-What this agent does.
-
-## Behavior
-- Guidelines
-- Constraints
-
-## Capabilities
-What this agent can do.
-```
-
-### Command File
-
-```markdown
-# /command-name
-
-Description of what this command does.
-
-## Usage
-/command-name @spec-slug "optional args"
-
-## Workflow
-1. Step one
-2. Step two
-
-## Output
-What this produces
-```
-
----
-
-## Standards
-
-Project standards in `.catalyst/standards/`:
-- `coding.md` - Code style and conventions
-- `testing.md` - Test requirements (TDD mandatory)
-- `git-workflow.md` - Branch and commit conventions
-
----
-
-## Workflow Documentation
-
-Detailed visual workflow guides are available in `.catalyst/workflows/`:
-
-| File | Command |
-|------|---------|
-| [catalyze-project.md](.catalyst/workflows/catalyze-project.md) | `/catalyze-project` |
-| [catalyze-spec.md](.catalyst/workflows/catalyze-spec.md) | `/catalyze-spec` |
-| [build-spec.md](.catalyst/workflows/build-spec.md) | `/build-spec` |
-| [build-task.md](.catalyst/workflows/build-task.md) | `/build-task` |
-| [validate-spec.md](.catalyst/workflows/validate-spec.md) | `/validate-spec` |
-| [approve-spec.md](.catalyst/workflows/approve-spec.md) | `/approve-spec` |
+| Category | Keywords |
+|----------|----------|
+| Payments | stripe, billing, subscription |
+| Authentication | oauth, sso, jwt, login |
+| File Storage | s3, upload, media |
+| Real-time | websocket, live updates |
+| Notifications | email, push, sms |
+| Search | elasticsearch, fulltext |
+| Caching | redis, performance |
+| Background Jobs | queue, worker, cron |
