@@ -90,6 +90,40 @@ Scribe will compile this into `research.md`.
 | Known issues | `concerns.md` |
 | Fragile areas | `concerns.md` → Fragile Areas |
 
+## Database Schema Reality Check
+
+**CRITICAL**: When the feature touches database operations (CRUD, queries, joins, migrations), do NOT trust column names found in application code. Code uses aliases, joins, computed fields, and abstractions that obscure the real schema.
+
+### Mandatory Steps for Data-Touching Features:
+
+1. **Query the actual schema** — use the project's database tool (Supabase MCP, `prisma db pull`, `information_schema`, etc.) to get real table definitions
+2. **Document actual column names, types, and constraints** — not what the code *calls* them, but what the database *has*
+3. **Trace joins and relationships** — if code references `contact.company_name`, find whether that's a direct column or a join through a foreign key
+4. **Map code abstractions to real schema** — document the mapping between application-level field names and actual database columns
+5. **Verify API request/response schemas** — check what fields endpoints actually accept and persist vs. what the spec assumes
+
+### Output Format (add to your analysis):
+
+```
+### Database Schema (Verified)
+Tables touched: [list]
+
+| Table | Column | Type | Nullable | Notes |
+|-------|--------|------|----------|-------|
+| contacts | primary_email | varchar | no | Code refers to this as "email" |
+| companies | company_name | varchar | no | Accessed via contacts.company_id join |
+
+### Code-to-Schema Mapping
+- `contact.company_name` → JOIN companies ON contacts.company_id = companies.id → companies.company_name
+- `contact.email` → contacts.primary_email
+
+### API Endpoint Gaps
+- POST /campaigns/update-basic-info accepts: [actual fields from request schema]
+- Fields NOT persisted by endpoint: [list any that are accepted but ignored]
+```
+
+**Why this matters**: Every spec gap in past projects came from trusting code abstractions over the actual database. Wrong column names, missing endpoint fields, and broken integration paths all stem from skipping this step.
+
 ## Analysis Areas
 
 1. **Structure**: Project organization, module boundaries
@@ -97,6 +131,7 @@ Scribe will compile this into `research.md`.
 3. **Conventions**: Naming, formatting, code style
 4. **Dependencies**: Libraries, frameworks, integrations
 5. **Data Flow**: How data moves through the system
+6. **Data Schema**: Actual database structure for data-touching features (see Database Schema Reality Check above)
 
 ## Output
 

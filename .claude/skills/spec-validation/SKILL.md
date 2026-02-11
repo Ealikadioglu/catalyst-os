@@ -86,6 +86,14 @@ Spawn all Guardians in parallel:
 - Secret scanning
 - Input validation checks
 
+**Alchemist** (Schema Integrity — only for specs touching database):
+- Query actual database schema for all tables the spec touches
+- Verify column names in spec/code match real database columns
+- Verify all foreign keys and constraints exist in the actual DB
+- Verify API endpoints persist all fields the spec expects (end-to-end trace)
+- Verify any SQL functions/stored procedures the feature depends on actually exist
+- Check for missing sequences, triggers, or DB-level defaults the feature assumes
+
 ### Phase 5: Compile Results (Arbiter)
 
 Create `validation.md` with results from all Guardians.
@@ -125,6 +133,12 @@ If all validation passes, create handoff.md with:
 - Dependencies: status
 - Secrets: status
 - Inputs: status
+
+### Schema Integrity (Alchemist) — if spec touches database
+- Column names match: status
+- Constraints verified: status
+- API end-to-end trace: status
+- DB functions/sequences: status
 
 ## Overall Status: PASS/FAIL
 

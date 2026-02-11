@@ -117,19 +117,25 @@ Spawn Forger → creates `tasks.md` with Build DAG including phases, scope bound
 
 Spawn Enforcer → writes failing tests for ALL tasks. Run tests to confirm all FAIL.
 
-### GATE 1: Red Phase Verification
+### GATE 1: Red Phase Verification — BLOCKING
 
-```bash
-# Run all tests — they MUST fail
-# Expected: Tests: 0 passed, N failed
+```
+THIS IS A HARD GATE. DO NOT PROCEED UNTIL ALL 3 STEPS COMPLETE:
+
+  1. RUN all tests → confirm every test FAILS
+  2. If ANY test passes → STOP and fix before continuing
+  3. COMMIT the failing tests → this is the checkpoint
+
+COMMIT: "test({scope}): write failing tests for {spec}"
+
+Only AFTER this commit exists may implementation begin.
+No commit = no implementation. No exceptions.
 ```
 
 - Every task has at least one test
 - All tests executed
-- All tests FAIL
-- If ANY test passes → STOP and investigate
-
-**Commit:** `test({scope}): write failing tests for {spec}`
+- All tests FAIL (for the right reasons — missing feature, not import errors)
+- Commit is the proof that red phase happened
 
 ### Phase 3-4: Foundation & Contracts
 
@@ -146,14 +152,19 @@ Each agent prompt includes:
 - Test references
 ```
 
-### GATE 2: Green Phase Verification
+### GATE 2: Green Phase Verification — BLOCKING
 
-```bash
-# Run all tests — they MUST pass
-# Expected: Tests: N passed, 0 failed
 ```
+THIS IS A HARD GATE. DO NOT PROCEED UNTIL ALL 3 STEPS COMPLETE:
 
-**Commit:** `feat({scope}): implement {spec}`
+  1. RUN all tests → confirm every test PASSES
+  2. If ANY test fails → fix before continuing
+  3. COMMIT the implementation → this is the checkpoint
+
+COMMIT: "feat({scope}): implement {spec}"
+
+Only AFTER this commit exists may integration begin.
+```
 
 ### Phase 6: Integration
 

@@ -42,6 +42,7 @@ Before any action, load `.claude/skills/using-skills/SKILL.md` and check which s
 
 1. **Understand**: Ask clarifying questions to understand the feature request
 2. **Research**: Gather context from codebase, documentation, and external sources
+   - **If the feature touches database operations**: Instruct Seer to run the "Database Schema Reality Check" (see seer.md). Seer must query the actual database — not just read code files — and document real column names, types, join paths, and API endpoint schemas. Past spec failures all traced to trusting code abstractions over the real schema.
 3. **Synthesize**: Combine findings into coherent requirements
 4. **Document**: Create a structured specification with acceptance criteria
 5. **Validate**: Confirm understanding with the user

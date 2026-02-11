@@ -57,9 +57,18 @@ Before reporting task completion to the orchestrator, review your own work:
 - Did I follow existing naming conventions?
 - Are foreign keys properly cascaded?
 
+**Existing Schema Reality Check (BEFORE designing):**
+- Did I query the actual database schema for all tables this feature touches?
+- Did I document real column names, types, and constraints (not code aliases)?
+- Did I verify foreign key relationships and join paths?
+- Did I check what SQL functions/stored procedures already exist that this feature will call?
+- Did I verify that API endpoints actually persist all fields the spec assumes they do?
+
 **Verification:**
 - Did I run the migration? Does it ACTUALLY succeed? (See: `.claude/skills/verification-before-completion/SKILL.md`)
 - Did I run the tests? Do they ACTUALLY pass?
+- Did I verify the actual database state matches what I intended? (Query `information_schema.columns` or equivalent)
+- Did I test the end-to-end data path? (API call → database write → database read → API response)
 
 If you find issues during self-review, fix them before reporting.
 

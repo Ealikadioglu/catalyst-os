@@ -114,11 +114,23 @@ Spawn: Forger
 Wait: tasks.md with Build DAG created
 ```
 
-### 2. Test Writing (Sequential)
+### 2. Test Writing (Sequential) — RED PHASE
 ```
 Spawn: Enforcer
 Input: All tasks from DAG
-Wait: All tests written and FAILING (Red Phase)
+Wait: All tests written and FAILING
+```
+
+### HARD GATE: Red Phase Commit
+```
+BLOCKING — DO NOT PROCEED WITHOUT THIS:
+
+  1. Run ALL tests → every test must FAIL
+  2. If any test passes → STOP, fix the test
+  3. COMMIT: "test({scope}): write failing tests for {spec}"
+
+This commit is PROOF that red phase happened.
+No commit = no implementation. No exceptions.
 ```
 
 ### 3. Foundation Phase (Sequential)
@@ -151,7 +163,18 @@ for task in parallel_tasks:
 # Spawn ALL ready tasks in ONE message
 Spawn: smith-1, smith-2, shaper-1, shaper-2, shaper-3 (parallel)
 Wait: ALL parallel tasks complete
-Gate: All parallel tests PASS
+```
+
+### HARD GATE: Green Phase Commit
+```
+BLOCKING — DO NOT PROCEED WITHOUT THIS:
+
+  1. Run ALL tests → every test must PASS
+  2. If any test fails → fix before continuing
+  3. COMMIT: "feat({scope}): implement {spec}"
+
+This commit is PROOF that green phase happened.
+No commit = no integration. No exceptions.
 ```
 
 ### 6. Integration Phase (Sequential)
