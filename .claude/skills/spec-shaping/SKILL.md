@@ -173,5 +173,9 @@ REMINDER: /build-spec follows strict TDD
   3. Then implement (Builders)
   4. Tests must PASS (green phase)
 
-Next: Run /build-spec @YYYY-MM-DD-{slug} to implement.
+Next steps:
+- /build-spec @YYYY-MM-DD-{slug} to start TDD build
+- Or /iterate-spec if you want changes first
 ```
+
+**IMPORTANT: Do NOT suggest `/approve-spec` after spec shaping.** `/approve-spec` is only for accepting a fully built and validated implementation — it is the FINAL step, not a plan-approval step. The correct flow is: `/catalyze-spec` → `/build-spec` → `/validate-spec` → `/approve-spec`.

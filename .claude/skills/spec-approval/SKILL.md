@@ -12,10 +12,16 @@ Final verification, git commit, spec archival, self-documentation (propagate lea
 - `verification-before-completion` — Final TDD compliance check
 - `agent-delegation` — Scribe delegation for library extraction
 
-## Prerequisites
+## Prerequisites — HARD GATES
 
-- Validation must be complete
-- `validation.md` must show all checks passed
+> **This skill is the FINAL step in the spec lifecycle.** It runs ONLY after build and validation are complete.
+> **Flow:** `/catalyze-spec` → `/build-spec` → `/validate-spec` → **`/approve-spec`** (you are here)
+>
+> If the spec has not been built yet, STOP and tell the user to run `/build-spec` first.
+> If the spec has not been validated yet, STOP and tell the user to run `/validate-spec` first.
+
+- `/build-spec` must have been completed (tasks.md exists with completed tasks)
+- Validation must be complete (`validation.md` must show all checks passed)
 - `handoff.md` must exist
 - TDD compliance verified
 
