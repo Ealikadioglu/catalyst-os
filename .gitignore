@@ -1,2 +1,5 @@
 # Temporary spec files
 .catalyst/specs/*/*.tmp
+
+# Worktree directories (local working directories, not committed)
+.catalyst/worktrees/

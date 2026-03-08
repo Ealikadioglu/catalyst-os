@@ -85,6 +85,32 @@ Write test → Run (PASS) → Revert the fix → Run (MUST FAIL) → Restore fix
 If it doesn't fail when reverted, the test is worthless.
 ```
 
+## MANDATORY: Update tasks.md on Completion
+
+**After completing your test-writing or integration task, you MUST update tasks.md BEFORE reporting back.**
+
+The orchestrator may lose context or the conversation may end before it updates. If you don't do this, your work looks like it never happened.
+
+### How to Update
+
+1. **Find tasks.md**: Read `.catalyst/specs/*/tasks.md` (the spec you're working on)
+2. **Update the Progress table**: Change your task's status from `⚡ Active` to `✓ Done`
+3. **Update Current Session**: Note what's next based on the DAG
+
+### Example
+
+Before:
+```
+| integration | ⚡ Active | enforcer | Pending | Running E2E tests |
+```
+
+After:
+```
+| integration | ✓ Done | enforcer | ✓ Pass | All integration tests passing |
+```
+
+**If you skip this step, `/primer-spec` will show the spec as not started and all your progress is invisible.**
+
 ## Principles
 
 - **Red First**: Tests must fail before implementation — and you must WATCH them fail

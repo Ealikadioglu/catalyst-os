@@ -194,19 +194,22 @@ Note: Git commits are made during /build-spec (RED FLAG and GREEN FLAG commits).
 │  Note: Commits were made during /build-spec workflow.           │
 │  This phase verifies the expected state exists.                 │
 │                                                                 │
-│  1. Verify current branch:                                      │
-│     $ git branch --show-current                                 │
-│                                                                 │
-│     Expected: feat/{spec-slug}                                  │
-│     (e.g., feat/2026-01-11-supabase-auth)                       │
+│  1. Detect worktree or branch mode:                              │
+│     IF .catalyst/worktrees/{spec-slug} exists:                   │
+│       cd into worktree (worktree mode)                           │
+│     ELSE:                                                        │
+│       Verify current branch:                                     │
+│       $ git branch --show-current                                │
+│       Expected: feat/{spec-slug}                                 │
+│       (e.g., feat/2026-01-11-supabase-auth)                      │
 │                                                                 │
 │     ┌──────────────────────────────────────────────────────┐    │
-│     │  ❌ IF ON WRONG BRANCH                               │    │
+│     │  ❌ IF NEITHER WORKTREE NOR CORRECT BRANCH           │    │
 │     │                                                      │    │
 │     │  "Expected branch feat/{spec-slug} but found {x}"    │    │
 │     │  "Did /build-spec complete successfully?"            │    │
 │     │                                                      │    │
-│     │  Action: Return to /build-spec                       │    │
+│     │  Action: Return to /build-spec or /build-spec-worktree│   │
 │     └──────────────────────────────────────────────────────┘    │
 │                                                                 │
 │  2. Verify commits exist:                                       │
@@ -277,6 +280,10 @@ Note: Git commits are made during /build-spec (RED FLAG and GREEN FLAG commits).
 │  3. Commit the archive:                                         │
 │     $ git add .                                                 │
 │     $ git commit -m "chore: archive {spec-slug}"                │
+│                                                                 │
+│  4. IF in worktree (.catalyst/worktrees/{spec-slug} exists):    │
+│     $ cd <repo-root>                                            │
+│     $ git worktree remove .catalyst/worktrees/{spec-slug}       │
 │                                                                 │
 └─────────────────────────────────────────────────────────────────┘
 ```

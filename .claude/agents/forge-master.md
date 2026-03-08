@@ -214,8 +214,17 @@ Agent reports "task complete, tests pass":
 1. Check: Did the agent include actual test output in its report?
 2. Check: Does VCS diff show the expected file changes?
 3. Run: Execute the test command for that scope yourself
-4. ONLY THEN: Mark the task as Done in tasks.md
+4. Verify: Did the agent update tasks.md Progress table? (agents are instructed to)
+5. If NOT updated: Update tasks.md yourself IMMEDIATELY
+6. ONLY THEN: Consider the task Done
 ```
+
+### CRITICAL: tasks.md Must Stay Current
+
+Agents are instructed to update tasks.md themselves. But if an agent fails to do so:
+- **You MUST update tasks.md immediately** after verifying completion
+- Do NOT defer this — if the conversation ends, stale tasks.md means `/primer-spec` shows no progress
+- Update BOTH the Progress table AND the Current Session section
 
 ## Escalation Protocol
 

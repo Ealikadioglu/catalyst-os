@@ -68,9 +68,11 @@ Phase 5: Implement (Smith/Shaper/Alchemist)
 
 ### Phase 0: Verify State
 
-1. Verify on feature branch: `git branch --show-current`
-2. Read existing spec.md and tasks.md
-3. If NOT on feature branch: ask user to checkout or run `/build-spec`
+1. Check if `.catalyst/worktrees/{spec-slug}` exists
+   - IF exists: `cd` into it (worktree mode)
+2. ELSE: Verify on feature branch: `git branch --show-current`
+3. Read existing spec.md and tasks.md
+4. If neither worktree nor feature branch: ask user to run `/build-spec` or `/build-spec-worktree`
 
 ### Phase 1: Clarify (Oracle — Optional)
 
@@ -116,7 +118,7 @@ Spawn appropriate agents (Smith/Shaper/Alchemist) based on task types. Parallel 
 
 | Failure | Action |
 |---------|--------|
-| Not on feature branch | Checkout or run `/build-spec` first |
+| Not on feature branch | Checkout, run `/build-spec`, or `/build-spec-worktree` first |
 | Spec not found | Run `/catalyze-spec` first |
 | tasks.md missing | Run `/build-spec` first |
 | Improvement conflicts with existing | Spawn Oracle to discuss options |

@@ -1,7 +1,7 @@
 # Build Orchestration
 
 > **When to invoke:** When implementing a specification using strict TDD.
-> **Invoked by:** `/build-spec` command.
+> **Invoked by:** `/build-spec` or `/build-spec-worktree` command.
 > **Orchestrator:** Forge-Master agent.
 
 ## Purpose
@@ -38,8 +38,14 @@ Orchestrate the full build workflow: task breakdown, test writing, foundation, c
 ```
 PHASE 0: Setup
 ├── Read .catalyst/main/project-config.yaml
-├── Checkout to development_branch (default: main)
-└── Create branch: {branch_prefix}/{spec-slug}
+├── IF --worktree flag:
+│   ├── mkdir -p {worktree_path}
+│   ├── git worktree add {worktree_path}/{spec-slug} -b {branch_prefix}/{spec-slug} {development_branch}
+│   ├── cd {worktree_path}/{spec-slug}
+│   └── Record worktree path in spec's handoff.md
+├── ELSE (default):
+│   ├── Checkout to development_branch (default: main)
+│   └── Create branch: {branch_prefix}/{spec-slug}
 
 GATE 1: RED FLAG
 └── Commit: "test({scope}): write failing tests for {spec}"
@@ -105,9 +111,15 @@ Phase 6: Integration (Enforcer — cross-boundary tests)
 
 ### Phase 0: Git Setup
 
-1. Read `project-config.yaml` for `development_branch` and `branch_prefix`
-2. Checkout development branch and pull
-3. Create spec feature branch: `{branch_prefix}/{spec-slug}`
+1. Read `project-config.yaml` for `development_branch`, `branch_prefix`, and `worktree_path`
+2. IF `--worktree` flag (from `/build-spec-worktree`):
+   - `mkdir -p {worktree_path}` (default: `.catalyst/worktrees`)
+   - `git worktree add {worktree_path}/{spec-slug} -b {branch_prefix}/{spec-slug} {development_branch}`
+   - `cd {worktree_path}/{spec-slug}` — all subsequent work happens here
+   - Record `worktree: {worktree_path}/{spec-slug}` in the spec's `handoff.md`
+3. ELSE (default — branch checkout):
+   - Checkout development branch and pull
+   - Create spec feature branch: `{branch_prefix}/{spec-slug}`
 
 ### Phase 1: Task Breakdown (Forger)
 
@@ -179,12 +191,19 @@ FOR EACH TASK:
 3. Run test → must PASS
 4. Refactor if needed
 5. Run test → must still PASS
-6. Update tasks.md Progress
+6. Update tasks.md Progress — THE AGENT DOING THE WORK MUST DO THIS
 
 NEVER write code without a failing test first
 NEVER write more code than needed to pass the test
 NEVER modify files outside your SCOPE
+NEVER report done without updating tasks.md first
 ```
+
+### tasks.md Update Responsibility
+
+**Every agent (smith, shaper, alchemist, enforcer) MUST update tasks.md before reporting back.**
+The orchestrator (forge-master) verifies and fills gaps, but agents are the primary updaters.
+This ensures `/primer-spec` always reflects actual progress, even if the orchestrator loses context.
 
 ## Failure Modes
 
