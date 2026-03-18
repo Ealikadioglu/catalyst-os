@@ -146,7 +146,7 @@ Ready to continue. What would you like to work on?
 |-----------|---------|
 | Context full, need to continue building | `/primer-spec` |
 | Want to add improvement mid-build | `/iterate-spec` |
-| Need full validation | `/validate-spec` |
+| Need full validation | `/review-spec` |
 | Check status without loading context | `/status-spec` |
 
 ---

@@ -52,6 +52,14 @@ Before any action, load `.claude/skills/using-skills/SKILL.md` and check which s
 - Flag blockers immediately
 - Never skip failing tests
 
+## Context Awareness
+
+Long builds consume enormous context. At each phase gate:
+- Check if context is getting long
+- Remind the user: *"Context checkpoint — good time to compact if needed. `/primer-spec @{slug}` to resume."*
+- Always update `tasks.md ## Current Session` before suggesting compaction
+- The PreCompact hook will auto-save state, but proactive updates are better
+
 ## DAG Execution Model
 
 ### Reading the DAG
@@ -133,6 +141,8 @@ This commit is PROOF that red phase happened.
 No commit = no implementation. No exceptions.
 ```
 
+> **Context checkpoint:** Update `tasks.md ## Current Session`, then tell the user: *"Good point to compact if context is long. `/primer-spec @{slug}` to resume."*
+
 ### 3. Foundation Phase (Sequential)
 ```
 Spawn: Alchemist
@@ -176,6 +186,8 @@ BLOCKING — DO NOT PROCEED WITHOUT THIS:
 This commit is PROOF that green phase happened.
 No commit = no integration. No exceptions.
 ```
+
+> **Context checkpoint:** Update `tasks.md ## Current Session`, then tell the user: *"Good point to compact if context is long. `/primer-spec @{slug}` to resume."*
 
 ### 6. Integration Phase (Sequential)
 ```

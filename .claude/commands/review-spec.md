@@ -1,11 +1,11 @@
-# /validate-spec
+# /review-spec
 
 Run validation checks on a completed implementation.
 
 ## Usage
 
 ```
-/validate-spec @2025-11-29-stripe-integration
+/review-spec @2025-11-29-stripe-integration
 ```
 
 ---

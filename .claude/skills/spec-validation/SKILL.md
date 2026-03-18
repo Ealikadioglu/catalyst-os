@@ -1,7 +1,7 @@
 # Spec Validation
 
 > **When to invoke:** When running validation checks on a completed implementation.
-> **Invoked by:** `/validate-spec` command.
+> **Invoked by:** `/review-spec` command.
 > **Orchestrator:** Arbiter agent.
 
 ## Purpose
@@ -153,7 +153,7 @@ If all validation passes, create handoff.md with:
 ```
 Validation complete!
 Status: READY FOR APPROVAL
-Next: /approve-spec @slug
+Next: /commit-spec @slug
 ```
 
 ### TDD Failure
@@ -167,5 +167,5 @@ Action: Return to /build-spec and follow TDD process
 ```
 Validation failed!
 Failed Checks: [details]
-Action: Fix issues and re-run /validate-spec
+Action: Fix issues and re-run /review-spec
 ```

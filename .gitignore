@@ -1,5 +1,8 @@
 # Temporary spec files
 .catalyst/specs/*/*.tmp
 
+# Temp folder (research artifacts, screenshots, scratch files)
+.catalyst/_temp-folder/
+
 # Worktree directories (local working directories, not committed)
 .catalyst/worktrees/

@@ -12,8 +12,8 @@ npx catalyst-os                        # Install to your project
 /catalyze-spec "description"           # Shape a feature specification
 /build-spec @spec-name                 # Implement with TDD
 /iterate-spec @spec-name "improvement" # Add improvements mid-build
-/validate-spec @spec-name              # Run quality checks
-/approve-spec @spec-name               # Accept and archive
+/review-spec @spec-name              # Run quality checks
+/commit-spec @spec-name               # Accept and archive
 ```
 
 ---
@@ -105,8 +105,8 @@ Without this, skills are optional documentation. With it, they're mandatory proc
 | `spec-shaping` | `/catalyze-spec` | Shape feature requests into specifications |
 | `build-orchestration` | `/build-spec` | DAG-based TDD implementation |
 | `spec-iteration` | `/iterate-spec` | Update and continue mid-build |
-| `spec-validation` | `/validate-spec` | Quality checks via Guardian agents |
-| `spec-approval` | `/approve-spec` | Final verification and archival |
+| `spec-validation` | `/review-spec` | Quality checks via Guardian agents |
+| `spec-approval` | `/commit-spec` | Final verification and archival |
 | `project-initialization` | `/catalyze-project` | Workspace detection + foundation docs |
 | `task-building` | `/build-task` | Single task (brownfield) |
 | `spec-update` | `/update-spec` | Modify spec during planning phase |
@@ -173,7 +173,7 @@ Guardians (Quality)
 ```
   ┌──────────────┐     ┌──────────────┐     ┌──────────────┐     ┌──────────────┐
   │              │     │              │     │              │     │              │
-  │   CATALYZE   │────>│    BUILD     │────>│   VALIDATE   │────>│   APPROVE    │
+  │   CATALYZE   │────>│    BUILD     │────>│   VALIDATE   │────>│    COMMIT    │
   │              │     │              │     │              │     │              │
   │ /catalyze-   │     │ /build-spec  │     │ /validate-   │     │ /approve-    │
   │    spec      │     │              │     │    spec      │     │    spec      │
@@ -209,9 +209,9 @@ Guardians (Quality)
 | `/iterate-spec @slug "idea"` | Add improvements mid-build | Updated spec + tasks, continues building |
 | `/primer-spec @slug` | Restore context (new conversation) | Brief status summary |
 | `/build-task "description"` | Modify existing code | task.md in .catalyst/tasks/ |
-| `/validate-spec @slug` | Quality checks | validation.md, handoff.md |
-| `/approve-spec @slug` | Finalize | Commit + Archive |
-| `/reject-spec @slug "reason"` | Reject implementation | Status: REJECTED |
+| `/review-spec @slug` | Quality checks | validation.md, handoff.md |
+| `/commit-spec @slug` | Finalize | Commit + Archive |
+| `/discard-spec @slug "reason"` | Discard implementation | Status: REJECTED |
 | `/status-spec @slug` | Check progress | Current status |
 | `/update-spec @slug "change"` | Modify spec (planning phase) | Updated spec.md |
 | `/mission` | Create/update mission.md | mission.md |
@@ -296,7 +296,7 @@ Enforcer   -> Builders      │ TDD: tests before code
 
 ## Pattern Library
 
-Reusable implementation patterns extracted from completed specs via `/approve-spec`.
+Reusable implementation patterns extracted from completed specs via `/commit-spec`.
 
 **Location:** `.catalyst/library/`
 

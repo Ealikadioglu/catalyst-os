@@ -35,7 +35,7 @@ files:
   handoff.md:
     owner: scribe
     purpose: Human-readable summary (colleague walkthrough)
-    created: build-spec (started), validate-spec (finalized)
+    created: build-spec (started), review-spec (finalized)
     updated_by: [scribe, arbiter]
     pattern: narrative
     note: |
@@ -45,7 +45,7 @@ files:
   validation.md:
     owner: arbiter
     purpose: Test results, quality checks
-    created: validate-spec
+    created: review-spec
     updated_by: [arbiter, enforcer, sentinel, inquisitor, watcher]
 
   assets/:
@@ -289,7 +289,7 @@ build_dag:
 library:
   root: "library/"
   description: "Reusable patterns extracted from completed specs"
-  created_by: "/approve-spec (optional)"
+  created_by: "/commit-spec (optional)"
 
   # Auto-detect patterns by keywords
   pattern_detection:
@@ -316,4 +316,4 @@ library:
 
 completed:
   location: "completed/"
-  description: "Specs moved here after /approve-spec"
+  description: "Specs moved here after /commit-spec"

@@ -425,7 +425,7 @@ Scope Violations: 0
 
 Updated: .catalyst/specs/2026-01-11-supabase-auth/tasks.md
 
-➡️  Next: Run /validate-spec @2026-01-11-supabase-auth
+➡️  Next: Run /review-spec @2026-01-11-supabase-auth
 ```
 
 ---

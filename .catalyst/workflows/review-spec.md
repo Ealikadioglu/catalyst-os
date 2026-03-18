@@ -1,4 +1,4 @@
-# /validate-spec Workflow
+# /review-spec Workflow
 
 > Run validation checks on a completed implementation.
 
@@ -7,7 +7,7 @@
 ## Quick Reference
 
 ```
-Command:      /validate-spec @2026-01-11-supabase-auth
+Command:      /review-spec @2026-01-11-supabase-auth
 Orchestrator: Arbiter (Opus)
 Agents:       [Enforcer + Sentinel + Inquisitor + Watcher] (parallel)
 Output:       validation.md, handoff.md
@@ -37,7 +37,7 @@ Output:       validation.md, handoff.md
 
 ```
 ┌─────────────────────────────────────────────────────────────────────────────┐
-│                    /validate-spec @2026-01-11-supabase-auth                 │
+│                    /review-spec @2026-01-11-supabase-auth                 │
 └─────────────────────────────────────────────────────────────────────────────┘
                                        │
                                        ▼
@@ -322,8 +322,8 @@ Created:
 └── .catalyst/specs/2026-01-11-supabase-auth/handoff.md
 
 ➡️  Next: Review handoff.md and run:
-         /approve-spec @2026-01-11-supabase-auth
-    Or:  /reject-spec @2026-01-11-supabase-auth "reason"
+         /commit-spec @2026-01-11-supabase-auth
+    Or:  /discard-spec @2026-01-11-supabase-auth "reason"
 ```
 
 ### TDD Failure
@@ -341,7 +341,7 @@ Status: BLOCKED - RETURN TO BUILD
 
 Action: Run /build-spec @2026-01-11-supabase-auth
         Follow TDD process (tests BEFORE code)
-        Then re-run /validate-spec
+        Then re-run /review-spec
 ```
 
 ### Validation Failure
@@ -357,7 +357,7 @@ Failed Checks:
 
 Created: .catalyst/specs/2026-01-11-supabase-auth/validation.md
 
-Action: Fix issues and re-run /validate-spec
+Action: Fix issues and re-run /review-spec
 ```
 
 ---

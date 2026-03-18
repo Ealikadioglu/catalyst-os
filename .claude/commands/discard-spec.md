@@ -1,13 +1,13 @@
-# /reject-spec
+# /discard-spec
 
 Request changes to the implementation.
 
 ## Usage
 
 ```
-/reject-spec @2025-11-29-stripe-integration "reason"
-/reject-spec @2025-11-29-stripe-integration "UI doesn't match mockup"
-/reject-spec @2025-11-29-stripe-integration "TDD not followed"
+/discard-spec @2025-11-29-stripe-integration "reason"
+/discard-spec @2025-11-29-stripe-integration "UI doesn't match mockup"
+/discard-spec @2025-11-29-stripe-integration "TDD not followed"
 ```
 
 ---
@@ -17,7 +17,7 @@ Request changes to the implementation.
 **If TDD was not followed, this is an automatic rejection reason:**
 
 ```
-/reject-spec @spec-name "TDD not followed - tests written after code"
+/discard-spec @spec-name "TDD not followed - tests written after code"
 ```
 
 This routes directly back to `/build-spec` with instructions to follow TDD.
@@ -55,7 +55,7 @@ Based on rejection reason:
 | Test failures | Enforcer + Builders | `/build-spec` |
 | UI/UX issues | Shaper | `/build-spec` |
 | API issues | Smith | `/build-spec` |
-| Quality issues | Inquisitor | `/validate-spec` |
+| Quality issues | Inquisitor | `/review-spec` |
 | Security issues | Watcher | IMMEDIATE FIX |
 
 ### Phase 3: Update Status
@@ -77,7 +77,7 @@ Update `tasks.md` with action items:
 
 ### Standard Rejection
 ```
-Spec rejected - changes requested
+Spec discarded - changes requested
 
 Spec: 2025-11-29-stripe-integration
 Reason: UI doesn't match mockup
@@ -90,12 +90,12 @@ Changes needed:
 Updated: .catalyst/specs/{slug}/validation.md
 
 Next: Fix issues and run /build-spec @2025-11-29-stripe-integration
-      Then /validate-spec @2025-11-29-stripe-integration
+      Then /review-spec @2025-11-29-stripe-integration
 ```
 
 ### TDD Violation Rejection
 ```
-Spec rejected - TDD VIOLATION
+Spec discarded - TDD VIOLATION
 
 Spec: 2025-11-29-stripe-integration
 Reason: TDD not followed - tests written after code

@@ -234,9 +234,9 @@ VALIDATION STATUS
 
 NEXT STEPS
 ----------
-1. Complete validation: /validate-spec @slug
+1. Complete validation: /review-spec @slug
 2. Review handoff.md when ready
-3. Approve: /approve-spec @slug
+3. Commit: /commit-spec @slug
 ```
 
 ---

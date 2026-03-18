@@ -1,4 +1,4 @@
-# /approve-spec Workflow
+# /commit-spec Workflow
 
 > Accept the implementation and archive the spec.
 
@@ -7,8 +7,8 @@
 ## Quick Reference
 
 ```
-Command:      /approve-spec @2026-01-11-supabase-auth
-              /approve-spec @2026-01-11-supabase-auth "Great work!"
+Command:      /commit-spec @2026-01-11-supabase-auth
+              /commit-spec @2026-01-11-supabase-auth "Great work!"
 Orchestrator: Main Agent
 Agents:       Scribe (for library extraction, optional)
 Output:       Archive to .catalyst/completed/ + Library item (optional)
@@ -40,7 +40,7 @@ Note: Git commits are made during /build-spec (RED FLAG and GREEN FLAG commits).
 
 ```
 ┌─────────────────────────────────────────────────────────────────────────────┐
-│                    /approve-spec @2026-01-11-supabase-auth                  │
+│                    /commit-spec @2026-01-11-supabase-auth                  │
 └─────────────────────────────────────────────────────────────────────────────┘
                                        │
                                        ▼
@@ -178,7 +178,7 @@ Note: Git commits are made during /build-spec (RED FLAG and GREEN FLAG commits).
 │  │  TDD compliance not verified. Cannot approve.            │   │
 │  │                                                          │   │
 │  │  Action: Return to /build-spec and follow TDD process.   │   │
-│  │          Then /validate-spec, then /approve-spec.        │   │
+│  │          Then /review-spec, then /commit-spec.        │   │
 │  └──────────────────────────────────────────────────────────┘   │
 │                                                                 │
 └─────────────────────────────────────────────────────────────────┘

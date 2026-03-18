@@ -44,8 +44,8 @@ Skills tell you HOW. User instructions tell you WHAT.
 | **spec-shaping** | `.claude/skills/spec-shaping/SKILL.md` | `/catalyze-spec` — shaping a new specification |
 | **build-orchestration** | `.claude/skills/build-orchestration/SKILL.md` | `/build-spec` — implementing a specification |
 | **spec-iteration** | `.claude/skills/spec-iteration/SKILL.md` | `/iterate-spec` — updating and continuing a build |
-| **spec-validation** | `.claude/skills/spec-validation/SKILL.md` | `/validate-spec` — quality checks on implementation |
-| **spec-approval** | `.claude/skills/spec-approval/SKILL.md` | `/approve-spec` — final approval and archival |
+| **spec-validation** | `.claude/skills/spec-validation/SKILL.md` | `/review-spec` — quality checks on implementation |
+| **spec-approval** | `.claude/skills/spec-approval/SKILL.md` | `/commit-spec` — final commit and archival |
 | **project-initialization** | `.claude/skills/project-initialization/SKILL.md` | `/catalyze-project` — setting up a new project |
 | **task-building** | `.claude/skills/task-building/SKILL.md` | `/build-task` — building a single task (brownfield) |
 | **spec-update** | `.claude/skills/spec-update/SKILL.md` | `/update-spec` — modifying an existing spec |

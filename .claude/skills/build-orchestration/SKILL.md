@@ -28,7 +28,7 @@ Orchestrate the full build workflow: task breakdown, test writing, foundation, c
 ├── spec.md           # Already exists from /catalyze-spec
 ├── research.md       # Already exists from /catalyze-spec
 ├── tasks.md          # Forger creates (this phase)
-├── validation.md     # Arbiter creates (in /validate-spec)
+├── validation.md     # Arbiter creates (in /review-spec)
 ├── handoff.md        # Updated throughout
 └── assets/
 ```
@@ -144,12 +144,18 @@ Only AFTER this commit exists may implementation begin.
 No commit = no implementation. No exceptions.
 ```
 
+> **Context checkpoint:** If context is getting long, compact now. All state is in `tasks.md`.
+> Run `/primer-spec @{slug}` in a new conversation to resume.
+
 - Every task has at least one test
 - All tests executed
 - All tests FAIL (for the right reasons — missing feature, not import errors)
 - Commit is the proof that red phase happened
 
 ### Phase 3-4: Foundation & Contracts
+
+> **Context checkpoint:** If context is getting long, compact now. All state is in `tasks.md`.
+> Run `/primer-spec @{slug}` in a new conversation to resume.
 
 Spawn Alchemist (foundation) → WAIT → Spawn Smith (contracts) → WAIT
 
@@ -178,7 +184,13 @@ COMMIT: "feat({scope}): implement {spec}"
 Only AFTER this commit exists may integration begin.
 ```
 
+> **Context checkpoint:** If context is getting long, compact now. All state is in `tasks.md`.
+> Run `/primer-spec @{slug}` in a new conversation to resume.
+
 ### Phase 6: Integration
+
+> **Context checkpoint:** If context is getting long, compact now. All state is in `tasks.md`.
+> Run `/primer-spec @{slug}` in a new conversation to resume.
 
 Spawn Enforcer for cross-boundary integration tests.
 

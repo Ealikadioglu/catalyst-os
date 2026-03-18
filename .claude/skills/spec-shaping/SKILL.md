@@ -178,4 +178,4 @@ Next steps:
 - Or /iterate-spec if you want changes first
 ```
 
-**IMPORTANT: Do NOT suggest `/approve-spec` after spec shaping.** `/approve-spec` is only for accepting a fully built and validated implementation — it is the FINAL step, not a plan-approval step. The correct flow is: `/catalyze-spec` → `/build-spec` → `/validate-spec` → `/approve-spec`.
+**IMPORTANT: Do NOT suggest `/commit-spec` after spec shaping.** `/commit-spec` is only for committing a fully built and validated implementation — it is the FINAL step, not a plan-approval step. The correct flow is: `/catalyze-spec` → `/build-spec` → `/review-spec` → `/commit-spec`.

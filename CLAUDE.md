@@ -23,3 +23,7 @@ Active specs live in `.catalyst/specs/YYYY-MM-DD-{slug}/`. Each spec has:
 - `tasks.md` — build DAG and progress tracking
 - `validation.md` — quality check results
 - `handoff.md` — decisions and deviations log
+
+## Rules
+
+Always-on rules in `.claude/rules/` apply to every action.
