@@ -8,6 +8,19 @@ Check the current status of a spec and sync progress with reality.
 /status-spec @2025-11-29-stripe-integration
 ```
 
+## Pre-computed Context
+
+```bash
+# Current git state
+echo "=== BRANCH ===" && git branch --show-current
+echo "=== STATUS ===" && git status --short
+echo "=== DIFF STAT ===" && git diff --stat
+echo "=== RECENT COMMITS ===" && git log --oneline -10
+echo "=== SPEC FILES ===" && ls .catalyst/specs/*$ARGUMENTS*/ 2>/dev/null || echo "No spec found for: $ARGUMENTS"
+echo "=== TASKS.MD ===" && cat .catalyst/specs/*$ARGUMENTS*/tasks.md 2>/dev/null | head -80 || echo "No tasks.md"
+echo "=== SPEC STATUS ===" && head -20 .catalyst/specs/*$ARGUMENTS*/spec.md 2>/dev/null || echo "No spec.md"
+```
+
 ---
 
 ## Purpose
@@ -18,13 +31,15 @@ Resume work on a spec after being away. This command:
 3. Syncs tasks.md with reality
 4. Gives you a clear "where we are" summary
 
+Use the pre-computed context above — do NOT re-run these commands. Only run additional commands if specific details are missing.
+
 ---
 
 ## Workflow
 
 ### Phase 1: Read Spec State
 
-Read all spec files:
+Read all spec files (use pre-computed context first, read full files only if needed):
 - `spec.md` → Feature overview, requirements, status
 - `tasks.md` → Task breakdown, marked progress
 - `research.md` → Context and decisions made
@@ -32,18 +47,11 @@ Read all spec files:
 
 ### Phase 2: Check Git Reality
 
-Run git commands to see actual state:
+Use pre-computed git context. Only run additional commands if needed:
 
 ```bash
-# What files are modified but not committed?
-git status --short
-
-# What's the diff for uncommitted work?
-git diff --stat
-
-# Recent commits related to this spec
+# Additional detail if needed
 git log --oneline -10 --grep="{slug}"
-git log --oneline -10 -- "src/" "lib/" "app/"  # Recent code commits
 ```
 
 ### Phase 3: Reconcile Tasks

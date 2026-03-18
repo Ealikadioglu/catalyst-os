@@ -2,6 +2,20 @@
 
 Quickly load spec context into a fresh conversation.
 
+## Pre-computed Context
+
+```bash
+# Git state
+echo "=== BRANCH ===" && git branch --show-current
+echo "=== STATUS ===" && git status --short
+echo "=== RECENT COMMITS ===" && git log --oneline -5
+
+# Spec files
+echo "=== TASKS.MD ===" && cat .catalyst/specs/*$ARGUMENTS*/tasks.md 2>/dev/null || echo "No tasks.md for: $ARGUMENTS"
+echo "=== SPEC FRONTMATTER ===" && head -30 .catalyst/specs/*$ARGUMENTS*/spec.md 2>/dev/null || echo "No spec.md"
+echo "=== RESEARCH ===" && head -30 .catalyst/specs/*$ARGUMENTS*/research.md 2>/dev/null || echo "No research.md"
+```
+
 ---
 
 ## Purpose
@@ -26,22 +40,18 @@ When you start a new conversation (context was full), use this command to:
 
 ## What To Do
 
-### Step 1: Read Spec Files
+### Step 1: Use Pre-computed Context
 
-Read these files from `.catalyst/specs/{slug}/`:
+The bash blocks above already loaded tasks.md, spec frontmatter, research, and git state. Use this data directly — do NOT re-read these files unless you need more detail beyond what was loaded.
+
+### Step 2: Read Full Files Only If Needed
+
+If the pre-computed context was truncated, read the full file:
 
 ```
-1. spec.md      → What is this feature? Requirements?
-2. tasks.md     → What's done? What's pending? What's in progress?
+1. tasks.md     → What's done? What's pending? What's in progress?
+2. spec.md      → What is this feature? Requirements?
 3. research.md  → (if exists) Any key technical decisions?
-```
-
-### Step 2: Check Git State
-
-```bash
-git branch --show-current    # What branch are we on?
-git status --short           # Any uncommitted changes?
-git log --oneline -3         # Recent commits?
 ```
 
 ### Step 3: Output Brief Summary

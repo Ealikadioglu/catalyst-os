@@ -76,10 +76,13 @@ Spawn all Guardians in parallel:
 - Test user flows
 - Capture screenshots on failure
 
-**Inquisitor** (Code Quality):
+**Inquisitor** (Code Quality + Simplification):
 - Run linters
 - Code review checks
 - Documentation gaps
+- **Code simplification suggestions** (unnecessary abstractions, over-engineering, dead code, verbose patterns)
+- Simplifications must NOT change behavior — only structure
+- Provide before/after snippets for each suggestion
 
 **Watcher** (Security):
 - Dependency audit
@@ -126,8 +129,9 @@ If all validation passes, create handoff.md with:
 - Total: N, Passing: N
 
 ## Quality Checks
-### Lint (Inquisitor)
-- Status: PASS/FAIL, Errors: N, Warnings: N
+### Lint & Simplification (Inquisitor)
+- Lint Status: PASS/FAIL, Errors: N, Warnings: N
+- Simplification Opportunities: N found
 
 ### Security (Watcher)
 - Dependencies: status
