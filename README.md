@@ -140,7 +140,7 @@ Technologists (Builders)
 Guardians (Quality)
 ├── Enforcer   → Unit tests
 ├── Sentinel   → E2E tests
-├── Inquisitor → Code review + simplification
+├── Inquisitor → Code review
 └── Watcher    → Security
 ```
 
@@ -163,7 +163,7 @@ Guardians (Quality)
 | | Necromancer | Implement ML/AI features |
 | **GUARDIANS** | Enforcer | Write and run unit tests |
 | | Sentinel | Run E2E tests |
-| | Inquisitor | Code review, linting, simplification |
+| | Inquisitor | Code review, linting |
 | | Watcher | Security audit, dependency scan |
 
 ---
