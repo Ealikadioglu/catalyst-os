@@ -223,13 +223,13 @@ Created: .catalyst/specs/2026-01-11-supabase-auth/
 [If roadmap was updated:]
 📝 Roadmap updated: .catalyst/main/roadmap.md
 
-⚠️  REMINDER: /build-spec follows strict TDD
+⚠️  REMINDER: /forge-spec follows strict TDD
     1. Tests written FIRST (Enforcer)
     2. Tests must FAIL (red phase)
     3. Then implement (Builders)
     4. Tests must PASS (green phase)
 
-➡️  Next: Run /build-spec @2026-01-11-supabase-auth
+➡️  Next: Run /forge-spec @2026-01-11-supabase-auth
 ```
 
 ---

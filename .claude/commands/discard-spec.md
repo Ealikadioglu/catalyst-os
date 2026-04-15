@@ -20,7 +20,7 @@ Request changes to the implementation.
 /discard-spec @spec-name "TDD not followed - tests written after code"
 ```
 
-This routes directly back to `/build-spec` with instructions to follow TDD.
+This routes directly back to `/forge-spec` with instructions to follow TDD.
 
 ---
 
@@ -50,12 +50,12 @@ Based on rejection reason:
 
 | Issue Type | Route To | Command |
 |------------|----------|---------|
-| **TDD not followed** | Enforcer -> Builders | `/build-spec` (restart) |
-| Missing tests | Enforcer | `/build-spec` |
-| Test failures | Enforcer + Builders | `/build-spec` |
-| UI/UX issues | Shaper | `/build-spec` |
-| API issues | Smith | `/build-spec` |
-| Quality issues | Inquisitor | `/review-spec` |
+| **TDD not followed** | Enforcer -> Builders | `/forge-spec` (restart) |
+| Missing tests | Enforcer | `/forge-spec` |
+| Test failures | Enforcer + Builders | `/forge-spec` |
+| UI/UX issues | Shaper | `/forge-spec` |
+| API issues | Smith | `/forge-spec` |
+| Quality issues | Inquisitor | `/audit-spec` |
 | Security issues | Watcher | IMMEDIATE FIX |
 
 ### Phase 3: Update Status
@@ -89,8 +89,8 @@ Changes needed:
 
 Updated: .catalyst/specs/{slug}/validation.md
 
-Next: Fix issues and run /build-spec @2025-11-29-stripe-integration
-      Then /review-spec @2025-11-29-stripe-integration
+Next: Fix issues and run /forge-spec @2025-11-29-stripe-integration
+      Then /audit-spec @2025-11-29-stripe-integration
 ```
 
 ### TDD Violation Rejection
@@ -108,7 +108,7 @@ Required process:
 3. Builders implement features
 4. Verify all tests PASS (green phase)
 
-Next: Run /build-spec @2025-11-29-stripe-integration
+Next: Run /forge-spec @2025-11-29-stripe-integration
       Follow TDD process strictly.
 ```
 

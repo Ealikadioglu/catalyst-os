@@ -2,7 +2,7 @@
 name: forge-master
 description: >
   PROACTIVELY DELEGATE build orchestration to this agent. MUST BE USED when:
-  - /build-spec command is invoked
+  - /forge-spec command is invoked
   - A specification needs to be implemented
   - TDD workflow needs to be coordinated
 

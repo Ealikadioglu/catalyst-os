@@ -1,4 +1,4 @@
-# Roadmap Template
+# Project Roadmap
 
 ## Current State
 
@@ -16,78 +16,89 @@
 
 ---
 
-## Short-Term Goals (1-3 months)
+## Short-Term (1-3 months)
 
-### Goal 1: [Goal Title]
-
+### SPEC: [Feature Name]
+**Status:** 📋 Planned
 **Objective:** [What we want to achieve]
 
-**Seed Prompt:** 
+**Seed Prompt:**
 ```
-[Prompt to generate spec - /catalyze-spec will use this prompt]
-
-Example: "Build user authentication system. Support email/password and OAuth (Google, GitHub). Use Supabase Auth."
+[Prompt to generate spec]
 ```
 
 **References:**
-- 📁 `./designs/auth-flow.png` <!-- Relative path - internal project file -->
-- 🔗 https://supabase.com/docs/guides/auth <!-- External URL -->
-- 🎨 https://figma.com/file/xxx <!-- Figma design -->
+- 📁 `./designs/feature.png`
+- 🔗 https://docs.example.com
 
 **Priority:** 🔴 Critical / 🟠 High / 🟡 Medium / 🟢 Low
 
 **Dependencies:**
-- [Depends on Goal X]
+- [Depends on X]
+
+**Command:**
+```
+!/catalyze-spec "[seed prompt]"
+```
 
 ---
 
-### Goal 2: [Goal Title]
-
+### SPEC: [Another Feature]
+**Status:** 🚧 IN_PROGRESS
+**Slug:** 2026-01-11-feature-slug
 **Objective:** [What we want to achieve]
 
-**Seed Prompt:** 
+**Command:**
 ```
-[Spec prompt here]
+!/audit-spec @2026-01-11-feature-slug
+```
+
+---
+
+## Medium-Term (3-6 months)
+
+### SPEC: [Feature Name]
+**Status:** 📋 Planned
+**Objective:** [What we want to achieve]
+
+**Seed Prompt:**
+```
+[Prompt to generate spec]
 ```
 
 **References:**
 - 
 
-**Priority:** 
+**Priority:** 🔴 Critical / 🟠 High / 🟡 Medium / 🟢 Low
 
 **Dependencies:**
 - 
+
+**Command:**
+```
+!/catalyze-spec "[seed prompt]"
+```
 
 ---
 
-## Medium-Term Goals (3-6 months)
-
-### Goal 3: [Goal Title]
-
+### SPEC: [Feature Name]
+**Status:** 📝 DRAFT
+**Slug:** 2026-03-15-feature-slug
 **Objective:** [What we want to achieve]
 
-**Seed Prompt:** 
+**Command:**
 ```
-[Spec prompt here]
+!/forge-spec @2026-03-15-feature-slug
 ```
-
-**References:**
-- 
-
-**Priority:** 
-
-**Dependencies:**
-- 
+> Or `!/forge-spec-worktree @2026-03-15-feature-slug` if another spec is in progress.
 
 ---
 
 ## Long-Term Vision (6+ months)
 
-<!-- Big picture goals - not yet ready for specs -->
-
 ### Vision Goals
 
-| Goal | Description | Prerequisite Goals |
+| Goal | Description | Prerequisite Specs |
 |------|-------------|--------------------|
 | | | |
 

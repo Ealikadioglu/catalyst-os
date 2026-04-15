@@ -25,7 +25,7 @@ files:
   tasks.md:
     owner: forger
     purpose: DAG + progress + decisions + session context (THE living doc)
-    created: build-spec
+    created: forge-spec
     updated_by: [forger, forge-master, builders]
     pattern: living
     note: |
@@ -35,7 +35,7 @@ files:
   handoff.md:
     owner: scribe
     purpose: Human-readable summary (colleague walkthrough)
-    created: build-spec (started), review-spec (finalized)
+    created: forge-spec (started), audit-spec (finalized)
     updated_by: [scribe, arbiter]
     pattern: narrative
     note: |
@@ -45,7 +45,7 @@ files:
   validation.md:
     owner: arbiter
     purpose: Test results, quality checks
-    created: review-spec
+    created: audit-spec
     updated_by: [arbiter, enforcer, sentinel, inquisitor, watcher]
 
   assets/:
@@ -289,7 +289,7 @@ build_dag:
 library:
   root: "library/"
   description: "Reusable patterns extracted from completed specs"
-  created_by: "/commit-spec (optional)"
+  created_by: "/seal-spec (optional)"
 
   # Auto-detect patterns by keywords
   pattern_detection:
@@ -316,4 +316,4 @@ library:
 
 completed:
   location: "completed/"
-  description: "Specs moved here after /commit-spec"
+  description: "Specs moved here after /seal-spec"

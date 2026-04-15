@@ -25,7 +25,7 @@ git:
     - "main"
     - "master"
 
-  # Path for git worktrees (relative to repo root, used by /build-spec-worktree)
+  # Path for git worktrees (relative to repo root, used by /forge-spec-worktree)
   worktree_path: ".catalyst/worktrees"
 
   # Commit message templates

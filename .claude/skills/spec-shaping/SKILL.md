@@ -167,15 +167,14 @@ Created: .catalyst/specs/YYYY-MM-DD-{slug}/
 ├── handoff.md   <- Living document
 └── assets/      <- UI references (if any)
 
-REMINDER: /build-spec follows strict TDD
+REMINDER: /forge-spec follows strict TDD
   1. Tests written FIRST (Enforcer)
   2. Tests must FAIL (red phase)
   3. Then implement (Builders)
   4. Tests must PASS (green phase)
 
 Next steps:
-- /build-spec @YYYY-MM-DD-{slug} to start TDD build
-- Or /iterate-spec if you want changes first
+- /forge-spec @YYYY-MM-DD-{slug} to start TDD build
 ```
 
-**IMPORTANT: Do NOT suggest `/commit-spec` after spec shaping.** `/commit-spec` is only for committing a fully built and validated implementation — it is the FINAL step, not a plan-approval step. The correct flow is: `/catalyze-spec` → `/build-spec` → `/review-spec` → `/commit-spec`.
+**IMPORTANT: Do NOT suggest `/seal-spec` after spec shaping.** `/seal-spec` is only for committing a fully built and validated implementation — it is the FINAL step, not a plan-approval step. The correct flow is: `/catalyze-spec` → `/forge-spec` → `/audit-spec` → `/seal-spec`.

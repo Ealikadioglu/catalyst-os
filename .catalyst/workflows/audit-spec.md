@@ -1,4 +1,4 @@
-# /review-spec Workflow
+# /audit-spec Workflow
 
 > Run validation checks on a completed implementation.
 
@@ -7,7 +7,7 @@
 ## Quick Reference
 
 ```
-Command:      /review-spec @2026-01-11-supabase-auth
+Command:      /audit-spec @2026-01-11-supabase-auth
 Orchestrator: Arbiter (Opus)
 Agents:       [Enforcer + Sentinel + Inquisitor + Watcher] (parallel)
 Output:       validation.md, handoff.md
@@ -26,7 +26,7 @@ Output:       validation.md, handoff.md
 ║  2. Verify all tests pass                                                 ║
 ║  3. Verify tests were written before implementation                       ║
 ║                                                                           ║
-║  If TDD was skipped → REJECT and return to /build-spec                    ║
+║  If TDD was skipped → REJECT and return to /forge-spec                    ║
 ║                                                                           ║
 ╚═══════════════════════════════════════════════════════════════════════════╝
 ```
@@ -37,7 +37,7 @@ Output:       validation.md, handoff.md
 
 ```
 ┌─────────────────────────────────────────────────────────────────────────────┐
-│                    /review-spec @2026-01-11-supabase-auth                 │
+│                    /audit-spec @2026-01-11-supabase-auth                 │
 └─────────────────────────────────────────────────────────────────────────────┘
                                        │
                                        ▼
@@ -58,7 +58,7 @@ Output:       validation.md, handoff.md
               ┌──────────────────┐        ┌──────────────────┐
               │ Continue to      │        │ ❌ BLOCKED       │
               │ validation       │        │ Return to        │
-              │                  │        │ /build-spec      │
+              │                  │        │ /forge-spec      │
               └──────────────────┘        └──────────────────┘
                          │
                          ▼
@@ -136,7 +136,7 @@ Output:       validation.md, handoff.md
 │  │  - Tests missing for tasks: T-003, T-005                 │   │
 │  │  - OR tests written after implementation                 │   │
 │  │                                                          │   │
-│  │  Action: Return to /build-spec and follow TDD process    │   │
+│  │  Action: Return to /forge-spec and follow TDD process    │   │
 │  └──────────────────────────────────────────────────────────┘   │
 │                                                                 │
 └─────────────────────────────────────────────────────────────────┘
@@ -322,7 +322,7 @@ Created:
 └── .catalyst/specs/2026-01-11-supabase-auth/handoff.md
 
 ➡️  Next: Review handoff.md and run:
-         /commit-spec @2026-01-11-supabase-auth
+         /seal-spec @2026-01-11-supabase-auth
     Or:  /discard-spec @2026-01-11-supabase-auth "reason"
 ```
 
@@ -339,9 +339,9 @@ TDD Compliance: FAILED
 
 Status: BLOCKED - RETURN TO BUILD
 
-Action: Run /build-spec @2026-01-11-supabase-auth
+Action: Run /forge-spec @2026-01-11-supabase-auth
         Follow TDD process (tests BEFORE code)
-        Then re-run /review-spec
+        Then re-run /audit-spec
 ```
 
 ### Validation Failure
@@ -357,7 +357,7 @@ Failed Checks:
 
 Created: .catalyst/specs/2026-01-11-supabase-auth/validation.md
 
-Action: Fix issues and re-run /review-spec
+Action: Fix issues and re-run /audit-spec
 ```
 
 ---

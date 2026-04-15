@@ -5,7 +5,7 @@
 
 ## Purpose
 
-Update spec documentation (requirements, tasks, research) without continuing to build. Unlike `/iterate-spec`, this STOPS after updating docs.
+Update spec documentation (requirements, tasks, research) without continuing to build.
 
 ## Skills Referenced
 
@@ -79,5 +79,5 @@ Change: {description}
 Updated files: {list}
 Impact: {new/removed requirements and tasks}
 
-Next: Continue with /build-spec or /iterate-spec
+Next: Continue with /forge-spec
 ```

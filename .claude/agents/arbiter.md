@@ -2,7 +2,7 @@
 name: arbiter
 description: >
   PROACTIVELY DELEGATE validation orchestration to this agent. MUST BE USED when:
-  - /review-spec command is invoked
+  - /audit-spec command is invoked
   - Implementation is complete and needs quality checks
   - Production readiness needs to be verified
 

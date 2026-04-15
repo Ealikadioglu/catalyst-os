@@ -42,13 +42,13 @@ Skills tell you HOW. User instructions tell you WHAT.
 | Skill | Path | Load when... |
 |-------|------|-------------|
 | **spec-shaping** | `.claude/skills/spec-shaping/SKILL.md` | `/catalyze-spec` — shaping a new specification |
-| **build-orchestration** | `.claude/skills/build-orchestration/SKILL.md` | `/build-spec` — implementing a specification |
-| **spec-iteration** | `.claude/skills/spec-iteration/SKILL.md` | `/iterate-spec` — updating and continuing a build |
-| **spec-validation** | `.claude/skills/spec-validation/SKILL.md` | `/review-spec` — quality checks on implementation |
-| **spec-approval** | `.claude/skills/spec-approval/SKILL.md` | `/commit-spec` — final commit and archival |
+| **build-orchestration** | `.claude/skills/build-orchestration/SKILL.md` | `/forge-spec` — implementing a specification |
+| **spec-validation** | `.claude/skills/spec-validation/SKILL.md` | `/audit-spec` — quality checks on implementation |
+| **spec-approval** | `.claude/skills/spec-approval/SKILL.md` | `/seal-spec` — final commit and archival |
+| **spec-archival** | `.claude/skills/spec-archival/SKILL.md` | `/archive-spec` — lightweight completion and archival |
 | **project-initialization** | `.claude/skills/project-initialization/SKILL.md` | `/catalyze-project` — setting up a new project |
-| **task-building** | `.claude/skills/task-building/SKILL.md` | `/build-task` — building a single task (brownfield) |
 | **spec-update** | `.claude/skills/spec-update/SKILL.md` | `/update-spec` — modifying an existing spec |
+| **project-sync** | `.claude/skills/project-sync/SKILL.md` | `/sync-project` — batch sync and archive specs |
 
 ---
 

@@ -1,11 +1,15 @@
-# /review-spec
+# /audit-spec
 
 Run validation checks and code simplification on a completed implementation.
+
+> **Lifecycle position:** `/catalyze-spec` → `/forge-spec` → **`/audit-spec`** → `/seal-spec`
+>
+> **Note:** This audits the CODE implementation (quality, security, tests) — not the spec document.
 
 ## Usage
 
 ```
-/review-spec @2025-11-29-stripe-integration
+/audit-spec @2025-11-29-stripe-integration
 ```
 
 ## Pre-computed Context

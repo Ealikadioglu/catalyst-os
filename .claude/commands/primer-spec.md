@@ -155,8 +155,7 @@ Ready to continue. What would you like to work on?
 | Situation | Command |
 |-----------|---------|
 | Context full, need to continue building | `/primer-spec` |
-| Want to add improvement mid-build | `/iterate-spec` |
-| Need full validation | `/review-spec` |
+| Need full validation | `/audit-spec` |
 | Check status without loading context | `/status-spec` |
 
 ---
@@ -164,5 +163,5 @@ Ready to continue. What would you like to work on?
 ## Tips
 
 - Run this FIRST in a new conversation before doing any work
-- After primer, you can run `/iterate-spec` or continue with `/build-spec`
-- If tasks.md doesn't exist, the spec hasn't been built yet - run `/build-spec`
+- After primer, continue with `/forge-spec`
+- If tasks.md doesn't exist, the spec hasn't been built yet - run `/forge-spec`

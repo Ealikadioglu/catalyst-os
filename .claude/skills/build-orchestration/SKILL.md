@@ -1,7 +1,7 @@
 # Build Orchestration
 
 > **When to invoke:** When implementing a specification using strict TDD.
-> **Invoked by:** `/build-spec` or `/build-spec-worktree` command.
+> **Invoked by:** `/forge-spec` or `/forge-spec-worktree` command.
 > **Orchestrator:** Forge-Master agent.
 
 ## Purpose
@@ -28,7 +28,7 @@ Orchestrate the full build workflow: task breakdown, test writing, foundation, c
 ├── spec.md           # Already exists from /catalyze-spec
 ├── research.md       # Already exists from /catalyze-spec
 ├── tasks.md          # Forger creates (this phase)
-├── validation.md     # Arbiter creates (in /review-spec)
+├── validation.md     # Arbiter creates (in /audit-spec)
 ├── handoff.md        # Updated throughout
 └── assets/
 ```
@@ -112,7 +112,7 @@ Phase 6: Integration (Enforcer — cross-boundary tests)
 ### Phase 0: Git Setup
 
 1. Read `project-config.yaml` for `development_branch`, `branch_prefix`, and `worktree_path`
-2. IF `--worktree` flag (from `/build-spec-worktree`):
+2. IF `--worktree` flag (from `/forge-spec-worktree`):
    - `mkdir -p {worktree_path}` (default: `.catalyst/worktrees`)
    - `git worktree add {worktree_path}/{spec-slug} -b {branch_prefix}/{spec-slug} {development_branch}`
    - `cd {worktree_path}/{spec-slug}` — all subsequent work happens here

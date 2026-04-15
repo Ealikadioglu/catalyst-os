@@ -174,7 +174,7 @@ Tests: N/A
 
 NEXT STEPS
 ----------
-1. Run /build-spec to start implementation
+1. Run /forge-spec to start implementation
 2. Forger will create task breakdown
 3. Enforcer will write tests first (TDD)
 ```
@@ -242,9 +242,9 @@ VALIDATION STATUS
 
 NEXT STEPS
 ----------
-1. Complete validation: /review-spec @slug
+1. Complete validation: /audit-spec @slug
 2. Review handoff.md when ready
-3. Commit: /commit-spec @slug
+3. Commit: /seal-spec @slug
 ```
 
 ---
@@ -262,7 +262,7 @@ tasks.md not found - implementation hasn't started.
 
 NEXT STEPS
 ----------
-Run /build-spec @2025-11-29-stripe-integration to begin.
+Run /forge-spec @2025-11-29-stripe-integration to begin.
 ```
 
 ### Uncommitted Work Not Matching Any Task

@@ -1,13 +1,15 @@
-# /build-spec-worktree
+# /forge-spec-worktree
 
 Implement a specification using **strict TDD** in an isolated git worktree.
 
-Use this instead of `/build-spec` when you need worktree isolation — e.g., working on a second spec while another is in progress, or wanting a clean working directory.
+Use this instead of `/forge-spec` when you need worktree isolation — e.g., working on a second spec while another is in progress, or wanting a clean working directory.
+
+> **Lifecycle position:** `/catalyze-spec` → **`/forge-spec-worktree`** → `/audit-spec` → `/seal-spec`
 
 ## Usage
 
 ```
-/build-spec-worktree @2025-11-29-stripe-integration
+/forge-spec-worktree @2025-11-29-stripe-integration
 ```
 
 ---

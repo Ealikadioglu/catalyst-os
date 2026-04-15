@@ -10,10 +10,9 @@
 npx catalyst-os                        # Install to your project
 /catalyze-project                      # Initialize project foundation
 /catalyze-spec "description"           # Shape a feature specification
-/build-spec @spec-name                 # Implement with TDD
-/iterate-spec @spec-name "improvement" # Add improvements mid-build
-/review-spec @spec-name              # Run quality checks
-/commit-spec @spec-name               # Accept and archive
+/forge-spec @spec-name                 # Implement with TDD
+/audit-spec @spec-name                 # Run quality checks
+/seal-spec @spec-name                  # Accept and archive
 ```
 
 ---
@@ -46,11 +45,11 @@ Then run `/catalyze-project` to initialize — this detects your workspace type,
 │   ├── workspace-detection/
 │   ├── spec-shaping/
 │   ├── build-orchestration/
-│   ├── spec-iteration/
 │   ├── spec-validation/
 │   ├── spec-approval/
+│   ├── spec-archival/
 │   ├── project-initialization/
-│   ├── task-building/
+│   ├── project-sync/
 │   └── spec-update/
 └── commands/            # WHEN - Thin triggers (invoke skills)
 
@@ -103,12 +102,12 @@ Without this, skills are optional documentation. With it, they're mandatory proc
 | Skill | Command | Purpose |
 |-------|---------|---------|
 | `spec-shaping` | `/catalyze-spec` | Shape feature requests into specifications |
-| `build-orchestration` | `/build-spec` | DAG-based TDD implementation |
-| `spec-iteration` | `/iterate-spec` | Update and continue mid-build |
-| `spec-validation` | `/review-spec` | Quality checks via Guardian agents |
-| `spec-approval` | `/commit-spec` | Final verification and archival |
+| `build-orchestration` | `/forge-spec` | DAG-based TDD implementation |
+| `spec-validation` | `/audit-spec` | Quality checks via Guardian agents |
+| `spec-approval` | `/seal-spec` | Final verification and archival |
+| `spec-archival` | `/archive-spec` | Lightweight completion and archival |
 | `project-initialization` | `/catalyze-project` | Workspace detection + foundation docs |
-| `task-building` | `/build-task` | Single task (brownfield) |
+| `project-sync` | `/sync-project` | Batch sync and archive specs |
 | `spec-update` | `/update-spec` | Modify spec during planning phase |
 
 ---
@@ -173,9 +172,9 @@ Guardians (Quality)
 ```
   ┌──────────────┐     ┌──────────────┐     ┌──────────────┐     ┌──────────────┐
   │              │     │              │     │              │     │              │
-  │   CATALYZE   │────>│    BUILD     │────>│    REVIEW    │────>│    COMMIT    │
+  │   CATALYZE   │────>│    FORGE     │────>│    AUDIT     │────>│     SEAL     │
   │              │     │              │     │              │     │              │
-  │ /catalyze-   │     │ /build-spec  │     │ /review-spec │     │ /commit-spec │
+  │ /catalyze-   │     │ /forge-spec  │     │ /audit-spec  │     │ /seal-spec   │
   │    spec      │     │              │     │              │     │              │
   └──────────────┘     └──────────────┘     └──────────────┘     └──────────────┘
          │                    │                    │                    │
@@ -184,15 +183,6 @@ Guardians (Quality)
   │  spec.md     │     │  tasks.md    │     │ validation.md│     │   Commit +   │
   │  research.md │     │  (updated)   │     │  handoff.md  │     │   Archive    │
   └──────────────┘     └──────────────┘     └──────────────┘     └──────────────┘
-                              │
-                              v
-                       ┌──────────────┐
-                       │   ITERATE    │ <--- New idea during build?
-                       │              │
-                       │ /iterate-    │      Updates spec + tasks
-                       │    spec      │      Continues building
-                       └──────────────┘
-
   Context full? New conversation?
   Run /primer-spec @slug to restore awareness before continuing.
 ```
@@ -205,12 +195,12 @@ Guardians (Quality)
 |---------|-------------|--------|
 | `/catalyze-project` | Start new project | mission.md, roadmap.md, tech-stack.md |
 | `/catalyze-spec "feature"` | New feature request | spec.md, research.md |
-| `/build-spec @slug` | Implement feature | tasks.md (updated) |
-| `/iterate-spec @slug "idea"` | Add improvements mid-build | Updated spec + tasks, continues building |
+| `/forge-spec @slug` | Implement feature | tasks.md (updated) |
 | `/primer-spec @slug` | Restore context (new conversation) | Brief status summary |
-| `/build-task "description"` | Modify existing code | task.md in .catalyst/tasks/ |
-| `/review-spec @slug` | Quality checks | validation.md, handoff.md |
-| `/commit-spec @slug` | Finalize | Commit + Archive |
+| `/audit-spec @slug` | Quality checks | validation.md, handoff.md |
+| `/seal-spec @slug` | Finalize | Commit + Archive |
+| `/archive-spec @slug` | Lightweight archive | Archive (no git ceremony) |
+| `/sync-project` | Batch sync spec statuses | Sync report + archives |
 | `/discard-spec @slug "reason"` | Discard implementation | Status: REJECTED |
 | `/status-spec @slug` | Check progress | Current status |
 | `/update-spec @slug "change"` | Modify spec (planning phase) | Updated spec.md |
@@ -296,7 +286,7 @@ Enforcer   -> Builders      │ TDD: tests before code
 
 ## Pattern Library
 
-Reusable implementation patterns extracted from completed specs via `/commit-spec`.
+Reusable implementation patterns extracted from completed specs via `/seal-spec`, `/archive-spec`, or `/sync-project`.
 
 **Location:** `.catalyst/library/`
 

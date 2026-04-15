@@ -1,4 +1,4 @@
-# /commit-spec Workflow
+# /seal-spec Workflow
 
 > Accept the implementation and archive the spec.
 
@@ -7,13 +7,13 @@
 ## Quick Reference
 
 ```
-Command:      /commit-spec @2026-01-11-supabase-auth
-              /commit-spec @2026-01-11-supabase-auth "Great work!"
+Command:      /seal-spec @2026-01-11-supabase-auth
+              /seal-spec @2026-01-11-supabase-auth "Great work!"
 Orchestrator: Main Agent
 Agents:       Scribe (for library extraction, optional)
 Output:       Archive to .catalyst/completed/ + Library item (optional)
 
-Note: Git commits are made during /build-spec (RED FLAG and GREEN FLAG commits).
+Note: Git commits are made during /forge-spec (RED FLAG and GREEN FLAG commits).
       This workflow verifies commits exist and handles archiving.
 ```
 
@@ -40,7 +40,7 @@ Note: Git commits are made during /build-spec (RED FLAG and GREEN FLAG commits).
 
 ```
 ┌─────────────────────────────────────────────────────────────────────────────┐
-│                    /commit-spec @2026-01-11-supabase-auth                  │
+│                    /seal-spec @2026-01-11-supabase-auth                  │
 └─────────────────────────────────────────────────────────────────────────────┘
                                        │
                                        ▼
@@ -65,7 +65,7 @@ Note: Git commits are made during /build-spec (RED FLAG and GREEN FLAG commits).
               │    │                       │           │
               │  FAIL ──▶ ❌ BLOCKED       │           │
               │           Return to        │           │
-              │           /build-spec      │           │
+              │           /forge-spec      │           │
               └─────────────────────────────────────────┘
                                        │
                                        ▼
@@ -177,8 +177,8 @@ Note: Git commits are made during /build-spec (RED FLAG and GREEN FLAG commits).
 │  │                                                          │   │
 │  │  TDD compliance not verified. Cannot approve.            │   │
 │  │                                                          │   │
-│  │  Action: Return to /build-spec and follow TDD process.   │   │
-│  │          Then /review-spec, then /commit-spec.        │   │
+│  │  Action: Return to /forge-spec and follow TDD process.   │   │
+│  │          Then /audit-spec, then /seal-spec.        │   │
 │  └──────────────────────────────────────────────────────────┘   │
 │                                                                 │
 └─────────────────────────────────────────────────────────────────┘
@@ -191,7 +191,7 @@ Note: Git commits are made during /build-spec (RED FLAG and GREEN FLAG commits).
 │  📍 VERIFY GIT STATE                                            │
 │  ───────────────────                                            │
 │                                                                 │
-│  Note: Commits were made during /build-spec workflow.           │
+│  Note: Commits were made during /forge-spec workflow.           │
 │  This phase verifies the expected state exists.                 │
 │                                                                 │
 │  1. Detect worktree or branch mode:                              │
@@ -207,9 +207,9 @@ Note: Git commits are made during /build-spec (RED FLAG and GREEN FLAG commits).
 │     │  ❌ IF NEITHER WORKTREE NOR CORRECT BRANCH           │    │
 │     │                                                      │    │
 │     │  "Expected branch feat/{spec-slug} but found {x}"    │    │
-│     │  "Did /build-spec complete successfully?"            │    │
+│     │  "Did /forge-spec complete successfully?"            │    │
 │     │                                                      │    │
-│     │  Action: Return to /build-spec or /build-spec-worktree│   │
+│     │  Action: Return to /forge-spec or /forge-spec-worktree│   │
 │     └──────────────────────────────────────────────────────┘    │
 │                                                                 │
 │  2. Verify commits exist:                                       │
@@ -376,7 +376,7 @@ Status: COMPLETED
 
 Branch: feat/2026-01-11-supabase-auth
 
-Commits (from /build-spec):
+Commits (from /forge-spec):
 ┌────────────────────────────────────────────────────────────────┐
 │ 🚩 abc1234 test(auth): write failing tests for supabase-auth   │
 │ 🟢 def5678 feat(auth): implement supabase-auth                 │
@@ -418,6 +418,6 @@ TDD +      verify        show commits    move to     extract
 validation branch &      ask approval   completed/  pattern
            commits                      + commit    (optional)
 
-Note: Git commits (RED FLAG, GREEN FLAG) happen during /build-spec
+Note: Git commits (RED FLAG, GREEN FLAG) happen during /forge-spec
       This workflow verifies and finalizes.
 ```

@@ -1,7 +1,7 @@
 # Spec Approval
 
 > **When to invoke:** When accepting an implementation and archiving the spec.
-> **Invoked by:** `/commit-spec` command.
+> **Invoked by:** `/seal-spec` command.
 
 ## Purpose
 
@@ -15,12 +15,12 @@ Final verification, git commit, spec archival, self-documentation (propagate lea
 ## Prerequisites — HARD GATES
 
 > **This skill is the FINAL step in the spec lifecycle.** It runs ONLY after build and validation are complete.
-> **Flow:** `/catalyze-spec` → `/build-spec` → `/review-spec` → **`/commit-spec`** (you are here)
+> **Flow:** `/catalyze-spec` → `/forge-spec` → `/audit-spec` → **`/seal-spec`** (you are here)
 >
-> If the spec has not been built yet, STOP and tell the user to run `/build-spec` first.
-> If the spec has not been validated yet, STOP and tell the user to run `/review-spec` first.
+> If the spec has not been built yet, STOP and tell the user to run `/forge-spec` first.
+> If the spec has not been validated yet, STOP and tell the user to run `/audit-spec` first.
 
-- `/build-spec` must have been completed (tasks.md exists with completed tasks)
+- `/forge-spec` must have been completed (tasks.md exists with completed tasks)
 - Validation must be complete (`validation.md` must show all checks passed)
 - `handoff.md` must exist
 - TDD compliance verified

@@ -1,11 +1,13 @@
-# /build-spec
+# /forge-spec
 
 Implement a specification using **strict TDD**.
+
+> **Lifecycle position:** `/catalyze-spec` → **`/forge-spec`** → `/audit-spec` → `/seal-spec`
 
 ## Usage
 
 ```
-/build-spec @2025-11-29-stripe-integration
+/forge-spec @2025-11-29-stripe-integration
 ```
 
 ## Pre-computed Context

@@ -16,6 +16,27 @@ This skill is the bootstrap — it tells you which other skills to load for the 
 
 Commands invoke skills. Skills define process. Agents execute within skill boundaries.
 
+## Spec Lifecycle
+
+The canonical workflow order:
+
+`/catalyze-spec` → `/forge-spec` → `/audit-spec` → `/seal-spec`
+
+- **catalyze** — Shape the specification from a feature request
+- **forge** — Implement with strict TDD
+- **audit** — Validate the CODE (quality, security, tests)
+- **seal** — Final commit, archive, and propagate learnings
+
+`/audit-spec` audits the code implementation, NOT the spec document.
+
+### Completion Alternatives
+
+| Path | When to use |
+|------|------------|
+| `/seal-spec` | Full ceremony — git commit, branch management, archive, library |
+| `/archive-spec` | Lightweight — archive + library, no git ceremony |
+| `/sync-project` | Batch — scan all specs, archive completed ones at once |
+
 ## Specs
 
 Active specs live in `.catalyst/specs/YYYY-MM-DD-{slug}/`. Each spec has:

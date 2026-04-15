@@ -1,4 +1,4 @@
-# /build-spec Workflow
+# /forge-spec Workflow
 
 > Implement a specification using **strict TDD**.
 
@@ -7,7 +7,7 @@
 ## Quick Reference
 
 ```
-Command:      /build-spec @2026-01-11-supabase-auth
+Command:      /forge-spec @2026-01-11-supabase-auth
 Orchestrator: Forge-Master (Opus)
 Agents:       Forger → Enforcer → Alchemist → Contracts → [Smith × N + Shaper × M] → Integration
 Output:       tasks.md (with Build DAG and progress)
@@ -38,7 +38,7 @@ Output:       tasks.md (with Build DAG and progress)
 
 ```
 ┌─────────────────────────────────────────────────────────────────────────────┐
-│                    /build-spec @2026-01-11-supabase-auth                    │
+│                    /forge-spec @2026-01-11-supabase-auth                    │
 └─────────────────────────────────────────────────────────────────────────────┘
                                        │
                                        ▼
@@ -425,7 +425,7 @@ Scope Violations: 0
 
 Updated: .catalyst/specs/2026-01-11-supabase-auth/tasks.md
 
-➡️  Next: Run /review-spec @2026-01-11-supabase-auth
+➡️  Next: Run /audit-spec @2026-01-11-supabase-auth
 ```
 
 ---

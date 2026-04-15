@@ -162,7 +162,7 @@ function install() {
   ${yellow}Next steps:${reset}
     1. Run ${cyan}/catalyze-project${reset} to initialize your project
     2. Run ${cyan}/catalyze-spec${reset} to create your first specification
-    3. Run ${cyan}/build-spec${reset} to implement it
+    3. Run ${cyan}/forge-spec${reset} to implement it
 
   ${dim}Documentation: https://github.com/Ealikadioglu/catalyst-os${reset}
 `);

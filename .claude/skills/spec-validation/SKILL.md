@@ -1,8 +1,12 @@
 # Spec Validation
 
 > **When to invoke:** When running validation checks on a completed implementation.
-> **Invoked by:** `/review-spec` command.
+> **Invoked by:** `/audit-spec` command.
 > **Orchestrator:** Arbiter agent.
+>
+> **Lifecycle position:** `/catalyze-spec` → `/forge-spec` → **`/audit-spec`** → `/seal-spec`
+>
+> This skill audits the CODE implementation (quality, security, tests) — not the spec document.
 
 ## Purpose
 
@@ -14,11 +18,16 @@ Orchestrate comprehensive validation: TDD compliance, unit tests, E2E tests, cod
 - `agent-delegation` — Parallel agent spawning rules
 - `test-driven-development` — TDD compliance verification
 
-## Prerequisites
+## Prerequisites — BLOCKING
 
-- Spec must be in "build complete" state
-- All tasks in `tasks.md` marked complete
-- TDD compliance verified (tests pass)
+Before ANY validation begins, verify the spec was actually built:
+
+1. **tasks.md must exist** in the spec folder
+   - IF NOT FOUND → STOP: "No tasks.md found. Run `/forge-spec @{slug}` first."
+2. **Spec status must be IN_PROGRESS or later** (not DRAFT)
+   - IF DRAFT → STOP: "Spec is still in DRAFT. Run `/forge-spec @{slug}` to implement it first."
+3. All tasks in `tasks.md` marked complete
+4. TDD compliance verified (tests pass)
 
 ## Output Location
 
@@ -38,7 +47,7 @@ Before validation begins, verify TDD was followed:
 2. Verify all tests pass
 3. Verify tests were written before implementation
 
-If TDD was skipped → REJECT and return to /build-spec
+If TDD was skipped → REJECT and return to /forge-spec
 ```
 
 ## Parallel Execution
@@ -157,19 +166,19 @@ If all validation passes, create handoff.md with:
 ```
 Validation complete!
 Status: READY FOR APPROVAL
-Next: /commit-spec @slug
+Next: /seal-spec @slug
 ```
 
 ### TDD Failure
 ```
 Validation blocked!
 TDD Compliance: FAILED
-Action: Return to /build-spec and follow TDD process
+Action: Return to /forge-spec and follow TDD process
 ```
 
 ### Validation Failure
 ```
 Validation failed!
 Failed Checks: [details]
-Action: Fix issues and re-run /review-spec
+Action: Fix issues and re-run /audit-spec
 ```
