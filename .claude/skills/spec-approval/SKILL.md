@@ -71,7 +71,17 @@ Move spec to completed path:
 
 Update spec.md status to COMPLETE.
 
-### Phase 7: Self-Documentation
+### Phase 7: Push & Pull Request
+
+1. Read `git.development_branch` from `.catalyst/main/project-config.yaml` (e.g., `development`, `staging`)
+2. Push the feature branch: `git push -u origin {branch-name}`
+3. Create a PR targeting the development branch:
+   ```
+   gh pr create --base {development_branch} --title "feat({scope}): {spec title}" --body "..."
+   ```
+4. Include spec summary, TDD stats, and file change counts in the PR body
+
+### Phase 8: Self-Documentation
 
 Propagate learnings from completed spec back to project docs:
 
@@ -79,7 +89,7 @@ Propagate learnings from completed spec back to project docs:
 2. **architecture.md** — Add key files from `key_files`
 3. **concerns.md** — Mark resolved issues from `issues_resolved`
 
-### Phase 8: Library Extraction (Optional)
+### Phase 9: Library Extraction (Optional)
 
 Auto-detect reusable patterns from spec name/content. Ask user if spec should be added to pattern library. If yes, delegate to Scribe for extraction.
 
@@ -99,5 +109,5 @@ Self-Documentation:
 
 Library: {status}
 
-Next: git push -u origin {branch-name}
+PR: {pr-url}
 ```

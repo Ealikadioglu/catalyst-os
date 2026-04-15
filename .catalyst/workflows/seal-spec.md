@@ -121,7 +121,19 @@ Note: Git commits are made during /forge-spec (RED FLAG and GREEN FLAG commits).
                                        │
                                        ▼
               ┌─────────────────────────────────────────┐
-              │  PHASE 5: LIBRARY EXTRACTION (Optional) │
+              │  PHASE 5: PUSH & PULL REQUEST             │
+              │  ─────────────────────────               │
+              │                                         │
+              │  1. Read development_branch from        │
+              │     project-config.yaml                 │
+              │  2. git push -u origin {branch}         │
+              │  3. gh pr create --base {dev_branch}    │
+              │  4. Report PR URL                       │
+              └─────────────────────────────────────────┘
+                                       │
+                                       ▼
+              ┌─────────────────────────────────────────┐
+              │  PHASE 6: LIBRARY EXTRACTION (Optional) │
               │  ──────────────────────────────────     │
               │                                         │
               │  Auto-detect reusable patterns          │
@@ -288,7 +300,38 @@ Note: Git commits are made during /forge-spec (RED FLAG and GREEN FLAG commits).
 └─────────────────────────────────────────────────────────────────┘
 ```
 
-### Phase 5: Library Extraction (Optional)
+### Phase 5: Push & Pull Request
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│  📍 PUSH & PULL REQUEST                                          │
+│  ──────────────────────                                          │
+│                                                                 │
+│  1. Read development_branch from project-config.yaml            │
+│     $ cat .catalyst/main/project-config.yaml                    │
+│     Expected: git.development_branch (e.g., "development")      │
+│                                                                 │
+│  2. Push feature branch:                                        │
+│     $ git push -u origin feat/{spec-slug}                       │
+│                                                                 │
+│  3. Create PR targeting development branch:                     │
+│     $ gh pr create \                                            │
+│         --base {development_branch} \                           │
+│         --title "feat({scope}): {spec title}" \                 │
+│         --body "## Summary\n..."                                │
+│                                                                 │
+│     PR body should include:                                     │
+│     - Spec summary (from spec.md)                               │
+│     - TDD stats (red/green commits)                             │
+│     - File change counts                                        │
+│     - Link to spec slug                                         │
+│                                                                 │
+│  4. Report PR URL in output                                     │
+│                                                                 │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+### Phase 6: Library Extraction (Optional)
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
@@ -397,11 +440,7 @@ Summary:
 ├── Tasks: 8 completed
 └── Tests: 45 passing
 
-🎉 Feature ready for review!
-
-➡️  Next steps:
-    1. git push -u origin feat/2026-01-11-supabase-auth
-    2. Create PR to merge into development/main
+PR: https://github.com/owner/repo/pull/XX → development
 ```
 
 ---
@@ -411,12 +450,12 @@ Summary:
 ```
 SEQUENTIAL EXECUTION
 
-Verify ──▶ Git State ──▶ User Review ──▶ Archive ──▶ Library ──▶ Done!
-  │            │              │             │           │
-  │            │              │             │           │
-TDD +      verify        show commits    move to     extract
-validation branch &      ask approval   completed/  pattern
-           commits                      + commit    (optional)
+Verify ──▶ Git State ──▶ User Review ──▶ Archive ──▶ Push & PR ──▶ Library ──▶ Done!
+  │            │              │             │           │              │
+  │            │              │             │           │              │
+TDD +      verify        show commits    move to    push branch    extract
+validation branch &      ask approval   completed/  + create PR    pattern
+           commits                      + commit    to dev branch  (optional)
 
 Note: Git commits (RED FLAG, GREEN FLAG) happen during /forge-spec
       This workflow verifies and finalizes.
