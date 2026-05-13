@@ -174,7 +174,8 @@ REMINDER: /forge-spec follows strict TDD
   4. Tests must PASS (green phase)
 
 Next steps:
+- /challenge-spec @YYYY-MM-DD-{slug} (optional) to interrogate every branch before tests are written
 - /forge-spec @YYYY-MM-DD-{slug} to start TDD build
 ```
 
-**IMPORTANT: Do NOT suggest `/seal-spec` after spec shaping.** `/seal-spec` is only for committing a fully built and validated implementation — it is the FINAL step, not a plan-approval step. The correct flow is: `/catalyze-spec` → `/forge-spec` → `/audit-spec` → `/seal-spec`.
+**IMPORTANT: Do NOT suggest `/seal-spec` after spec shaping.** `/seal-spec` is only for committing a fully built and validated implementation — it is the FINAL step, not a plan-approval step. The correct flow is: `/catalyze-spec` → *(optional)* `/challenge-spec` → `/forge-spec` → `/audit-spec` → `/seal-spec`.

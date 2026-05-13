@@ -10,6 +10,7 @@
 npx catalyst-os                        # Install to your project
 /catalyze-project                      # Initialize project foundation
 /catalyze-spec "description"           # Shape a feature specification
+/challenge-spec @spec-name             # (optional) Interrogate the spec branch by branch
 /forge-spec @spec-name                 # Implement with TDD
 /audit-spec @spec-name                 # Run quality checks
 /seal-spec @spec-name                  # Accept and archive
@@ -44,6 +45,7 @@ Then run `/catalyze-project` to initialize — this detects your workspace type,
 │   ├── receiving-code-review/
 │   ├── workspace-detection/
 │   ├── spec-shaping/
+│   ├── spec-challenge/
 │   ├── build-orchestration/
 │   ├── spec-validation/
 │   ├── spec-approval/
@@ -102,6 +104,7 @@ Without this, skills are optional documentation. With it, they're mandatory proc
 | Skill | Command | Purpose |
 |-------|---------|---------|
 | `spec-shaping` | `/catalyze-spec` | Shape feature requests into specifications |
+| `spec-challenge` | `/challenge-spec` | Interrogate a shaped spec branch by branch (optional) |
 | `build-orchestration` | `/forge-spec` | DAG-based TDD implementation |
 | `spec-validation` | `/audit-spec` | Quality checks via Guardian agents |
 | `spec-approval` | `/seal-spec` | Final verification and archival |
@@ -185,6 +188,10 @@ Guardians (Quality)
   └──────────────┘     └──────────────┘     └──────────────┘     └──────────────┘
   Context full? New conversation?
   Run /primer-spec @slug to restore awareness before continuing.
+
+  Optional gate between CATALYZE and FORGE:
+  /challenge-spec @slug — interrogate every branch of the design tree
+  before tests are written. Patches spec.md, logs to handoff.md.
 ```
 
 ---
@@ -195,6 +202,7 @@ Guardians (Quality)
 |---------|-------------|--------|
 | `/catalyze-project` | Start new project | mission.md, roadmap.md, tech-stack.md |
 | `/catalyze-spec "feature"` | New feature request | spec.md, research.md |
+| `/challenge-spec @slug` | Stress-test the spec before forging (optional) | spec.md (patched), handoff.md (Challenge Log) |
 | `/forge-spec @slug` | Implement feature | tasks.md (updated) |
 | `/primer-spec @slug` | Restore context (new conversation) | Brief status summary |
 | `/audit-spec @slug` | Quality checks | validation.md, handoff.md |

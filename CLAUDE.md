@@ -20,14 +20,17 @@ Commands invoke skills. Skills define process. Agents execute within skill bound
 
 The canonical workflow order:
 
-`/catalyze-spec` → `/forge-spec` → `/audit-spec` → `/seal-spec`
+`/catalyze-spec` → *(optional)* `/challenge-spec` → `/forge-spec` → `/audit-spec` → `/seal-spec`
 
 - **catalyze** — Shape the specification from a feature request
+- **challenge** *(optional)* — Interrogate the shaped spec branch by branch; patch spec.md and log to handoff.md
 - **forge** — Implement with strict TDD
 - **audit** — Validate the CODE (quality, security, tests)
 - **seal** — Final commit, archive, and propagate learnings
 
 `/audit-spec` audits the code implementation, NOT the spec document.
+
+`/challenge-spec` is optional. Use it when the spec has real design surface area; skip it for trivial specs.
 
 ### Completion Alternatives
 

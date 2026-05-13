@@ -1,6 +1,6 @@
 {
   "name": "catalyst-os",
-  "version": "2.0.2",
+  "version": "2.0.3",
   "scripts": {
     "postinstall": "node .catalyst/bin/install.js",
     "validate": "node .catalyst/bin/validate-artifacts.js"
