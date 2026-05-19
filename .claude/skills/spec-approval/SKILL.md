@@ -73,13 +73,20 @@ Update spec.md status to COMPLETE.
 
 ### Phase 7: Push & Pull Request
 
+> **This phase is atomic — do NOT stop or ask for confirmation between push and PR creation.**
+> If validation passed in Phase 1 and the commit succeeded in Phase 5, proceed straight through push → PR without pausing.
+> Only halt if a git/gh command returns an error.
+
 1. Read `git.development_branch` from `.catalyst/main/project-config.yaml` (e.g., `development`, `staging`)
 2. Push the feature branch: `git push -u origin {branch-name}`
-3. Create a PR targeting the development branch:
+3. **Immediately** create a PR targeting the development branch — do not wait for user input:
    ```
    gh pr create --base {development_branch} --title "feat({scope}): {spec title}" --body "..."
    ```
 4. Include spec summary, TDD stats, and file change counts in the PR body
+5. Capture the returned PR URL for the final output
+
+**Do not ask** "should I create a PR?" or "ready to push?" — the user already invoked `/seal-spec`, which is the explicit authorization for the full push + PR flow. Only pause if a command fails or the working tree is in an unexpected state.
 
 ### Phase 8: Self-Documentation
 
