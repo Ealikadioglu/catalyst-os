@@ -14,7 +14,7 @@ Quick reference for all agents and the skills they use.
 |----------|--------------|
 | Research phase | Oracle + Seer + Scout + Surveyor |
 | Build phase | Smith x N + Shaper x M (multiple instances) |
-| Validation phase | Inquisitor + Watcher + Sentinel |
+| Validation phase | Inquisitor + Watcher + Sentinel + Curator (DB specs) |
 
 ### Run Sequentially (Has Dependencies)
 
@@ -94,6 +94,7 @@ All builders follow `test-driven-development`, `systematic-debugging`, `verifica
 | [Sentinel](.claude/agents/sentinel.md) | E2E tests | — |
 | [Inquisitor](.claude/agents/inquisitor.md) | Code review | — |
 | [Watcher](.claude/agents/watcher.md) | Security audit | — |
+| [Curator](.claude/agents/curator.md) | Schema-integrity audit (read-only DB) | `secret-scanning` |
 
 ---
 

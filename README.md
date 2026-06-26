@@ -9,6 +9,7 @@
 ```bash
 npx catalyst-os                        # Install to your project
 /catalyze-project                      # Initialize project foundation
+/meet-spec "topic"                     # (optional) Talk it through -> meeting notes
 /catalyze-spec "description"           # Shape a feature specification
 /challenge-spec @spec-name             # (optional) Interrogate the spec branch by branch
 /forge-spec @spec-name                 # Implement with TDD
@@ -44,6 +45,7 @@ Then run `/catalyze-project` to initialize — this detects your workspace type,
 │   ├── agent-delegation/
 │   ├── receiving-code-review/
 │   ├── workspace-detection/
+│   ├── meet-spec/
 │   ├── spec-shaping/
 │   ├── spec-challenge/
 │   ├── build-orchestration/
@@ -57,6 +59,8 @@ Then run `/catalyze-project` to initialize — this detects your workspace type,
 
 .catalyst/
 ├── main/                # Mission, roadmap, tech-stack, project-config
+├── voice/               # /meet-spec meeting runtime (zero-dependency)
+├── meetings/            # Meeting notes artifacts (generated, git-ignored)
 ├── specs/               # Active specifications
 ├── completed/           # Archived specs
 └── library/             # Reusable patterns
@@ -103,6 +107,7 @@ Without this, skills are optional documentation. With it, they're mandatory proc
 
 | Skill | Command | Purpose |
 |-------|---------|---------|
+| `meet-spec` | `/meet-spec` | Voice meeting → `/catalyze-spec`-ready notes (optional) |
 | `spec-shaping` | `/catalyze-spec` | Shape feature requests into specifications |
 | `spec-challenge` | `/challenge-spec` | Interrogate a shaped spec branch by branch (optional) |
 | `build-orchestration` | `/forge-spec` | DAG-based TDD implementation |
@@ -143,7 +148,8 @@ Guardians (Quality)
 ├── Enforcer   → Unit tests
 ├── Sentinel   → E2E tests
 ├── Inquisitor → Code review
-└── Watcher    → Security
+├── Watcher    → Security
+└── Curator    → Schema integrity (DB, read-only)
 ```
 
 ### Agent Capabilities
@@ -167,6 +173,7 @@ Guardians (Quality)
 | | Sentinel | Run E2E tests |
 | | Inquisitor | Code review, linting |
 | | Watcher | Security audit, dependency scan |
+| | Curator | Schema-integrity audit (read-only DB) |
 
 ---
 
@@ -201,6 +208,7 @@ Guardians (Quality)
 | Command | When to Use | Output |
 |---------|-------------|--------|
 | `/catalyze-project` | Start new project | mission.md, roadmap.md, tech-stack.md |
+| `/meet-spec "topic"` | Shape a spec by talking it through (optional) | meeting.html + meeting.md |
 | `/catalyze-spec "feature"` | New feature request | spec.md, research.md |
 | `/challenge-spec @slug` | Stress-test the spec before forging (optional) | spec.md (patched), handoff.md (Challenge Log) |
 | `/forge-spec @slug` | Implement feature | tasks.md (updated) |
@@ -215,6 +223,34 @@ Guardians (Quality)
 | `/mission` | Create/update mission.md | mission.md |
 | `/roadmap` | Create/update roadmap.md | roadmap.md |
 | `/tech-stack` | Create/update tech-stack.md | tech-stack.md |
+
+---
+
+## Voice Meetings (`/meet-spec`)
+
+Shape a spec by **talking it through**. `/meet-spec` opens a local browser meeting room,
+holds a spoken conversation, and writes a `/catalyze-spec`-ready notes artifact. The
+agent can read the codebase, docs, and the web live during the meeting.
+
+```
+/meet-spec "realtime notifications"     # opens the room → talk → End meeting
+/catalyze-spec @.catalyst/meetings/YYYY-MM-DD-{slug}/meeting.md
+```
+
+Two modes (`voice.mode` in `project-config.yaml`):
+
+| | **diy** (default) | **bundled** |
+|---|---|---|
+| Speech | Browser Web Speech API | ElevenLabs Conversational AI |
+| Brain | Local `claude -p` | ElevenLabs agent (Claude LLM) |
+| Cost | **Free** (uses your Claude) | Per-minute, BYOK key |
+| Setup | None — just Chrome | API key + agent |
+
+The room shows **live meeting notes** (left) beside the **chat history** (right). On
+**End meeting** it saves both `meeting.html` (rendered, self-contained) and `meeting.md`
+(canonical input for `/catalyze-spec`). Notes are written in English regardless of the
+spoken language (`voice.language`, e.g. `"tr"`). Runtime lives in `.catalyst/voice/`
+(zero npm dependencies). See `.catalyst/voice/README.md` for setup.
 
 ---
 
