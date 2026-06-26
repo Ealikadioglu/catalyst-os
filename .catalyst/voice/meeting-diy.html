@@ -113,13 +113,33 @@
       notes.innerHTML = lastNotesHtml;
     }
 
+    let voices = [];
+    function loadVoices() { try { voices = speechSynthesis.getVoices() || []; } catch {} }
+    if ('speechSynthesis' in window) { loadVoices(); speechSynthesis.onvoiceschanged = loadVoices; }
+    function pickVoice() {
+      if (!voices.length) loadVoices();
+      const base = lang.split('-')[0].toLowerCase();
+      return voices.find(v => v.lang === lang)
+          || voices.find(v => (v.lang || '').toLowerCase().startsWith(base))
+          || voices[0] || null;
+    }
     function speak(text) {
       return new Promise((resolve) => {
-        if (!('speechSynthesis' in window)) return resolve();
+        if (!('speechSynthesis' in window) || !text) return resolve();
+        try { speechSynthesis.cancel(); } catch {}
         const u = new SpeechSynthesisUtterance(text);
-        u.lang = lang; u.onend = resolve; u.onerror = resolve;
+        u.lang = lang;
+        const v = pickVoice();
+        if (v) u.voice = v;        // explicit voice → avoids silent "no voice for lang"
+        let done = false;
+        const finish = () => { if (done) return; done = true; clearInterval(ka); resolve(); };
+        u.onend = finish; u.onerror = finish;
+        // Chrome silently pauses long utterances (~15s); nudge it to keep going.
+        const ka = setInterval(() => { try { if (speechSynthesis.speaking) speechSynthesis.resume(); } catch {} }, 4000);
         setOrb('speaking'); setStatus('Catalyst is speaking…');
         speechSynthesis.speak(u);
+        // If speech never starts (blocked / no voice), don't hang the turn loop.
+        setTimeout(() => { if (!done && !speechSynthesis.speaking) finish(); }, 2500);
       });
     }
 
@@ -170,6 +190,8 @@
 
     startBtn.onclick = () => {
       startBtn.disabled = true; endBtn.disabled = false; chatRow.hidden = false;
+      // Unlock audio within the user gesture so TTS works later, and warm up voices.
+      if ('speechSynthesis' in window) { try { speechSynthesis.cancel(); speechSynthesis.resume(); loadVoices(); } catch {} }
       recognition = buildRecognition();
       if (!recognition) { setStatus('Speech needs Chrome. You can still type below.'); setOrb(''); return; }
       startListening();
