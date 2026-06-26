@@ -1,0 +1,198 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Catalyst Meeting Room</title>
+  <style>
+    :root { --bg:#0e0e14; --panel:#1a1a24; --accent:#9b6dff; --text:#e8e8f0; --dim:#8a8a9a; }
+    * { box-sizing: border-box; }
+    body { margin:0; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+      background:var(--bg); color:var(--text); display:flex; min-height:100vh; }
+    .room { margin:auto; width:100%; max-width:680px; padding:32px; }
+    h1 { font-size:20px; font-weight:600; margin:0 0 4px; }
+    .topic { color:var(--dim); margin:0 0 28px; font-size:14px; }
+    .orb { width:120px; height:120px; border-radius:50%; margin:24px auto;
+      background:radial-gradient(circle at 35% 35%, #b89bff, var(--accent));
+      box-shadow:0 0 0 0 rgba(155,109,255,.5); transition:transform .2s; }
+    .orb.listening { animation:pulse 2s infinite; }
+    .orb.speaking { animation:pulse .7s infinite; transform:scale(1.08); }
+    .orb.thinking { background:radial-gradient(circle at 35% 35%,#ffd27a,#ff9b3d);
+      animation:spin 1.1s linear infinite; }
+    @keyframes pulse { 0%{box-shadow:0 0 0 0 rgba(155,109,255,.5);} 70%{box-shadow:0 0 0 22px rgba(155,109,255,0);} 100%{box-shadow:0 0 0 0 rgba(155,109,255,0);} }
+    @keyframes spin { to { transform:rotate(360deg);} }
+    .status { text-align:center; color:var(--dim); min-height:22px; margin:8px 0 24px; font-size:14px; }
+    .btns { display:flex; gap:12px; justify-content:center; }
+    button { border:none; border-radius:10px; padding:12px 22px; font-size:15px;
+      font-weight:600; cursor:pointer; }
+    .start { background:var(--accent); color:#fff; }
+    .end { background:#2a2a36; color:var(--text); }
+    button:disabled { opacity:.4; cursor:not-allowed; }
+    .log { margin-top:28px; background:var(--panel); border-radius:12px; padding:16px;
+      max-height:34vh; overflow-y:auto; font-size:13px; line-height:1.6; }
+    .log .u { color:#7fd1ff; } .log .a { color:#c8b0ff; } .log .t { color:var(--dim); font-style:italic; }
+    .done { text-align:center; padding:20px; }
+    .done code { background:var(--panel); padding:4px 8px; border-radius:6px; }
+    .chat { display:flex; gap:8px; margin-top:16px; }
+    .chat input { flex:1; background:var(--panel); border:1px solid #2a2a36; color:var(--text);
+      border-radius:8px; padding:10px 12px; font-size:14px; }
+    .chat input:focus { outline:none; border-color:var(--accent); }
+    .chat button { background:#2a2a36; color:var(--text); }
+  </style>
+</head>
+<body>
+  <div class="room">
+    <h1>Catalyst Meeting Room</h1>
+    <p class="topic" id="topic">Loading…</p>
+    <div class="orb" id="orb"></div>
+    <div class="status" id="status">Ready when you are.</div>
+    <div class="btns">
+      <button class="start" id="startBtn">Start meeting</button>
+      <button class="end" id="endBtn" disabled>End meeting</button>
+    </div>
+    <div class="chat" id="chatRow" hidden>
+      <input id="chatInput" type="text" placeholder="Type a message instead of speaking…" autocomplete="off" />
+      <button id="chatSend">Send</button>
+    </div>
+    <div class="log" id="log" hidden></div>
+  </div>
+
+  <script type="module">
+    import { Conversation } from 'https://esm.sh/@elevenlabs/client';
+
+    const $ = (id) => document.getElementById(id);
+    const orb = $('orb'), status = $('status'), log = $('log');
+    const startBtn = $('startBtn'), endBtn = $('endBtn');
+    const chatRow = $('chatRow'), chatInput = $('chatInput'), chatSend = $('chatSend');
+    let conversation = null;
+    const transcript = [];
+
+    fetch('/config').then(r => r.json()).then(c => {
+      $('topic').textContent = c.topic || 'Untitled meeting';
+    });
+
+    function setStatus(t) { status.textContent = t; }
+    function setOrb(cls) { orb.className = 'orb' + (cls ? ' ' + cls : ''); }
+    function addLine(kind, text) {
+      log.hidden = false;
+      const cls = kind === 'user' ? 'u' : kind === 'ai' ? 'a' : 't';
+      const who = kind === 'user' ? 'You' : kind === 'ai' ? 'Catalyst' : '·';
+      const div = document.createElement('div');
+      div.className = cls;
+      div.textContent = `${who}: ${text}`;
+      log.appendChild(div);
+      log.scrollTop = log.scrollHeight;
+      if (kind === 'user' || kind === 'ai') transcript.push(`${who}: ${text}`);
+    }
+
+    // Client tool: live codebase investigation via the local daemon -> claude -p.
+    const clientTools = {
+      investigate_codebase: async ({ query }) => {
+        const prev = orb.className;
+        setOrb('thinking');
+        setStatus(`🔍 Investigating: ${query}`);
+        addLine('tool', `investigating: ${query}`);
+        try {
+          const r = await fetch('/tool', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ query }),
+          });
+          const j = await r.json();
+          addLine('tool', `findings ready`);
+          return j.result || 'No result.';
+        } catch (e) {
+          return `Investigation failed: ${e.message}`;
+        } finally {
+          orb.className = prev;
+          setStatus('Listening…');
+        }
+      },
+    };
+
+    startBtn.onclick = async () => {
+      startBtn.disabled = true;
+      setStatus('Connecting…');
+      try {
+        const cfg = await (await fetch('/config')).json();
+        const signed = await (await fetch('/signed-url')).json();
+        const opts = {
+          clientTools,
+          onConnect: () => { setStatus('Listening…'); setOrb('listening'); endBtn.disabled = false; chatRow.hidden = false; },
+          onDisconnect: () => { setOrb(''); },
+          onError: (e) => { setStatus('Error: ' + (e?.message || e)); },
+          onModeChange: ({ mode }) => {
+            setOrb(mode === 'speaking' ? 'speaking' : 'listening');
+            setStatus(mode === 'speaking' ? 'Catalyst is speaking…' : 'Listening…');
+          },
+          onMessage: (payload) => {
+            // SDK versions differ: payload may be {message, source} or a bare string.
+            const raw = payload && typeof payload === 'object' ? payload.message ?? payload : payload;
+            const text = typeof raw === 'string' ? raw : (raw && raw.message) || JSON.stringify(raw);
+            const src = payload && payload.source;
+            if (text) addLine(src === 'user' ? 'user' : 'ai', text);
+          },
+        };
+        if (signed.signedUrl) opts.signedUrl = signed.signedUrl;
+        else opts.agentId = cfg.agentId;
+        // Drive the conversation language from project-config (voice.language).
+        // Requires the language override to be enabled on the agent; if it isn't,
+        // ElevenLabs rejects the override, so we retry once without it.
+        if (cfg.language) opts.overrides = { agent: { language: cfg.language } };
+        try {
+          conversation = await Conversation.startSession(opts);
+        } catch (err) {
+          if (opts.overrides) {
+            console.warn('Language override rejected (enable it on the agent). Retrying without it.', err);
+            delete opts.overrides;
+            conversation = await Conversation.startSession(opts);
+          } else {
+            throw err;
+          }
+        }
+      } catch (e) {
+        setStatus('Could not start: ' + (e?.message || e));
+        startBtn.disabled = false;
+      }
+    };
+
+    // Typed messages — useful when speech is misheard. Treated as a user turn.
+    function sendChat() {
+      const t = chatInput.value.trim();
+      if (!t || !conversation) return;
+      try {
+        conversation.sendUserMessage(t);
+        addLine('user', t);
+        chatInput.value = '';
+      } catch (e) {
+        addLine('tool', 'could not send message: ' + (e?.message || e));
+      }
+    }
+    chatSend.onclick = sendChat;
+    chatInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') sendChat(); });
+
+    endBtn.onclick = async () => {
+      endBtn.disabled = true;
+      setStatus('Wrapping up…');
+      setOrb('thinking');
+      try { if (conversation) await conversation.endSession(); } catch {}
+      try {
+        const r = await fetch('/end', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ transcript: transcript.join('\n') }),
+        });
+        const j = await r.json();
+        document.querySelector('.room').innerHTML =
+          `<div class="done"><h1>Meeting captured ✓</h1>` +
+          `<p>Artifact written to:</p><p><code>${j.path}</code></p>` +
+          `<p class="topic">Back in your terminal, shape it with<br>` +
+          `<code>/catalyze-spec @${j.path}</code></p>` +
+          `<p class="topic">You can close this tab.</p></div>`;
+      } catch (e) {
+        setStatus('Failed to save: ' + (e?.message || e));
+      }
+    };
+  </script>
+</body>
+</html>

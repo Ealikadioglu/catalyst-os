@@ -33,3 +33,19 @@ git:
     red_phase: "test({scope}): write failing tests for {spec}"
     green_phase: "feat({scope}): implement {spec}"
 
+# Voice meetings (/meet-spec) — optional.
+# See .catalyst/voice/README.md for setup.
+voice:
+  enabled: false            # set true to enable /meet-spec
+  language: "en"            # meeting/conversation language (e.g. "tr"); artifacts stay English
+
+  # mode: diy = browser speech + local `claude -p` brain. FREE, no API key, needs Chrome.
+  #       bundled = ElevenLabs Conversational AI. Nicer voice, per-minute cost (BYOK).
+  mode: diy
+
+  # --- bundled mode only (ignored in diy) ---
+  # The ElevenLabs API key does NOT go here — it lives in .catalyst/secrets.local.yaml.
+  provider: elevenlabs
+  voice_id: ""              # optional ElevenLabs voice id
+  agent_id: ""              # ElevenLabs Conversational AI agent id
+

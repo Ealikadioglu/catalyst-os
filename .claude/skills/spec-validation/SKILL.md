@@ -56,7 +56,7 @@ If TDD was skipped → REJECT and return to /forge-spec
 TDD Check (sequential, must pass first)
         |
         v
-[Enforcer + Sentinel + Inquisitor + Watcher] (all parallel)
+[Enforcer + Sentinel + Inquisitor + Watcher + Curator] (all parallel)
         |
         v
 Arbiter compiles results → validation.md
@@ -98,7 +98,9 @@ Spawn all Guardians in parallel:
 - Secret scanning
 - Input validation checks
 
-**Alchemist** (Schema Integrity — only for specs touching database):
+**Curator** (Schema Integrity — only for specs touching database):
+- READ-ONLY Guardian — audits the schema, never creates or modifies it
+- (The Alchemist *builds* the schema during `/forge-spec`; Curator independently *verifies* it here)
 - Query actual database schema for all tables the spec touches
 - Verify column names in spec/code match real database columns
 - Verify all foreign keys and constraints exist in the actual DB
@@ -147,7 +149,7 @@ If all validation passes, create handoff.md with:
 - Secrets: status
 - Inputs: status
 
-### Schema Integrity (Alchemist) — if spec touches database
+### Schema Integrity (Curator) — if spec touches database
 - Column names match: status
 - Constraints verified: status
 - API end-to-end trace: status

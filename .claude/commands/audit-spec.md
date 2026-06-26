@@ -28,6 +28,6 @@ echo "=== FILES CHANGED ===" && git diff --name-only main...HEAD 2>/dev/null || 
 
 **Invoke skill:** `spec-validation`
 
-**Orchestrator:** Arbiter (delegates to Enforcer, Sentinel, Inquisitor, Watcher)
+**Orchestrator:** Arbiter (delegates to Enforcer, Sentinel, Inquisitor, Watcher, and Curator for database specs)
 
 **Process skills used:** `verification-before-completion`, `agent-delegation`, `test-driven-development`

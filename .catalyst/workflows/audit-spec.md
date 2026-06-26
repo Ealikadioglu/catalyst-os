@@ -9,7 +9,7 @@
 ```
 Command:      /audit-spec @2026-01-11-supabase-auth
 Orchestrator: Arbiter (Opus)
-Agents:       [Enforcer + Sentinel + Inquisitor + Watcher] (parallel)
+Agents:       [Enforcer + Sentinel + Inquisitor + Watcher (+ Curator for DB specs)] (parallel)
 Output:       validation.md, handoff.md
 ```
 
@@ -63,12 +63,15 @@ Output:       validation.md, handoff.md
                          │
                          ▼
      ┌─────────────────────────────────────────────────────────────┐
-     │              PHASES 1-4: PARALLEL VALIDATION                │
+     │              PHASES 1-5: PARALLEL VALIDATION                │
      │                                                             │
      │  ┌───────────┐ ┌───────────┐ ┌───────────┐ ┌───────────┐   │
      │  │ ENFORCER  │ │ SENTINEL  │ │ INQUISITOR│ │  WATCHER  │   │
      │  │  (Unit)   │ │   (E2E)   │ │  (Lint)   │ │ (Security)│   │
      │  └───────────┘ └───────────┘ └───────────┘ └───────────┘   │
+     │  ┌──────────────────────────┐                               │
+     │  │ CURATOR (Schema Integrity)│  ← DB specs only, read-only   │
+     │  └──────────────────────────┘                               │
      │                                                             │
      └─────────────────────────────────────────────────────────────┘
                          │
@@ -371,6 +374,7 @@ Action: Fix issues and re-run /audit-spec
 | **Sentinel** | E2E Tests | Sonnet | Parallel |
 | **Inquisitor** | Code Quality | Sonnet | Parallel |
 | **Watcher** | Security | Sonnet | Parallel |
+| **Curator** | Schema Integrity (DB specs only, read-only) | Sonnet | Parallel |
 
 ---
 
@@ -379,7 +383,7 @@ Action: Fix issues and re-run /audit-spec
 ```
 SEQUENTIAL GATE THEN PARALLEL
 
-TDD Check ──▶ [Enforcer + Sentinel + Inquisitor + Watcher] ──▶ Arbiter
+TDD Check ──▶ [Enforcer + Sentinel + Inquisitor + Watcher (+ Curator: DB)] ──▶ Arbiter
 (blocking)              (all run simultaneously)              (compile)
     │                              │                              │
     │                              │                              │

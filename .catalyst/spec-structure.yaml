@@ -46,7 +46,7 @@ files:
     owner: arbiter
     purpose: Test results, quality checks
     created: audit-spec
-    updated_by: [arbiter, enforcer, sentinel, inquisitor, watcher]
+    updated_by: [arbiter, enforcer, sentinel, inquisitor, watcher, curator]
 
   assets/:
     owner: any

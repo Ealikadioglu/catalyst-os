@@ -6,3 +6,9 @@
 
 # Worktree directories (local working directories, not committed)
 .catalyst/worktrees/
+
+# Local secrets (BYOK — never commit)
+.catalyst/secrets.local.yaml
+
+# Voice meeting artifacts (local, not part of the framework)
+.catalyst/meetings/

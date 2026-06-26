@@ -87,6 +87,27 @@ function copyFile(src, dest) {
 }
 
 /**
+ * Ensure the consuming project's .gitignore protects local secrets.
+ * If `.catalyst/` (or the secrets file) is already ignored, do nothing.
+ */
+function ensureGitignore(cwd) {
+  const guard = '.catalyst/secrets.local.yaml';
+  const gitignorePath = path.join(cwd, '.gitignore');
+  let content = '';
+  if (fs.existsSync(gitignorePath)) {
+    content = fs.readFileSync(gitignorePath, 'utf8');
+    const lines = content.split(/\r?\n/).map((l) => l.trim());
+    const covered = lines.some(
+      (l) => l === guard || l === '/.catalyst' || l === '.catalyst' || l === '.catalyst/'
+    );
+    if (covered) return;
+  }
+  const block = `${content && !content.endsWith('\n') ? '\n' : ''}\n# Catalyst OS local secrets (never commit)\n${guard}\n`;
+  fs.appendFileSync(gitignorePath, block);
+  console.log(`  ${green}✓${reset} Added ${guard} to .gitignore`);
+}
+
+/**
  * Install catalyst-os to current directory
  */
 function install() {
@@ -142,12 +163,37 @@ function install() {
     }
   }
 
+  // Install voice runtime (zero-dependency local meeting daemon for /meet-spec)
+  const voiceSrc = path.join(src, '.catalyst', 'voice');
+  const voiceDest = path.join(catalystDir, 'voice');
+  if (fs.existsSync(voiceSrc)) {
+    copyDir(voiceSrc, voiceDest);
+    console.log(`  ${green}✓${reset} Installed .catalyst/voice/`);
+  }
+
   // Create specs directory if it doesn't exist
   const specsDir = path.join(catalystDir, 'specs');
   if (!fs.existsSync(specsDir)) {
     fs.mkdirSync(specsDir, { recursive: true });
     console.log(`  ${green}✓${reset} Created .catalyst/specs/`);
   }
+
+  // Create a local secrets file (git-ignored) if it doesn't exist yet.
+  // Optional — only needed for voice meetings (/meet-spec).
+  const secretsPath = path.join(catalystDir, 'secrets.local.yaml');
+  if (!fs.existsSync(secretsPath)) {
+    fs.writeFileSync(
+      secretsPath,
+      '# Catalyst OS — Local Secrets (git-ignored, never commit)\n' +
+        '# Optional. Only needed for /meet-spec voice meetings.\n' +
+        '# Get a key at https://elevenlabs.io (you pay for your own usage).\n' +
+        'elevenlabs_api_key: ""\n'
+    );
+    console.log(`  ${green}✓${reset} Created .catalyst/secrets.local.yaml`);
+  }
+
+  // Safety belt: ensure the local secrets file can never be committed.
+  ensureGitignore(cwd);
 
   // Install AGENTS.md
   const agentsMdSrc = path.join(src, 'AGENTS.md');

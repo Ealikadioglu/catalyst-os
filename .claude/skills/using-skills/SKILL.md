@@ -41,6 +41,7 @@ Skills tell you HOW. User instructions tell you WHAT.
 
 | Skill | Path | Load when... |
 |-------|------|-------------|
+| **meet-spec** | `.claude/skills/meet-spec/SKILL.md` | `/meet-spec` — shaping a spec via a voice meeting (optional) |
 | **spec-shaping** | `.claude/skills/spec-shaping/SKILL.md` | `/catalyze-spec` — shaping a new specification |
 | **spec-challenge** | `.claude/skills/spec-challenge/SKILL.md` | `/challenge-spec` — interrogating a shaped spec branch by branch (optional) |
 | **build-orchestration** | `.claude/skills/build-orchestration/SKILL.md` | `/forge-spec` — implementing a specification |

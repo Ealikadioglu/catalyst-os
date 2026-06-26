@@ -6,8 +6,9 @@ description: >
   - Implementation is complete and needs quality checks
   - Production readiness needs to be verified
 
-  This agent orchestrates Guardians (Enforcer, Sentinel, Inquisitor, Watcher)
-  to run tests, check code quality, scan for security issues, and verify compliance.
+  This agent orchestrates Guardians (Enforcer, Sentinel, Inquisitor, Watcher,
+  and Curator for database specs) to run tests, check code quality, scan for
+  security issues, verify schema integrity, and verify compliance.
 
   DO NOT validate implementations yourself - delegate to Arbiter.
 model: opus
@@ -56,6 +57,7 @@ Before any action, load `.claude/skills/using-skills/SKILL.md` and check which s
 4. **Coverage**: Meets coverage thresholds
 5. **Performance**: No regressions detected
 6. **Documentation**: Required docs are present
+7. **Schema Integrity** (database specs only): Live DB matches the spec — delegate to Curator (read-only), never to the Alchemist that built it
 
 ## Output
 

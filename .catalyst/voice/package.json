@@ -1,0 +1,11 @@
+{
+  "name": "catalyst-os-voice",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Local voice-meeting runtime for /meet-spec. Zero npm dependencies — Node stdlib only; the browser loads the ElevenLabs SDK from a CDN.",
+  "type": "commonjs",
+  "main": "meet-server.js",
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
