@@ -149,18 +149,20 @@ function install() {
     console.log(`  ${green}✓${reset} Installed .claude/skills`);
   }
 
-  // Install config files
-  const configs = [
-    ['.catalyst/spec-structure.yaml', '.catalyst/spec-structure.yaml'],
-    ['.catalyst/main/project-config.yaml', '.catalyst/main/project-config.yaml']
-  ];
+  // Framework-owned config: always refresh on (re)install.
+  if (copyFile(path.join(src, '.catalyst/spec-structure.yaml'), path.join(cwd, '.catalyst/spec-structure.yaml'))) {
+    console.log(`  ${green}✓${reset} Installed .catalyst/spec-structure.yaml`);
+  }
 
-  for (const [srcFile, destFile] of configs) {
-    const srcPath = path.join(src, srcFile);
-    const destPath = path.join(cwd, destFile);
-    if (copyFile(srcPath, destPath)) {
-      console.log(`  ${green}✓${reset} Installed ${destFile}`);
+  // User-owned config: create ONLY if missing — never clobber a customized
+  // project-config.yaml (branch settings, voice.language, agent_id, etc.) on update.
+  const pcDest = path.join(cwd, '.catalyst/main/project-config.yaml');
+  if (!fs.existsSync(pcDest)) {
+    if (copyFile(path.join(src, '.catalyst/main/project-config.yaml'), pcDest)) {
+      console.log(`  ${green}✓${reset} Installed .catalyst/main/project-config.yaml`);
     }
+  } else {
+    console.log(`  ${dim}•${reset} Kept existing .catalyst/main/project-config.yaml`);
   }
 
   // Install voice runtime (zero-dependency local meeting daemon for /meet-spec)
