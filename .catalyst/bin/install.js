@@ -154,6 +154,15 @@ function install() {
     console.log(`  ${green}✓${reset} Installed .catalyst/spec-structure.yaml`);
   }
 
+  // Framework-owned document templates (roadmap, dashboard, mission, etc.):
+  // always refresh — the commands read these to generate .catalyst/main docs.
+  const tempSrc = path.join(src, '.catalyst', 'main', 'temp');
+  const tempDest = path.join(catalystDir, 'main', 'temp');
+  if (fs.existsSync(tempSrc)) {
+    copyDir(tempSrc, tempDest);
+    console.log(`  ${green}✓${reset} Installed .catalyst/main/temp/ (doc templates)`);
+  }
+
   // User-owned config: create ONLY if missing — never clobber a customized
   // project-config.yaml (branch settings, voice.language, agent_id, etc.) on update.
   const pcDest = path.join(cwd, '.catalyst/main/project-config.yaml');

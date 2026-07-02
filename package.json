@@ -15,6 +15,7 @@
     ".catalyst/bin",
     ".catalyst/voice",
     ".catalyst/spec-structure.yaml",
+    ".catalyst/main/temp",
     ".catalyst/main/project-config.yaml"
   ],
   "keywords": [
