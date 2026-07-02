@@ -118,3 +118,7 @@ Library: {status}
 
 PR: {pr-url}
 ```
+
+## Board Sync (final step)
+
+The spec just moved **Audited → Done (sealed)**. Load `spec-lifecycle-board` and run **Update the Board**: move the entry out of the board into the **Done** timeline in `roadmap.md`, re-resolve `▶ Next Up`, and regenerate `.catalyst/main/dashboard.html` (`generatedBy: "/seal-spec"`).

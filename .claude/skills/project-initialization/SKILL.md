@@ -65,11 +65,20 @@ Create in `.catalyst/main/`:
 |------|--------|
 | `project-config.yaml` | User preferences |
 | `mission.md` | Questions or README |
-| `roadmap.md` | Questions or TODOs |
+| `roadmap.md` | Spec-queue |
 | `tech-stack.md` | Detected or recommended |
 | `architecture.md` | Analyzed or planned |
 | `conventions.md` | Learned or best-practice |
 | `concerns.md` | Found or empty |
+
+**Generating `roadmap.md`:** Use the template at `.catalyst/main/temp/temp-roadmap.md`. The roadmap is a **queue of specs, not a checklist of tasks** — one entry = one spec = one forge cycle. Do NOT emit "Goal + Key Tasks" lists; that granularity belongs in each spec's `tasks.md` later.
+
+- Seed the **🗂️ Backlog** with 3-6 ordered spec entries derived from the mission/TODOs. Each gets a `Catalyze as: {slug}` hint, a one-line **Scope**, a **Done when** acceptance line, `Depends on:`, and a ready-to-run `!/catalyze-spec "..."` seed prompt.
+- Order the Backlog as a ranked queue (dependencies first, then unblocking value, then priority).
+- Set **▶ Next Up** to Backlog #1 (a fresh project has nothing In Progress yet).
+- Leave 📋 Planned / 🔨 In Progress / 🔬 Audited / ✅ Done empty (a fresh project has no specs yet).
+- Granularity guardrail: if a backlog idea would need more than ~5-8 tasks or spans multiple subsystems, split it into multiple entries.
+- After writing `roadmap.md`, also generate the visual panel `.catalyst/main/dashboard.html` — follow **Generating `dashboard.html`** in the `spec-lifecycle-board` skill (set `generatedBy: "/catalyze-project"`). Point the user to it — double-click to open in a browser.
 
 ### Phase 5: Bootstrap CLAUDE.md
 

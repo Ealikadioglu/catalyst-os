@@ -88,9 +88,15 @@ For each spec the user confirms:
 
 ### Phase 5: Update Roadmap (Optional)
 
-If `.catalyst/main/roadmap.md` exists:
-1. Update status of archived specs to COMPLETE
-2. Update command sections for completed specs
+If `.catalyst/main/roadmap.md` exists, load the `spec-lifecycle-board` skill (single source of the lifecycle) and:
+1. Move archived/sealed specs into the **✅ Done** section
+2. Re-classify remaining on-disk specs into their current buckets (📋 Planned / 🔨 In Progress / 🔬 Audited) by re-running State Detection
+
+> **Boundary:** this is mechanical reconciliation of specs that exist on disk. Do NOT invent, reorder, or re-prioritize **🗂️ Backlog** entries or set strategic Next Up direction — that is planning, owned by `/plan-project`. If the board needs re-planning, tell the user to run `/plan-project`.
+
+### Phase 6: Regenerate Dashboard
+
+If `.catalyst/main/roadmap.md` exists, also regenerate `.catalyst/main/dashboard.html` so it reflects the archiving just done. Follow **Generating `dashboard.html`** in the `spec-lifecycle-board` skill (set `generatedBy: "/sync-project"`). The **Backlog stays as-is** — sync never re-plans it.
 
 ## Output
 
@@ -110,5 +116,8 @@ Flagged: 1 stale spec
 
 Library: Added authentication.md, payment-integration.md
 
-Roadmap: Updated .catalyst/main/roadmap.md
+Roadmap: Moved 2 specs to ✅ Shipped, re-classified active specs
+         (run /plan-project to re-plan the backlog and Next Up)
+
+Dashboard: Regenerated .catalyst/main/dashboard.html (open in browser)
 ```

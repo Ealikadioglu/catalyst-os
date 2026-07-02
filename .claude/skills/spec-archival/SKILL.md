@@ -75,3 +75,7 @@ Library: {Added to .catalyst/library/X.md | Skipped}
 Note: This was a lightweight archive (no git ceremony).
 For full commit + branch management, use /seal-spec.
 ```
+
+## Board Sync (final step)
+
+The spec just moved to **Done (sealed)**. Load `spec-lifecycle-board` and run **Update the Board**: move the entry into the **Done** timeline in `roadmap.md`, re-resolve `▶ Next Up`, and regenerate `.catalyst/main/dashboard.html` (`generatedBy: "/archive-spec"`).

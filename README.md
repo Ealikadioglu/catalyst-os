@@ -221,8 +221,33 @@ Guardians (Quality)
 | `/status-spec @slug` | Check progress | Current status |
 | `/update-spec @slug "change"` | Modify spec (planning phase) | Updated spec.md |
 | `/mission` | Create/update mission.md | mission.md |
-| `/roadmap` | Create/update roadmap.md | roadmap.md |
+| `/plan-project` | Plan the backlog & next spec | roadmap.md |
 | `/tech-stack` | Create/update tech-stack.md | tech-stack.md |
+
+---
+
+## Project Dashboard
+
+Alongside `roadmap.md`, Catalyst generates a self-contained visual panel at **`.catalyst/main/dashboard.html`** — double-click to open in any browser (no server, no network). It's a whole-`.catalyst/main` control panel tabbed across **Roadmap · Mission · Tech Stack · Architecture · Concerns**.
+
+The Roadmap tab is a Kanban board over the spec lifecycle:
+
+```
+Backlog → Planned → In Progress → Audited → Done (sealed)
+```
+
+The board shows the 4 active states as collapsible columns; **Done** is the sealed timeline below. A single **▶ Next Up** card always answers "what's the next spec?", with a copy-able command.
+
+**It stays in sync automatically.** Every lifecycle command moves the spec one column and regenerates the dashboard:
+
+| Command | Moves the spec |
+|---------|----------------|
+| `/catalyze-spec` | Backlog → Planned |
+| `/forge-spec` | Planned → In Progress |
+| `/audit-spec` (pass) | In Progress → Audited |
+| `/seal-spec` | Audited → Done |
+
+Run `/plan-project` to re-plan the backlog, or `/sync-project` to reconcile after the fact. The lifecycle, detection, and dashboard generation are defined once in the `spec-lifecycle-board` skill.
 
 ---
 

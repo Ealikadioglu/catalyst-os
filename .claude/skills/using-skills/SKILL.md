@@ -51,6 +51,7 @@ Skills tell you HOW. User instructions tell you WHAT.
 | **project-initialization** | `.claude/skills/project-initialization/SKILL.md` | `/catalyze-project` — setting up a new project |
 | **spec-update** | `.claude/skills/spec-update/SKILL.md` | `/update-spec` — modifying an existing spec |
 | **project-sync** | `.claude/skills/project-sync/SKILL.md` | `/sync-project` — batch sync and archive specs |
+| **spec-lifecycle-board** | `.claude/skills/spec-lifecycle-board/SKILL.md` | After any spec transition, or `/plan-project` — move the spec on the board and regenerate `dashboard.html` |
 
 ---
 

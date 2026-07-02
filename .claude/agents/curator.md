@@ -12,7 +12,7 @@ description: >
 
   DO NOT audit database integrity yourself - delegate to Curator.
 model: sonnet
-color: cyan
+color: red
 skills: secret-scanning
 ---
 

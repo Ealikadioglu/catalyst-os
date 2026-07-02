@@ -226,3 +226,7 @@ This ensures `/primer-spec` always reflects actual progress, even if the orchest
 | Scope violation detected | STOP agent, revert, re-run with stricter prompt |
 | Parallel agents conflict | STOP build, revert, restructure DAG |
 | Dependency deadlock | STOP all, report to user, restructure DAG |
+
+## Board Sync (final step)
+
+Once the build reaches green and `tasks.md` reflects progress, the spec has moved **Planned → In Progress**. Load `spec-lifecycle-board` and run **Update the Board**: move the entry to In Progress in `roadmap.md`, re-resolve `▶ Next Up`, and regenerate `.catalyst/main/dashboard.html` (`generatedBy: "/forge-spec"`).

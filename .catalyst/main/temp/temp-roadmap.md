@@ -1,8 +1,147 @@
 # Project Roadmap
 
-## Current State
+> **The roadmap is a queue of specs, not a checklist of tasks.**
+> One entry = one spec = one forge cycle (one PR-sized unit of work).
+> Tasks live in each spec's `tasks.md`, never here.
+> Sections are **lifecycle states** — a spec moves across the board as it progresses:
+> `Backlog → Planned → In Progress → Audited → Done`.
+> The board shows the 4 active states; **Done** is the sealed history below.
 
-<!-- Where are we now? -->
+---
+
+## ▶ Next Up
+
+<!--
+The single most important thing to do next. Exactly ONE spec.
+Resolution rule (closest to Done first):
+  IF anything Audited      → that spec (seal it)
+  ELSE IF In Progress      → that spec (finish it)
+  ELSE IF Planned          → highest-priority Planned spec (forge it)
+  ELSE                     → Backlog #1 (catalyze it)
+-->
+
+**[spec-name]** — [one-line why this is next]
+
+```
+!/[resolved command for this spec]
+```
+
+---
+
+## 🗂️ Backlog
+
+<!--
+Ideas we WILL build, not yet catalyzed. This is an ORDERED queue —
+the number IS the priority. #1 is what becomes "Next Up" once the board clears.
+Each entry must be ONE spec. If it needs more than ~5-8 tasks or spans
+multiple subsystems, split it into multiple backlog entries.
+-->
+
+### 1. [Feature Name]
+**Catalyze as:** `feature-slug`
+**Scope:** [one-line scope — one spec's worth of work]
+**Done when:** [acceptance criteria]
+**Depends on:** [prior entry, or "nothing"]
+**Priority:** 🔴 Critical / 🟠 High / 🟡 Medium / 🟢 Low
+
+**Seed prompt:**
+```
+[prompt to hand /catalyze-spec]
+```
+
+**References:**
+- 📁 `./designs/feature.png`
+- 🔗 https://docs.example.com
+
+```
+!/catalyze-spec "[seed prompt]"
+```
+
+---
+
+### 2. [Feature Name]
+**Catalyze as:** `another-feature-slug`
+**Scope:** [one-line scope]
+**Done when:** [acceptance criteria]
+**Depends on:** #1
+**Priority:** 🟠 High
+
+**Seed prompt:**
+```
+[prompt to hand /catalyze-spec]
+```
+
+```
+!/catalyze-spec "[seed prompt]"
+```
+
+---
+
+## 📋 Planned
+
+<!-- spec.md exists (catalyzed), no tasks.md yet. Ready to forge. -->
+
+### [Feature Name]
+**Slug:** `2026-02-15-feature-slug`
+**Scope:** [one-line scope — what this spec covers]
+**Done when:** [acceptance criteria]
+
+```
+!/forge-spec @2026-02-15-feature-slug
+```
+> Or `!/forge-spec-worktree @2026-02-15-feature-slug` if another spec is in progress.
+
+---
+
+## 🔨 In Progress
+
+<!-- tasks.md exists, build ongoing. Keep this to 0-1 specs (WIP limit). -->
+
+### [Feature Name]
+**Slug:** `2026-01-11-feature-slug`
+**Done when:** [acceptance criteria — how we know this spec is complete]
+
+```
+!/audit-spec @2026-01-11-feature-slug
+```
+
+---
+
+## 🔬 Audited
+
+<!-- validation.md exists and audit PASSED, not yet sealed. Ready to seal. -->
+
+### [Feature Name]
+**Slug:** `2026-01-08-feature-slug`
+**Done when:** [acceptance criteria]
+
+```
+!/seal-spec @2026-01-08-feature-slug
+```
+
+---
+
+## ✅ Done
+
+<!-- Sealed/archived specs. Gives closure and history. Newest first. -->
+
+| Spec | Slug | Sealed |
+|------|------|--------|
+| [Feature Name] | `2026-01-05-feature-slug` | 2026-01-20 |
+
+---
+
+## Vision / Someday
+
+<!-- Strategic goals not yet ready to be specs. NOT part of the ordered backlog. -->
+
+| Goal | Description | Prerequisite Specs |
+|------|-------------|--------------------|
+| | | |
+
+---
+
+## Current State
 
 ### Existing Features
 
@@ -12,95 +151,7 @@
 
 ### Technical Debt
 
-- 
-
----
-
-## Short-Term (1-3 months)
-
-### SPEC: [Feature Name]
-**Status:** 📋 Planned
-**Objective:** [What we want to achieve]
-
-**Seed Prompt:**
-```
-[Prompt to generate spec]
-```
-
-**References:**
-- 📁 `./designs/feature.png`
-- 🔗 https://docs.example.com
-
-**Priority:** 🔴 Critical / 🟠 High / 🟡 Medium / 🟢 Low
-
-**Dependencies:**
-- [Depends on X]
-
-**Command:**
-```
-!/catalyze-spec "[seed prompt]"
-```
-
----
-
-### SPEC: [Another Feature]
-**Status:** 🚧 IN_PROGRESS
-**Slug:** 2026-01-11-feature-slug
-**Objective:** [What we want to achieve]
-
-**Command:**
-```
-!/audit-spec @2026-01-11-feature-slug
-```
-
----
-
-## Medium-Term (3-6 months)
-
-### SPEC: [Feature Name]
-**Status:** 📋 Planned
-**Objective:** [What we want to achieve]
-
-**Seed Prompt:**
-```
-[Prompt to generate spec]
-```
-
-**References:**
-- 
-
-**Priority:** 🔴 Critical / 🟠 High / 🟡 Medium / 🟢 Low
-
-**Dependencies:**
-- 
-
-**Command:**
-```
-!/catalyze-spec "[seed prompt]"
-```
-
----
-
-### SPEC: [Feature Name]
-**Status:** 📝 DRAFT
-**Slug:** 2026-03-15-feature-slug
-**Objective:** [What we want to achieve]
-
-**Command:**
-```
-!/forge-spec @2026-03-15-feature-slug
-```
-> Or `!/forge-spec-worktree @2026-03-15-feature-slug` if another spec is in progress.
-
----
-
-## Long-Term Vision (6+ months)
-
-### Vision Goals
-
-| Goal | Description | Prerequisite Specs |
-|------|-------------|--------------------|
-| | | |
+-
 
 ---
 

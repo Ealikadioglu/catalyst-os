@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<!--
+  Catalyst OS — Project Dashboard (whole .catalyst/main)
+  Self-contained, offline. Double-click to open in a browser.
+  Regenerated on every spec lifecycle transition and by
+  /plan-project, /sync-project, /catalyze-project. See the
+  `spec-lifecycle-board` skill for the canonical generation procedure.
+
+  HOW COMMANDS UPDATE THIS FILE:
+  Replace ONLY the block between "DATA:START" and "DATA:END" with the
+  current project state read from the .catalyst/main docs
+  (roadmap.md, mission.md, tech-stack.md, architecture.md, concerns.md).
+  Never edit the CSS/JS below the data block — layout is fixed on purpose.
+  Any section with empty/omitted data is auto-hidden; only fill what exists.
+
+  LIFECYCLE: Backlog → Planned → In Progress → Audited → Done (sealed).
+  The Kanban board shows the 4 active states; Done is the timeline below it.
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Project Dashboard</title>
+<style>
+  :root {
+    --bg: #0d1117; --bg-elev: #161b22; --bg-elev2: #1c2230;
+    --border: #2a3140; --text: #e6edf3; --text-dim: #8b949e; --text-faint: #6e7681;
+    --accent: #f0b429;
+    --backlog: #7d8590; --planned: #a371f7; --inprogress: #4493f8; --audited: #39c5cf; --done: #3fb950;
+    --crit: #f85149; --high: #f0883e; --med: #d29922; --low: #3fb950;
+    --radius: 12px; --mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+    --sans: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  }
+  @media (prefers-color-scheme: light) {
+    :root { --bg: #f6f8fa; --bg-elev: #fff; --bg-elev2: #f0f3f6; --border: #d0d7de; --text: #1f2328; --text-dim: #59636e; --text-faint: #818b98; }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--text); font-family: var(--sans); line-height: 1.5; -webkit-font-smoothing: antialiased; }
+  .wrap { max-width: 1200px; margin: 0 auto; padding: 28px 24px 80px; }
+  a { color: var(--inprogress); text-decoration: none; } a:hover { text-decoration: underline; }
+  h3.section { font-size: 13px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-dim); margin: 24px 0 12px; }
+
+  header { margin-bottom: 20px; }
+  header h1 { margin: 0 0 4px; font-size: 26px; letter-spacing: -0.02em; }
+  header .tagline { color: var(--text-dim); font-size: 15px; max-width: 70ch; }
+  header .meta { color: var(--text-faint); font-size: 12px; margin-top: 6px; }
+  header .meta code { font-family: var(--mono); color: var(--accent); }
+
+  /* Stats — 5 lifecycle states */
+  .stats { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; margin: 18px 0 8px; }
+  .stat { background: var(--bg-elev); border: 1px solid var(--border); border-radius: var(--radius); padding: 12px 14px; }
+  .stat .n { font-size: 23px; font-weight: 700; letter-spacing: -0.02em; }
+  .stat .l { font-size: 11px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.04em; }
+  .stat.backlog .n { color: var(--backlog); } .stat.planned .n { color: var(--planned); }
+  .stat.inprogress .n { color: var(--inprogress); } .stat.audited .n { color: var(--audited); } .stat.done .n { color: var(--done); }
+  .progress { height: 7px; background: var(--bg-elev2); border-radius: 99px; overflow: hidden; margin: 8px 0 4px; border: 1px solid var(--border); }
+  .progress > span { display: block; height: 100%; background: var(--done); }
+  .progress-l { font-size: 11px; color: var(--text-faint); }
+
+  nav.tabs { display: flex; gap: 4px; flex-wrap: wrap; border-bottom: 1px solid var(--border); margin: 22px 0 8px; position: sticky; top: 0; background: var(--bg); z-index: 5; padding-top: 6px; }
+  nav.tabs button { background: transparent; border: none; border-bottom: 2px solid transparent; color: var(--text-dim); font-size: 14px; font-weight: 500; padding: 10px 14px; cursor: pointer; font-family: var(--sans); }
+  nav.tabs button:hover { color: var(--text); }
+  nav.tabs button.active { color: var(--text); border-bottom-color: var(--accent); }
+  .panel { display: none; } .panel.active { display: block; }
+
+  .nextup { background: linear-gradient(135deg, color-mix(in srgb, var(--accent) 14%, var(--bg-elev)), var(--bg-elev)); border: 1px solid color-mix(in srgb, var(--accent) 40%, var(--border)); border-radius: var(--radius); padding: 20px 22px; margin: 8px 0 28px; }
+  .nextup .tag { color: var(--accent); font-weight: 700; font-size: 13px; text-transform: uppercase; letter-spacing: 0.08em; }
+  .nextup h2 { margin: 6px 0; font-size: 22px; letter-spacing: -0.02em; }
+  .nextup .why { color: var(--text-dim); margin-bottom: 12px; }
+
+  /* Board — 4 collapsible columns */
+  .board { display: flex; gap: 14px; align-items: flex-start; }
+  .board > details { flex: 1 1 0; min-width: 0; background: var(--bg-elev); border: 1px solid var(--border); border-radius: var(--radius); }
+  .board > details:not([open]) { flex: 0 0 auto; }
+  .board > details > summary { list-style: none; cursor: pointer; padding: 12px 13px; display: flex; align-items: center; gap: 7px; font-weight: 600; font-size: 13.5px; user-select: none; }
+  .board > details > summary::-webkit-details-marker { display: none; }
+  .board > details > summary .chev { color: var(--text-faint); font-size: 10px; transition: transform .15s; margin-left: auto; }
+  .board > details[open] > summary .chev { transform: rotate(90deg); }
+  .dot { width: 9px; height: 9px; border-radius: 99px; display: inline-block; flex: none; }
+  .dot.backlog { background: var(--backlog); } .dot.planned { background: var(--planned); } .dot.inprogress { background: var(--inprogress); } .dot.audited { background: var(--audited); }
+  .count { color: var(--text-faint); font-weight: 500; font-size: 13px; }
+  .cards { display: flex; flex-direction: column; gap: 10px; padding: 0 11px 13px; }
+
+  .card { background: var(--bg-elev2); border: 1px solid var(--border); border-radius: 10px; padding: 12px 13px; position: relative; }
+  .card.backlog { border-left: 3px solid var(--backlog); } .card.planned { border-left: 3px solid var(--planned); }
+  .card.inprogress { border-left: 3px solid var(--inprogress); } .card.audited { border-left: 3px solid var(--audited); }
+  .card .rank { position: absolute; top: 11px; right: 12px; color: var(--text-faint); font-family: var(--mono); font-size: 12px; }
+  .card h4 { margin: 0 0 5px; font-size: 14.5px; letter-spacing: -0.01em; padding-right: 22px; }
+  .card .slug { font-family: var(--mono); font-size: 11px; color: var(--text-faint); }
+  .card .scope { font-size: 13px; color: var(--text-dim); margin: 8px 0; }
+  .card .done-line { font-size: 12px; color: var(--text-faint); margin: 6px 0; }
+  .card .done-line b { color: var(--text-dim); font-weight: 600; }
+  .card .row { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; margin-top: 8px; }
+  .pill { font-size: 11px; padding: 2px 8px; border-radius: 99px; border: 1px solid var(--border); color: var(--text-dim); }
+  .pill.dep { font-family: var(--mono); }
+  .prio { font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 99px; }
+  .prio.crit { background: color-mix(in srgb, var(--crit) 18%, transparent); color: var(--crit); }
+  .prio.high { background: color-mix(in srgb, var(--high) 18%, transparent); color: var(--high); }
+  .prio.med { background: color-mix(in srgb, var(--med) 18%, transparent); color: var(--med); }
+  .prio.low { background: color-mix(in srgb, var(--low) 18%, transparent); color: var(--low); }
+  .empty { color: var(--text-faint); font-size: 13px; font-style: italic; padding: 4px 0; }
+
+  .cmd { display: flex; align-items: center; gap: 8px; margin-top: 9px; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 7px 9px; font-family: var(--mono); font-size: 12px; }
+  .cmd code { flex: 1; overflow-x: auto; white-space: nowrap; color: var(--text); }
+  .cmd button { background: transparent; border: 1px solid var(--border); color: var(--text-dim); border-radius: 6px; padding: 3px 9px; font-size: 11px; cursor: pointer; font-family: var(--sans); white-space: nowrap; }
+  .cmd button:hover { color: var(--text); border-color: var(--text-dim); }
+  .cmd button.copied { color: var(--done); border-color: var(--done); }
+  .nextup .cmd { background: color-mix(in srgb, var(--accent) 10%, var(--bg-elev2)); font-size: 13px; }
+
+  /* Done timeline */
+  .done-list { display: flex; flex-direction: column; gap: 1px; margin-top: 10px; }
+  .done-item { display: flex; align-items: center; gap: 12px; padding: 8px 12px; border-radius: 8px; }
+  .done-item:hover { background: var(--bg-elev); }
+  .done-item .check { color: var(--done); font-weight: 700; }
+  .done-item .name { flex: 1; } .done-item .sslug { font-family: var(--mono); font-size: 11px; color: var(--text-faint); }
+  .done-item .date { font-family: var(--mono); font-size: 12px; color: var(--text-dim); }
+
+  details.sec { background: var(--bg-elev); border: 1px solid var(--border); border-radius: var(--radius); margin-bottom: 12px; }
+  details.sec > summary { list-style: none; cursor: pointer; padding: 14px 18px; font-weight: 600; font-size: 15px; display: flex; align-items: center; gap: 8px; user-select: none; }
+  details.sec > summary::-webkit-details-marker { display: none; }
+  details.sec > summary .chev { color: var(--text-faint); font-size: 11px; margin-left: auto; transition: transform .15s; }
+  details.sec[open] > summary .chev { transform: rotate(90deg); }
+  details.sec .body { padding: 0 18px 18px; }
+  .callout { background: var(--bg-elev); border: 1px solid var(--border); border-left: 3px solid var(--accent); border-radius: var(--radius); padding: 16px 18px; margin-bottom: 16px; font-size: 15px; }
+  ul.clean { margin: 0; padding-left: 18px; } ul.clean li { margin-bottom: 6px; color: var(--text-dim); font-size: 14px; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th, td { text-align: left; padding: 7px 8px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  th { color: var(--text-dim); font-weight: 600; font-size: 11px; text-transform: uppercase; letter-spacing: 0.04em; }
+  td code, .mono { font-family: var(--mono); font-size: 12px; }
+  .badge { font-size: 11px; padding: 1px 7px; border-radius: 99px; border: 1px solid var(--border); }
+
+  .sev { display: grid; grid-template-columns: repeat(4,1fr); gap: 12px; margin-bottom: 16px; }
+  .sevtile { border: 1px solid var(--border); border-radius: var(--radius); padding: 12px 16px; background: var(--bg-elev); }
+  .sevtile .n { font-size: 24px; font-weight: 700; }
+  .sevtile.crit { border-left: 3px solid var(--crit); } .sevtile.crit .n { color: var(--crit); }
+  .sevtile.high { border-left: 3px solid var(--high); } .sevtile.high .n { color: var(--high); }
+  .sevtile.med  { border-left: 3px solid var(--med); }  .sevtile.med .n { color: var(--med); }
+  .sevtile.low  { border-left: 3px solid var(--low); }  .sevtile.low .n { color: var(--low); }
+  .sevtile .l { font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-dim); }
+  .issue { border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px; margin-bottom: 10px; background: var(--bg-elev); }
+  .issue .top { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .issue .id { font-family: var(--mono); font-size: 12px; color: var(--text-faint); }
+  .issue h4 { margin: 0; font-size: 14px; }
+  .issue .loc { font-family: var(--mono); font-size: 11px; color: var(--text-faint); margin-top: 4px; }
+  .issue .desc { font-size: 13px; color: var(--text-dim); margin-top: 6px; }
+
+  footer { margin-top: 48px; text-align: center; color: var(--text-faint); font-size: 12px; }
+
+  @media (max-width: 900px) {
+    .stats { grid-template-columns: repeat(3, 1fr); } .sev { grid-template-columns: repeat(2, 1fr); }
+    .board { flex-direction: column; } .board > details, .board > details:not([open]) { flex: 1 1 auto; width: 100%; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap" id="app"></div>
+
+<script>
+// === DATA:START (commands replace only this object) ===
+const DATA = {
+  project: "Project Name",
+  tagline: "One-line mission vision — what this project changes.",
+  generated: "2026-07-02",
+  generatedBy: "/plan-project",
+
+  roadmap: {
+    nextUp: { name: "example-feature", why: "The single most important thing next.", command: '!/catalyze-spec "seed prompt for the next feature"' },
+    backlog: [
+      { rank: 1, name: "Two-Factor Auth", slug: "two-factor-auth", scope: "TOTP-based 2FA on login.", doneWhen: "User enrolls + verifies TOTP.", dependsOn: "user-auth", priority: "high", command: '!/catalyze-spec "TOTP two-factor authentication on login"' },
+      { rank: 2, name: "Audit Log", slug: "audit-log", scope: "Record security-sensitive actions.", doneWhen: "Logins + role changes logged.", dependsOn: "#1", priority: "medium", command: '!/catalyze-spec "security audit log for sensitive actions"' }
+    ],
+    planned: [
+      { name: "Password Reset", slug: "2026-06-28-password-reset", scope: "Email-based reset with expiring tokens.", doneWhen: "User resets password via emailed link.", command: "!/forge-spec @2026-06-28-password-reset" }
+    ],
+    inProgress: [
+      { name: "User Authentication", slug: "2026-06-20-user-auth", scope: "Login, session, protected routes.", doneWhen: "Login + session pass E2E.", command: "!/audit-spec @2026-06-20-user-auth" }
+    ],
+    audited: [
+      { name: "Onboarding Flow", slug: "2026-06-18-onboarding", scope: "3-step guided onboarding.", doneWhen: "New users complete setup.", command: "!/seal-spec @2026-06-18-onboarding" }
+    ],
+    done: [
+      { name: "Project Setup", slug: "2026-06-10-project-setup", date: "2026-06-15" }
+    ],
+    vision: [ { goal: "SSO", description: "Enterprise single sign-on", prereq: "user-auth, audit-log" } ]
+  },
+
+  mission: {
+    vision: "Make X effortless for Y.",
+    pain: ["Users waste hours on manual step Z."],
+    whoSuffers: ["Small teams without dedicated ops."],
+    coreValue: ["Automates Z end to end."],
+    differentiators: ["Spec-driven", "Offline-first", "No lock-in"],
+    targetUsers: [ { persona: "Indie founder", description: "Builds solo", need: "Ship fast without process overhead" } ],
+    metrics: [ { metric: "Time to first spec", target: "< 10 min", timeline: "Q3" } ],
+    qualitativeGoals: ["Feels calm, not noisy."],
+    nonGoals: ["Not a full project-management suite."]
+  },
+
+  techStack: {
+    overview: "Next.js + FastAPI + Supabase, deployed on Vercel + DO.",
+    groups: [
+      { category: "Frontend", items: [ { name: "Next.js", version: "14.x", purpose: "App framework", docs: "" }, { name: "Tailwind", version: "3.x", purpose: "Styling", docs: "" } ] },
+      { category: "Backend", items: [ { name: "FastAPI", version: "0.11x", purpose: "API", docs: "" } ] },
+      { category: "Data", items: [ { name: "PostgreSQL", version: "15", purpose: "Primary DB (Supabase)", docs: "" } ] }
+    ],
+    decisions: [ { id: "ADR-001", title: "Celery over DB triggers", context: "Fan-out was fragile in triggers.", decision: "Move to Celery pollers.", consequences: "Simpler ops, explicit retries." } ]
+  },
+
+  architecture: {
+    overview: "Layered: presentation → application → domain → infrastructure.",
+    layers: [
+      { layer: "Presentation", location: "src/app/", responsibility: "HTTP handlers, UI" },
+      { layer: "Application", location: "src/services/", responsibility: "Use-case orchestration" },
+      { layer: "Domain", location: "src/domain/", responsibility: "Business rules" },
+      { layer: "Infrastructure", location: "src/lib/", responsibility: "External integrations" }
+    ],
+    patterns: [ { name: "Repository", purpose: "Abstract DB access", location: "src/db/repositories/" } ],
+    entryPoints: [ { name: "REST API", location: "src/app/api/", purpose: "Main routes" } ],
+    keyFiles: [ { purpose: "DB client", file: "src/lib/db.ts" }, { purpose: "Auth middleware", file: "src/middleware/auth.ts" } ]
+  },
+
+  concerns: {
+    summary: { critical: 0, high: 1, medium: 1, low: 0 },
+    issues: [
+      { id: "HIGH-001", title: "No rate limiting on auth", severity: "high", type: "Security", location: "src/api/auth/*", description: "Public auth endpoints unthrottled.", fix: "Add rate limiter middleware." },
+      { id: "MED-001", title: "N+1 in user list", severity: "medium", type: "Performance", location: "src/api/users/route.ts:34", description: "Related data loaded in a loop.", fix: "Use eager include / join." }
+    ],
+    techDebt: [ { id: "TD-001", location: "src/lib/legacy.ts", description: "Old auth path still present", effort: "High" } ],
+    security: [ { area: "Rate limiting", status: "Missing", notes: "Needed on public endpoints" }, { area: "Auth", status: "Good", notes: "JWT + refresh" } ],
+    knownBugs: [ { id: "BUG-001", description: "Login redirect fails on Safari", location: "src/lib/auth.ts", priority: "Medium" } ]
+  }
+};
+// === DATA:END ===
+
+/* ---------- renderer (do not edit when regenerating) ---------- */
+const h = (s) => String(s == null ? "" : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const has = (a) => Array.isArray(a) && a.length > 0;
+const prioClass = (p) => ({critical:'crit',high:'high',medium:'med',low:'low'}[(p||'').toLowerCase()] || 'med');
+const chev = '<span class="chev">▶</span>';
+
+function cmdBlock(cmd) {
+  if (!cmd) return "";
+  return `<div class="cmd"><code>${h(cmd)}</code><button onclick="copyCmd(this)" data-cmd="${h(cmd)}">Copy</button></div>`;
+}
+function copyCmd(btn) {
+  const t = btn.getAttribute('data-cmd');
+  navigator.clipboard?.writeText(t).then(() => {
+    btn.textContent = 'Copied'; btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 1400);
+  }).catch(() => { btn.textContent = 'Copy failed'; });
+}
+
+function card(item, kind) {
+  const rank = item.rank ? `<span class="rank">#${h(item.rank)}</span>` : "";
+  const scope = item.scope ? `<div class="scope">${h(item.scope)}</div>` : "";
+  const done = item.doneWhen ? `<div class="done-line"><b>Done when:</b> ${h(item.doneWhen)}</div>` : "";
+  const prio = item.priority ? `<span class="prio ${prioClass(item.priority)}">${h(item.priority)}</span>` : "";
+  const dep = item.dependsOn ? `<span class="pill dep">↳ ${h(item.dependsOn)}</span>` : "";
+  const row = (prio || dep) ? `<div class="row">${prio}${dep}</div>` : "";
+  return `<div class="card ${kind}">${rank}<h4>${h(item.name)}</h4><div class="slug">${h(item.slug)}</div>${scope}${done}${row}${cmdBlock(item.command)}</div>`;
+}
+function column(title, kind, items, key) {
+  const body = has(items) ? items.map(i => card(i, kind)).join("") : `<div class="empty">Nothing here.</div>`;
+  return `<details class="dcol" data-k="${key}" open><summary><span class="dot ${kind}"></span>${h(title)} <span class="count">${(items||[]).length}</span>${chev}</summary><div class="cards">${body}</div></details>`;
+}
+function renderRoadmap(r) {
+  if (!r) return "";
+  const nu = r.nextUp;
+  const nextUp = nu && nu.name ? `<div class="nextup"><div class="tag">▶ Next Up</div><h2>${h(nu.name)}</h2><div class="why">${h(nu.why)}</div>${cmdBlock(nu.command)}</div>` : "";
+  const board = `<div class="board">
+    ${column("Backlog", "backlog", r.backlog, "backlog")}
+    ${column("Planned", "planned", r.planned, "planned")}
+    ${column("In Progress", "inprogress", r.inProgress, "inprogress")}
+    ${column("Audited", "audited", r.audited, "audited")}
+  </div>`;
+  const done = has(r.done) ? `<h3 class="section">✅ Done — sealed</h3><div class="done-list">${r.done.map(s => `<div class="done-item"><span class="check">✓</span><span class="name">${h(s.name)}</span><span class="sslug">${h(s.slug)}</span><span class="date">${h(s.date||"")}</span></div>`).join("")}</div>` : "";
+  const vision = has(r.vision) ? `<h3 class="section">Vision / Someday</h3><table><thead><tr><th>Goal</th><th>Description</th><th>Prerequisite Specs</th></tr></thead><tbody>${r.vision.map(v => `<tr><td>${h(v.goal)}</td><td>${h(v.description)}</td><td class="mono">${h(v.prereq)}</td></tr>`).join("")}</tbody></table>` : "";
+  return nextUp + board + done + vision;
+}
+
+function bulletCard(title, items) {
+  if (!has(items)) return "";
+  return `<details class="sec" open><summary>${h(title)}${chev}</summary><div class="body"><ul class="clean">${items.map(i=>`<li>${h(i)}</li>`).join("")}</ul></div></details>`;
+}
+function renderMission(m) {
+  if (!m) return "";
+  const vision = m.vision ? `<div class="callout">${h(m.vision)}</div>` : "";
+  const users = has(m.targetUsers) ? `<details class="sec" open><summary>Target Users${chev}</summary><div class="body"><table><thead><tr><th>Persona</th><th>Description</th><th>Primary Need</th></tr></thead><tbody>${m.targetUsers.map(u=>`<tr><td>${h(u.persona)}</td><td>${h(u.description)}</td><td>${h(u.need)}</td></tr>`).join("")}</tbody></table></div></details>` : "";
+  const metrics = has(m.metrics) ? `<details class="sec" open><summary>Success Metrics${chev}</summary><div class="body"><table><thead><tr><th>Metric</th><th>Target</th><th>Timeline</th></tr></thead><tbody>${m.metrics.map(x=>`<tr><td>${h(x.metric)}</td><td>${h(x.target)}</td><td>${h(x.timeline)}</td></tr>`).join("")}</tbody></table></div></details>` : "";
+  return vision + bulletCard("The Pain", m.pain) + bulletCard("Who Suffers", m.whoSuffers) + bulletCard("Core Value", m.coreValue) + bulletCard("Differentiators", m.differentiators) + users + metrics + bulletCard("Qualitative Goals", m.qualitativeGoals) + bulletCard("Non-Goals", m.nonGoals);
+}
+
+function renderTech(t) {
+  if (!t) return "";
+  const overview = t.overview ? `<div class="callout">${h(t.overview)}</div>` : "";
+  const groups = has(t.groups) ? t.groups.map(g => `<details class="sec" open><summary>${h(g.category)}${chev}</summary><div class="body"><table><thead><tr><th>Technology</th><th>Version</th><th>Purpose</th><th>Docs</th></tr></thead><tbody>${(g.items||[]).map(it=>`<tr><td>${h(it.name)}</td><td class="mono">${h(it.version)}</td><td>${h(it.purpose)}</td><td>${it.docs?`<span class="mono">${h(it.docs)}</span>`:''}</td></tr>`).join("")}</tbody></table></div></details>`).join("") : "";
+  const adr = has(t.decisions) ? `<h3 class="section">Architecture Decisions</h3>` + t.decisions.map(d=>`<details class="sec"><summary>${h(d.id)} — ${h(d.title)}${chev}</summary><div class="body"><p><b>Context:</b> ${h(d.context)}</p><p><b>Decision:</b> ${h(d.decision)}</p><p><b>Consequences:</b> ${h(d.consequences)}</p></div></details>`).join("") : "";
+  return overview + groups + adr;
+}
+
+function renderArch(a) {
+  if (!a) return "";
+  const overview = a.overview ? `<div class="callout">${h(a.overview)}</div>` : "";
+  const layers = has(a.layers) ? `<details class="sec" open><summary>Layers${chev}</summary><div class="body"><table><thead><tr><th>Layer</th><th>Location</th><th>Responsibility</th></tr></thead><tbody>${a.layers.map(l=>`<tr><td>${h(l.layer)}</td><td class="mono">${h(l.location)}</td><td>${h(l.responsibility)}</td></tr>`).join("")}</tbody></table></div></details>` : "";
+  const patterns = has(a.patterns) ? `<details class="sec"><summary>Patterns${chev}</summary><div class="body"><table><thead><tr><th>Pattern</th><th>Purpose</th><th>Location</th></tr></thead><tbody>${a.patterns.map(p=>`<tr><td>${h(p.name)}</td><td>${h(p.purpose)}</td><td class="mono">${h(p.location)}</td></tr>`).join("")}</tbody></table></div></details>` : "";
+  const entries = has(a.entryPoints) ? `<details class="sec"><summary>Entry Points${chev}</summary><div class="body"><table><thead><tr><th>Entry Point</th><th>Location</th><th>Purpose</th></tr></thead><tbody>${a.entryPoints.map(e=>`<tr><td>${h(e.name)}</td><td class="mono">${h(e.location)}</td><td>${h(e.purpose)}</td></tr>`).join("")}</tbody></table></div></details>` : "";
+  const files = has(a.keyFiles) ? `<details class="sec"><summary>Key Files${chev}</summary><div class="body"><table><thead><tr><th>Purpose</th><th>File</th></tr></thead><tbody>${a.keyFiles.map(f=>`<tr><td>${h(f.purpose)}</td><td class="mono">${h(f.file)}</td></tr>`).join("")}</tbody></table></div></details>` : "";
+  return overview + layers + patterns + entries + files;
+}
+
+function renderConcerns(c) {
+  if (!c) return "";
+  const s = c.summary || {};
+  const tiles = `<div class="sev">
+    <div class="sevtile crit"><div class="n">${s.critical||0}</div><div class="l">Critical</div></div>
+    <div class="sevtile high"><div class="n">${s.high||0}</div><div class="l">High</div></div>
+    <div class="sevtile med"><div class="n">${s.medium||0}</div><div class="l">Medium</div></div>
+    <div class="sevtile low"><div class="n">${s.low||0}</div><div class="l">Low</div></div>
+  </div>`;
+  const issues = has(c.issues) ? `<h3 class="section">Issues</h3>` + c.issues.map(i=>`<div class="issue"><div class="top"><span class="prio ${prioClass(i.severity)}">${h(i.severity)}</span><span class="id">${h(i.id)}</span>${i.type?`<span class="badge">${h(i.type)}</span>`:''}<h4>${h(i.title)}</h4></div>${i.location?`<div class="loc">${h(i.location)}</div>`:''}${i.description?`<div class="desc">${h(i.description)}</div>`:''}${i.fix?`<div class="desc"><b>Fix:</b> ${h(i.fix)}</div>`:''}</div>`).join("") : "";
+  const debt = has(c.techDebt) ? `<details class="sec"><summary>Tech Debt${chev}</summary><div class="body"><table><thead><tr><th>ID</th><th>Location</th><th>Description</th><th>Effort</th></tr></thead><tbody>${c.techDebt.map(d=>`<tr><td class="mono">${h(d.id)}</td><td class="mono">${h(d.location)}</td><td>${h(d.description)}</td><td>${h(d.effort)}</td></tr>`).join("")}</tbody></table></div></details>` : "";
+  const sec = has(c.security) ? `<details class="sec"><summary>Security Notes${chev}</summary><div class="body"><table><thead><tr><th>Area</th><th>Status</th><th>Notes</th></tr></thead><tbody>${c.security.map(x=>`<tr><td>${h(x.area)}</td><td><span class="badge">${h(x.status)}</span></td><td>${h(x.notes)}</td></tr>`).join("")}</tbody></table></div></details>` : "";
+  const bugs = has(c.knownBugs) ? `<details class="sec"><summary>Known Bugs${chev}</summary><div class="body"><table><thead><tr><th>ID</th><th>Description</th><th>Location</th><th>Priority</th></tr></thead><tbody>${c.knownBugs.map(b=>`<tr><td class="mono">${h(b.id)}</td><td>${h(b.description)}</td><td class="mono">${h(b.location)}</td><td>${h(b.priority)}</td></tr>`).join("")}</tbody></table></div></details>` : "";
+  return tiles + issues + debt + sec + bugs;
+}
+
+function render() {
+  const d = DATA, r = d.roadmap || {};
+  const nBack=(r.backlog||[]).length, nPlan=(r.planned||[]).length, nProg=(r.inProgress||[]).length, nAud=(r.audited||[]).length, nDone=(r.done||[]).length;
+  const total = nBack+nPlan+nProg+nAud+nDone, pct = total ? Math.round((nDone/total)*100) : 0;
+
+  const tabDefs = [
+    { id:"roadmap", label:"Roadmap", html: renderRoadmap(d.roadmap), show: !!d.roadmap },
+    { id:"mission", label:"Mission", html: renderMission(d.mission), show: !!(d.mission && (d.mission.vision || has(d.mission.pain) || has(d.mission.targetUsers))) },
+    { id:"tech", label:"Tech Stack", html: renderTech(d.techStack), show: !!(d.techStack && (d.techStack.overview || has(d.techStack.groups))) },
+    { id:"arch", label:"Architecture", html: renderArch(d.architecture), show: !!(d.architecture && (d.architecture.overview || has(d.architecture.layers))) },
+    { id:"concerns", label:"Concerns", html: renderConcerns(d.concerns), show: !!(d.concerns) }
+  ].filter(t => t.show);
+
+  const saved = localStorage.getItem('catalyst-dash-tab');
+  const activeId = tabDefs.some(t=>t.id===saved) ? saved : (tabDefs[0] && tabDefs[0].id);
+  const nav = tabDefs.map(t => `<button data-tab="${t.id}" class="${t.id===activeId?'active':''}">${h(t.label)}</button>`).join("");
+  const panels = tabDefs.map(t => `<section class="panel ${t.id===activeId?'active':''}" id="tab-${t.id}">${t.html}</section>`).join("");
+
+  document.getElementById('app').innerHTML = `
+    <header>
+      <h1>${h(d.project)}</h1>
+      ${d.tagline?`<div class="tagline">${h(d.tagline)}</div>`:''}
+      <div class="meta">Updated ${h(d.generated)} by <code>${h(d.generatedBy)}</code></div>
+    </header>
+    <div class="stats">
+      <div class="stat backlog"><div class="n">${nBack}</div><div class="l">Backlog</div></div>
+      <div class="stat planned"><div class="n">${nPlan}</div><div class="l">Planned</div></div>
+      <div class="stat inprogress"><div class="n">${nProg}</div><div class="l">In Progress</div></div>
+      <div class="stat audited"><div class="n">${nAud}</div><div class="l">Audited</div></div>
+      <div class="stat done"><div class="n">${nDone}</div><div class="l">Done</div></div>
+    </div>
+    <div class="progress" title="${pct}% done"><span style="width:${pct}%"></span></div>
+    <div class="progress-l">${pct}% of ${total} known specs sealed</div>
+    <nav class="tabs">${nav}</nav>
+    ${panels}
+    <footer>Catalyst OS dashboard — updates on every spec transition, or re-run <code>/plan-project</code> / <code>/sync-project</code>.</footer>
+  `;
+
+  document.querySelectorAll('nav.tabs button').forEach(btn => btn.addEventListener('click', () => {
+    const id = btn.getAttribute('data-tab');
+    document.querySelectorAll('nav.tabs button').forEach(b=>b.classList.toggle('active', b===btn));
+    document.querySelectorAll('.panel').forEach(p=>p.classList.toggle('active', p.id===`tab-${id}`));
+    localStorage.setItem('catalyst-dash-tab', id);
+  }));
+  document.querySelectorAll('details.dcol').forEach(det => {
+    const key = 'catalyst-dash-col-' + det.getAttribute('data-k');
+    if (localStorage.getItem(key) === 'closed') det.removeAttribute('open');
+    det.addEventListener('toggle', () => localStorage.setItem(key, det.open ? 'open' : 'closed'));
+  });
+}
+render();
+</script>
+</body>
+</html>

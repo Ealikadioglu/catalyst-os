@@ -179,3 +179,7 @@ Next steps:
 ```
 
 **IMPORTANT: Do NOT suggest `/seal-spec` after spec shaping.** `/seal-spec` is only for committing a fully built and validated implementation — it is the FINAL step, not a plan-approval step. The correct flow is: `/catalyze-spec` → *(optional)* `/challenge-spec` → `/forge-spec` → `/audit-spec` → `/seal-spec`.
+
+## Board Sync (final step)
+
+The spec just moved **Backlog → Planned**. Load `spec-lifecycle-board` and run **Update the Board**: move the entry to Planned in `roadmap.md`, re-resolve `▶ Next Up`, and regenerate `.catalyst/main/dashboard.html` (`generatedBy: "/catalyze-spec"`).
