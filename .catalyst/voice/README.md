@@ -1,9 +1,19 @@
 # Catalyst Voice Runtime
 
-Local browser meeting room for `/meet-spec`. **Zero npm dependencies** — Node stdlib
+Local browser **project hub** for `/meet-spec`. **Zero npm dependencies** — Node stdlib
 only. Requires **Node >= 18** and the `claude` CLI on your PATH.
 
-Two modes, set by `voice.mode` in `.catalyst/main/project-config.yaml`:
+The hub (served at `/`) is the landing page and offers two ways to talk to the project,
+both reading the codebase live:
+
+- **💬 Chat** (`/chat`) — a text-only conversation about vision and ideas. Runs on local
+  `claude -p` regardless of mode.
+- **🎙️ Meeting** (`/meeting`) — the spoken spec-shaping meeting (diy or bundled).
+
+If `.catalyst/dashboard.html` exists, the hub embeds it (also served at `/dashboard`).
+Both chat and meeting write the same `meeting.md` artifact on end.
+
+The **meeting** has two modes, set by `voice.mode` in `.catalyst/main/project-config.yaml`:
 
 | | **diy** (default) | **bundled** |
 |---|---|---|
@@ -59,13 +69,15 @@ Chrome/Chromium for speech; in other browsers, the text box still works.
 ## How it works
 
 ```
+chat:     Browser (text)  ──text──►  meet-server /turn (kind:chat)  ──►  claude -p (repo)  ──►  reply
 diy:      Browser (Web Speech)  ──text──►  meet-server /turn  ──►  claude -p (repo)  ──►  reply ──► browser TTS
 bundled:  Browser (ElevenLabs SDK)  ◄─voice─►  ElevenLabs agent
               └─ investigate_codebase ─► meet-server /tool ─► claude -p (repo)
 ```
 
-Clicking **End meeting** sends the transcript to the daemon, which folds it into
-`.catalyst/meetings/YYYY-MM-DD-{slug}/meeting.md` via one `claude -p` pass, then shuts down.
+Ending a session (**End meeting** in the room, **End & save notes** in chat) sends the
+transcript to the daemon, which folds it into `.catalyst/meetings/YYYY-MM-DD-{slug}/meeting.md`
+via one `claude -p` pass, then shuts down.
 
 ## Run it manually
 

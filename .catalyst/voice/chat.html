@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Chat with your project</title>
+  <script src="https://cdn.jsdelivr.net/npm/marked@12/marked.min.js"></script>
+  <style>
+    :root { --bg:#0e0e14; --panel:#1a1a24; --accent:#4fd1a5; --user:#7fb0ff;
+      --text:#e8e8f0; --dim:#8a8a9a; --line:#2a2a36; }
+    * { box-sizing: border-box; }
+    body { margin:0; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+      background:var(--bg); color:var(--text); }
+    .room { max-width:1080px; margin:0 auto; padding:24px 24px 32px; }
+    .top { display:flex; align-items:baseline; justify-content:space-between; margin:0 0 4px; }
+    h1 { font-size:20px; font-weight:600; margin:0; }
+    .top a { color:var(--dim); text-decoration:none; font-size:13px; }
+    .top a:hover { color:var(--text); }
+    .topic { color:var(--dim); margin:0 0 20px; font-size:14px; }
+    .split { display:flex; gap:20px; align-items:flex-start; }
+    .notes-pane { flex:1; min-width:0; background:var(--panel); border:1px solid var(--line);
+      border-radius:12px; overflow:hidden; }
+    .chat-pane { width:420px; flex:none; display:flex; flex-direction:column; }
+    @media (max-width:860px){ .split{flex-direction:column;} .chat-pane{width:100%;} }
+    .pane-h { padding:12px 16px; font-size:13px; font-weight:600; color:var(--dim);
+      border-bottom:1px solid var(--line); letter-spacing:.04em; text-transform:uppercase; }
+    .notes { padding:6px 20px 18px; max-height:66vh; overflow-y:auto; font-size:14px; line-height:1.55; }
+    .notes h1 { font-size:18px; } .notes h2 { font-size:15px; color:var(--accent); margin:18px 0 6px; }
+    .notes ul { margin:6px 0; padding-left:20px; } .notes li { margin:3px 0; }
+    .notes .empty { color:var(--dim); font-style:italic; }
+    .log { background:var(--panel); border:1px solid var(--line); border-radius:10px;
+      padding:12px 14px; height:52vh; overflow-y:auto; font-size:14px; line-height:1.5; }
+    .msg { margin:0 0 12px; }
+    .msg .who { font-size:11px; text-transform:uppercase; letter-spacing:.05em; color:var(--dim); margin-bottom:2px; }
+    .msg.user .who { color:var(--user); } .msg.ai .who { color:var(--accent); }
+    .msg .body { white-space:pre-wrap; }
+    .status { color:var(--dim); font-style:italic; min-height:18px; margin:6px 2px 0; font-size:13px; }
+    .chat { display:flex; gap:8px; margin-top:12px; }
+    .chat textarea { flex:1; min-width:0; background:var(--panel); border:1px solid var(--line);
+      color:var(--text); border-radius:8px; padding:10px 12px; font-size:14px; resize:none;
+      font-family:inherit; line-height:1.4; height:44px; }
+    .chat textarea:focus { outline:none; border-color:var(--accent); }
+    button { border:none; border-radius:9px; padding:10px 16px; font-size:14px; font-weight:600; cursor:pointer; }
+    .send { background:var(--accent); color:#06281e; }
+    .end { background:#2a2a36; color:var(--text); margin-top:10px; align-self:flex-start; }
+    button:disabled { opacity:.4; cursor:not-allowed; }
+    .done { text-align:center; padding:40px 20px; } .done code { background:var(--panel); padding:4px 8px; border-radius:6px; }
+    .hint { color:var(--dim); font-size:12px; margin-top:14px; }
+  </style>
+</head>
+<body>
+  <div class="room">
+    <div class="top">
+      <h1>💬 Chat with your project</h1>
+      <a href="/">← Hub</a>
+    </div>
+    <p class="topic" id="topic">Loading…</p>
+    <div class="split">
+      <section class="notes-pane">
+        <div class="pane-h">Notes — live</div>
+        <div class="notes" id="notes"><p class="empty">Notes build up here as you chat…</p></div>
+      </section>
+      <section class="chat-pane">
+        <div class="log" id="log"></div>
+        <div class="status" id="status">Ask about your vision, ideas, or anything you'd like to build.</div>
+        <div class="chat">
+          <textarea id="chatInput" placeholder="Type your message… (Enter to send, Shift+Enter for newline)" autocomplete="off"></textarea>
+          <button class="send" id="chatSend">Send</button>
+        </div>
+        <button class="end" id="endBtn">End &amp; save notes</button>
+        <p class="hint">Runs on your local Claude, reading this repo. Notes save to a meeting artifact.</p>
+      </section>
+    </div>
+  </div>
+
+  <script>
+    const $ = (id) => document.getElementById(id);
+    const log = $('log'), notes = $('notes'), status = $('status');
+    const chatInput = $('chatInput'), chatSend = $('chatSend'), endBtn = $('endBtn');
+
+    const transcript = [];
+    let ended = false, busy = false;
+    let lastNotesMd = '', lastNotesHtml = '';
+
+    fetch('/config').then(r => r.json()).then(c => {
+      $('topic').textContent = c.topic && c.topic !== 'Untitled meeting'
+        ? c.topic : 'Free-form conversation about your project';
+    }).catch(() => {});
+
+    function esc(s){ return String(s).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c])); }
+    function addLine(kind, text) {
+      const who = kind === 'user' ? 'You' : 'Catalyst';
+      const div = document.createElement('div');
+      div.className = 'msg ' + (kind === 'user' ? 'user' : 'ai');
+      div.innerHTML = `<div class="who">${who}</div><div class="body">${esc(text)}</div>`;
+      log.appendChild(div); log.scrollTop = log.scrollHeight;
+      transcript.push(`${who}: ${text}`);
+    }
+    function renderNotes(md) {
+      if (!md) return;
+      lastNotesMd = md;
+      lastNotesHtml = (window.marked && marked.parse) ? marked.parse(md) : `<pre>${esc(md)}</pre>`;
+      notes.innerHTML = lastNotesHtml;
+    }
+
+    async function handleTurn(text) {
+      if (!text || busy || ended) return;
+      busy = true; chatSend.disabled = true;
+      addLine('user', text);
+      status.textContent = 'Thinking… (reading the codebase)';
+      let reply = '(no response)';
+      try {
+        const r = await fetch('/turn', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ text, kind: 'chat' }),
+        });
+        const data = await r.json();
+        reply = data.reply || reply;
+        renderNotes(data.notes);
+      } catch (e) { reply = 'Error: ' + (e?.message || e); }
+      addLine('ai', reply);
+      status.textContent = '';
+      busy = false; chatSend.disabled = false;
+      if (!ended) chatInput.focus();
+    }
+
+    function sendChat() {
+      const t = chatInput.value.trim(); if (!t) return;
+      chatInput.value = ''; handleTurn(t);
+    }
+    chatSend.onclick = sendChat;
+    chatInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendChat(); }
+    });
+    chatInput.focus();
+
+    endBtn.onclick = async () => {
+      if (busy) { status.textContent = 'Hang on — finishing the current reply…'; return; }
+      ended = true; endBtn.disabled = true; chatSend.disabled = true;
+      status.textContent = 'Saving notes…';
+      try {
+        const r = await fetch('/end', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ transcript: transcript.join('\n'), notesMd: lastNotesMd, notesHtml: lastNotesHtml }),
+        });
+        const j = await r.json();
+        document.querySelector('.room').innerHTML =
+          `<div class="done"><h1>Notes captured ✓</h1>` +
+          `<p>Saved to:</p><p><code>${j.path}</code><br><code>${j.htmlPath || ''}</code></p>` +
+          `<p class="topic">Back in your terminal, shape it into a spec when ready:<br>` +
+          `<code>/catalyze-spec @${j.path}</code></p>` +
+          `<p class="topic">You can close this tab.</p></div>`;
+      } catch (e) { status.textContent = 'Failed to save: ' + (e?.message || e); ended = false; endBtn.disabled = false; }
+    };
+  </script>
+</body>
+</html>

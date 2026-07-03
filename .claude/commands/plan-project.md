@@ -37,7 +37,7 @@ Plan the future of the project: maintain `roadmap.md` as a **queue of specs grou
 8. **Order the Backlog** — it is a ranked queue; #1 is what becomes Next Up once the board clears
 9. **Set `▶ Next Up`** using the resolution rule below
 10. **Create/Update** the roadmap using the template at `.catalyst/main/temp/temp-roadmap.md`
-11. **Regenerate the dashboard** — write `.catalyst/main/dashboard.html` (see Dashboard below)
+11. **Regenerate the dashboard** — write `.catalyst/dashboard.html` (see Dashboard below)
 
 ## State Detection & Next Up
 
@@ -72,4 +72,4 @@ The Backlog is a **ranked queue** — the number is the priority. Order by:
 
 ## Dashboard
 
-Also (re)generate the visual, browser-openable panel at `.catalyst/main/dashboard.html` — a **whole-`.catalyst/main` control panel** tabbed across **Roadmap / Mission / Tech Stack / Architecture / Concerns**. Follow **Generating `dashboard.html`** in the `spec-lifecycle-board` skill for the full `DATA` schema and steps (set `generatedBy: "/plan-project"`). The board shows the 4 active states as collapsible columns; **Done** is the timeline below it.
+Also (re)generate the visual, browser-openable panel at `.catalyst/dashboard.html` — a **whole-`.catalyst/main` control panel** tabbed across **Roadmap / Mission / Tech Stack / Architecture / Concerns**. Follow **Generating `dashboard.html`** in the `spec-lifecycle-board` skill for the full `DATA` schema and steps (set `generatedBy: "/plan-project"`). The board shows the 4 active states as collapsible columns; **Done** is the timeline below it.

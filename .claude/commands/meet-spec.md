@@ -1,13 +1,20 @@
 # /meet-spec
 
-Hold a **voice meeting** with Catalyst, then turn the notes into a spec.
+Open the **project hub** — talk to your project, then turn the notes into a spec.
 
-Start a local browser meeting room. Talk through a feature; the meeting agent can
-investigate the codebase, docs, and web live (via `claude -p` → Seer/Scout). When you
-click **End meeting**, a structured, `/catalyze-spec`-ready notes artifact is written.
+Start a local browser hub with two ways in, both reading the codebase live (via
+`claude -p` → Seer/Scout):
+
+- **💬 Chat with your project** — a text conversation about your vision, ideas, and what
+  you'd like to build.
+- **🎙️ Start a meeting** — a spoken spec-shaping meeting.
+
+If a dashboard exists it's embedded on the hub. Either path writes a structured,
+`/catalyze-spec`-ready notes artifact when you end the session.
 
 Default mode is **diy** — free, browser speech + local Claude, no API key. Switch
-`voice.mode` to `bundled` for ElevenLabs' nicer (paid) voice.
+`voice.mode` to `bundled` for ElevenLabs' nicer (paid) voice. (Chat is text-only and
+works the same in both modes.)
 
 > **Lifecycle position:** **`/meet-spec`** → `/catalyze-spec` → *(optional)* `/challenge-spec` → `/forge-spec` → `/audit-spec` → `/seal-spec`
 

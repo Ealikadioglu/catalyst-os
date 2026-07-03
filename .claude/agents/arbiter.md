@@ -78,7 +78,7 @@ Append results to the spec's validation.md:
 4. **Finalize `key_files`** (important files created)
 5. **Finalize `key_decisions`** (strategic choices with WHY)
 
-See `.catalyst/spec-structure.yaml` for full frontmatter schema.
+See `.catalyst/specs/spec-structure.yaml` for full frontmatter schema.
 
 ### handoff.md (On Success)
 

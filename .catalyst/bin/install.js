@@ -150,8 +150,8 @@ function install() {
   }
 
   // Framework-owned config: always refresh on (re)install.
-  if (copyFile(path.join(src, '.catalyst/spec-structure.yaml'), path.join(cwd, '.catalyst/spec-structure.yaml'))) {
-    console.log(`  ${green}✓${reset} Installed .catalyst/spec-structure.yaml`);
+  if (copyFile(path.join(src, '.catalyst/specs/spec-structure.yaml'), path.join(cwd, '.catalyst/specs/spec-structure.yaml'))) {
+    console.log(`  ${green}✓${reset} Installed .catalyst/specs/spec-structure.yaml`);
   }
 
   // Framework-owned document templates (roadmap, dashboard, mission, etc.):

@@ -78,7 +78,7 @@ Create in `.catalyst/main/`:
 - Set **▶ Next Up** to Backlog #1 (a fresh project has nothing In Progress yet).
 - Leave 📋 Planned / 🔨 In Progress / 🔬 Audited / ✅ Done empty (a fresh project has no specs yet).
 - Granularity guardrail: if a backlog idea would need more than ~5-8 tasks or spans multiple subsystems, split it into multiple entries.
-- After writing `roadmap.md`, also generate the visual panel `.catalyst/main/dashboard.html` — follow **Generating `dashboard.html`** in the `spec-lifecycle-board` skill (set `generatedBy: "/catalyze-project"`). Point the user to it — double-click to open in a browser.
+- After writing `roadmap.md`, also generate the visual panel `.catalyst/dashboard.html` — follow **Generating `dashboard.html`** in the `spec-lifecycle-board` skill (set `generatedBy: "/catalyze-project"`). Point the user to it — double-click to open in a browser.
 
 ### Phase 5: Bootstrap CLAUDE.md
 

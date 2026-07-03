@@ -1,6 +1,6 @@
 {
   "name": "catalyst-os",
-  "version": "3.1.1",
+  "version": "3.3.1",
   "scripts": {
     "postinstall": "node .catalyst/bin/install.js",
     "validate": "node .catalyst/bin/validate-artifacts.js"
@@ -14,7 +14,7 @@
     ".claude",
     ".catalyst/bin",
     ".catalyst/voice",
-    ".catalyst/spec-structure.yaml",
+    ".catalyst/specs/spec-structure.yaml",
     ".catalyst/main/temp",
     ".catalyst/main/project-config.yaml"
   ],

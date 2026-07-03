@@ -9,10 +9,13 @@
  *   bundled  — ElevenLabs Conversational AI (better voice, per-minute cost).
  *
  * Responsibilities:
- *   GET  /              serve the meeting room page (diy or bundled)
- *   GET  /config        non-secret config for the browser (mode, agentId, language, topic)
+ *   GET  /              serve the project hub (landing: chat or meeting + dashboard)
+ *   GET  /meeting       serve the voice meeting room page (diy or bundled)
+ *   GET  /chat          serve the text-only "chat with project" page
+ *   GET  /dashboard     serve the generated .catalyst/dashboard.html (404 if not built)
+ *   GET  /config        non-secret config for the browser (mode, agentId, language, topic, project)
  *   GET  /signed-url     bundled: mint an ElevenLabs signed URL (key stays server-side)
- *   POST /turn          diy: one conversational turn via headless `claude -p`
+ *   POST /turn          one conversational turn via headless `claude -p` (kind: meeting|chat)
  *   POST /tool          bundled: live codebase investigation via headless `claude -p`
  *   POST /end           fold transcript (+ findings) into meeting.md, then shut down
  *
@@ -54,12 +57,34 @@ const LANGUAGE = readScalar('.catalyst/main/project-config.yaml', 'language') ||
 // bundled = ElevenLabs Conversational AI; diy = browser speech + local claude -p (free).
 const MODE = readScalar('.catalyst/main/project-config.yaml', 'mode') || 'bundled';
 const HTML_PATH = path.join(__dirname, MODE === 'diy' ? 'meeting-diy.html' : 'meeting.html');
+const HUB_PATH = path.join(__dirname, 'hub.html');
+const CHAT_PATH = path.join(__dirname, 'chat.html');
+const DASHBOARD_PATH = path.join(PROJECT_ROOT, '.catalyst', 'dashboard.html');
 
-// In DIY mode the "agent" is claude -p itself, driven turn by turn.
-const PERSONA =
+// Project name + tagline for the hub header. Best-effort: never throws, degrades to blanks.
+function readProjectInfo() {
+  const name = path.basename(PROJECT_ROOT);
+  let tagline = '';
+  try {
+    const mission = fs.readFileSync(path.join(PROJECT_ROOT, '.catalyst/main/mission.md'), 'utf8');
+    // First non-heading, non-empty line under a "## Vision" section, else first prose line.
+    const vision = mission.split(/^##\s+Vision\b.*$/im)[1];
+    const scope = (vision || mission).split('\n');
+    tagline = (scope.find((l) => l.trim() && !l.trim().startsWith('#')) || '').trim();
+  } catch {
+    /* no mission.md — leave tagline blank */
+  }
+  return { name, tagline };
+}
+
+const SPEAK_LANG = LANGUAGE === 'tr' ? 'Turkish' : "the user's language";
+
+// In DIY mode the "agent" is claude -p itself, driven turn by turn. Two personas:
+// a spoken spec-shaping interviewer (voice meeting) and a written thinking partner (chat).
+const PERSONA_MEETING =
   `You are Catalyst, a spec-shaping interviewer for this software project. Hold a focused, ` +
   `friendly spoken meeting that turns a rough idea into a clear feature specification. ` +
-  `Speak in ${LANGUAGE === 'tr' ? 'Turkish' : "the user's language"}. Ask ONE question at a ` +
+  `Speak in ${SPEAK_LANG}. Ask ONE question at a ` +
   `time and keep each spoken turn short (1-3 sentences). You have full read access to this ` +
   `repository, its documentation, and web search — use them to ground your questions and ` +
   `answers; never guess about the code. Drive toward: the problem, scope, concrete ` +
@@ -70,6 +95,22 @@ const PERSONA =
   `ENGLISH, cumulative (carry forward everything so far and refine it), with these sections:\n` +
   `## Summary\n## Decisions\n## Action Items\n## Open Questions\n` +
   `The spoken part is for text-to-speech; the notes part is never spoken.`;
+
+const PERSONA_CHAT =
+  `You are Catalyst, a thinking partner for this software project. The user wants to talk ` +
+  `through their vision, ideas, and things they'd like to build — this is an open written ` +
+  `conversation, not a formal interview. Help them clarify direction, surface trade-offs, ` +
+  `and connect ideas to what already exists. Reply in ${SPEAK_LANG}. You have full read ` +
+  `access to this repository, its documentation, and web search — use them to ground the ` +
+  `conversation; never guess about the code. Respond like a sharp collaborator: you may ask ` +
+  `questions, but you don't have to limit yourself to one, and you don't have to drive ` +
+  `toward a spec unless the user does.\n\n` +
+  `OUTPUT FORMAT (strict, every turn): first your conversational reply as plain text (no ` +
+  `markdown headers or bullet lists). Then a line containing exactly ===NOTES=== . Then ` +
+  `running notes in Markdown, IN ENGLISH, cumulative (carry forward everything so far and ` +
+  `refine it), with these sections:\n` +
+  `## Summary\n## Ideas\n## Decisions\n## Open Questions\n## Next Steps\n` +
+  `The reply part is shown in the chat; the notes part is saved as the artifact.`;
 
 const NOTES_DELIM = '===NOTES===';
 
@@ -117,13 +158,14 @@ function runClaude(prompt, timeoutMs) {
 
 // One conversational turn for DIY mode. Uses --resume to keep context (and the
 // codebase warm) across turns; the persona is sent only on the first turn.
-function claudeTurn(userText) {
+function claudeTurn(userText, kind) {
   return new Promise((resolve) => {
     const args = ['-p', '--output-format', 'json', '--allowedTools', CLAUDE_TOOLS];
     if (sessionId) args.push('--resume', sessionId);
+    const persona = kind === 'chat' ? PERSONA_CHAT : PERSONA_MEETING;
     const prompt = sessionId
       ? userText
-      : `${PERSONA}\n\nThe meeting topic is: ${MEETING_TOPIC}\n\nUser: ${userText}`;
+      : `${persona}\n\nThe topic is: ${MEETING_TOPIC}\n\nUser: ${userText}`;
     let child;
     try {
       child = spawn('claude', args, { cwd: PROJECT_ROOT });
@@ -198,11 +240,18 @@ function readBody(req) {
 const server = http.createServer(async (req, res) => {
   const url = (req.url || '/').split('?')[0];
 
-  if (req.method === 'GET' && url === '/') {
-    fs.readFile(HTML_PATH, (e, buf) => {
+  // Static page routes: hub (landing), meeting room, chat, and the generated dashboard.
+  const PAGES = {
+    '/': HUB_PATH,
+    '/meeting': HTML_PATH,
+    '/chat': CHAT_PATH,
+    '/dashboard': DASHBOARD_PATH,
+  };
+  if (req.method === 'GET' && PAGES[url]) {
+    fs.readFile(PAGES[url], (e, buf) => {
       if (e) {
-        res.writeHead(500);
-        res.end('meeting.html not found');
+        res.writeHead(url === '/dashboard' ? 404 : 500);
+        res.end(url === '/dashboard' ? 'dashboard.html not generated yet' : 'page not found');
       } else {
         res.writeHead(200, { 'Content-Type': 'text/html' });
         res.end(buf);
@@ -212,12 +261,16 @@ const server = http.createServer(async (req, res) => {
   }
 
   if (req.method === 'GET' && url === '/config') {
+    const { name, tagline } = readProjectInfo();
     return sendJson(res, 200, {
       mode: MODE,
       agentId: AGENT_ID,
       voiceId: VOICE_ID,
       topic: MEETING_TOPIC,
       language: LANGUAGE,
+      project: name,
+      tagline,
+      hasDashboard: fs.existsSync(DASHBOARD_PATH),
     });
   }
 
@@ -249,9 +302,9 @@ const server = http.createServer(async (req, res) => {
   }
 
   if (req.method === 'POST' && url === '/turn') {
-    const { text } = await readBody(req);
+    const { text, kind } = await readBody(req);
     if (!text) return sendJson(res, 400, { reply: '', notes: latestNotes });
-    const { reply, notes } = await claudeTurn(text);
+    const { reply, notes } = await claudeTurn(text, kind);
     return sendJson(res, 200, { reply, notes });
   }
 
@@ -282,8 +335,8 @@ const server = http.createServer(async (req, res) => {
 });
 
 server.listen(PORT, () => {
-  console.log(`\n  Catalyst meeting room: http://localhost:${PORT}`);
-  console.log(`  Topic: ${MEETING_TOPIC}  ·  Mode: ${MODE}  ·  Language: ${LANGUAGE}`);
+  console.log(`\n  Catalyst project hub: http://localhost:${PORT}`);
+  console.log(`  Chat or meeting  ·  Topic: ${MEETING_TOPIC}  ·  Mode: ${MODE}  ·  Language: ${LANGUAGE}`);
   if (MODE === 'diy') {
     console.log('  DIY mode: browser speech + local claude -p (no ElevenLabs, no cost).');
   } else {

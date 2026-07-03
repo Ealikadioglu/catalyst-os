@@ -120,7 +120,7 @@ key_decisions: []         # Filled during build
 ...requirements...
 ```
 
-See `.catalyst/spec-structure.yaml` for full schema.
+See `.catalyst/specs/spec-structure.yaml` for full schema.
 
 ## handoff.md Format
 

@@ -59,7 +59,7 @@ Two artifacts stay in sync — `roadmap.md` (source) and `dashboard.html` (view)
 A self-contained, offline, browser-openable panel covering the **whole `.catalyst/main`**.
 
 1. Read the template `.catalyst/main/temp/temp-dashboard.html`.
-2. Copy it verbatim to `.catalyst/main/dashboard.html`, replacing **only** the block between `// === DATA:START` and `// === DATA:END` with a `const DATA = {…}` object. **Never edit the CSS/JS below the data block.**
+2. Copy it verbatim to `.catalyst/dashboard.html`, replacing **only** the block between `// === DATA:START` and `// === DATA:END` with a `const DATA = {…}` object. **Never edit the CSS/JS below the data block.**
 3. Build `DATA` from the `.catalyst/main` docs (skip any that don't exist — the tab/section auto-hides):
    - Top: `project`, `tagline` (mission vision one-liner), `generated` (today), `generatedBy` (the command that ran)
    - `roadmap` (from `roadmap.md`): `nextUp {name,why,command}`; and five arrays — `backlog` (ordered `[{rank,name,slug,scope,doneWhen,dependsOn,priority,command}]`), `planned`/`inProgress`/`audited` (`[{name,slug,scope,doneWhen,command}]`), `done` (`[{name,slug,date}]`); plus `vision [{goal,description,prereq}]`

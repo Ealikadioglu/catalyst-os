@@ -1,14 +1,24 @@
 # Meet Spec
 
-> **When to invoke:** When the user wants to shape a spec by holding a voice meeting.
+> **When to invoke:** When the user wants to talk through their project — either a
+>   free-form **chat** about vision/ideas, or a spoken **meeting** to shape a spec.
 > **Invoked by:** `/meet-spec` command.
 > **Orchestrator:** Catalyst agent.
 
 ## Purpose
 
-Run a local, browser-based voice meeting (ElevenLabs) where the user talks through a
-feature. The meeting agent can investigate the codebase live. When the meeting ends,
-write a structured, `/catalyze-spec`-ready notes artifact.
+Open a local, browser-based **project hub**. The hub is the landing page and offers two
+ways to talk to the project, both grounded in live codebase access:
+
+- **💬 Chat with your project** — a text-only conversation about the user's vision,
+  ideas, and what they'd like to build. A written thinking partner, not a formal
+  interview.
+- **🎙️ Start a meeting** — the spoken spec-shaping meeting (diy Web Speech or bundled
+  ElevenLabs).
+
+If a dashboard has been generated, the hub embeds `.catalyst/dashboard.html` below the
+two options. **Both** chat and meeting end by writing the same structured,
+`/catalyze-spec`-ready notes artifact.
 
 **This skill does NOT produce a spec.** It produces a meeting artifact. The user runs
 `/catalyze-spec @<artifact>` afterwards, when they choose to.
@@ -67,16 +77,17 @@ node .catalyst/voice/meet-server.js &
 ```
 
 Run it from the project root (so `claude -p` investigations resolve against this repo).
-Then open `http://localhost:4399` (e.g. `open`, `xdg-open`, or `start`). Tell the user:
-"The meeting room is open. Click **Start meeting**, talk it through, then click **End
-meeting** when you're done."
+Then open `http://localhost:4399` (e.g. `open`, `xdg-open`, or `start`) — this is the
+**project hub**. Tell the user: "The project hub is open. Pick **💬 Chat with your
+project** to talk through ideas, or **🎙️ Start a meeting** to shape a spec by voice.
+Click **End** when you're done and I'll pick up the notes."
 
 ### Phase 3: Wait for the artifact
 
 Poll for `.catalyst/meetings/YYYY-MM-DD-{slug}/meeting.md`. It is written when the user
-clicks **End meeting** (the server folds the transcript + live findings into the artifact
-via a single `claude -p` summarization pass). When it appears, the meeting is over — the
-server shuts itself down.
+ends the session (**End meeting** in the room, or **End & save notes** in chat) — the
+server folds the transcript + live findings into the artifact and shuts itself down.
+Whichever path the user chose, the artifact lands in the same place.
 
 ### Phase 4: Output
 

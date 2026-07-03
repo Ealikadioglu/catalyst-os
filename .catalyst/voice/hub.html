@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Catalyst Project Hub</title>
+  <style>
+    :root { --bg:#0e0e14; --panel:#1a1a24; --accent:#4fd1a5; --accent2:#7fb0ff;
+      --text:#e8e8f0; --dim:#8a8a9a; --line:#2a2a36; }
+    * { box-sizing: border-box; }
+    body { margin:0; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+      background:var(--bg); color:var(--text); }
+    .hub { max-width:1080px; margin:0 auto; padding:40px 24px 60px; }
+    .head { margin:0 0 28px; }
+    .brand { font-size:12px; letter-spacing:.14em; text-transform:uppercase; color:var(--accent); margin:0 0 8px; }
+    h1 { font-size:30px; font-weight:700; margin:0 0 6px; }
+    .tagline { color:var(--dim); font-size:15px; margin:0; max-width:640px; line-height:1.5; }
+    .cards { display:grid; grid-template-columns:1fr 1fr; gap:18px; margin:8px 0 34px; }
+    @media (max-width:680px){ .cards{grid-template-columns:1fr;} }
+    .card { display:block; text-decoration:none; color:inherit; background:var(--panel);
+      border:1px solid var(--line); border-radius:16px; padding:26px 24px; transition:.18s;
+      cursor:pointer; }
+    .card:hover { border-color:var(--accent); transform:translateY(-2px); }
+    .card .ico { font-size:30px; line-height:1; margin-bottom:14px; }
+    .card h2 { font-size:19px; font-weight:600; margin:0 0 6px; }
+    .card p { color:var(--dim); font-size:14px; line-height:1.5; margin:0; }
+    .card .go { display:inline-block; margin-top:16px; font-size:13px; font-weight:600; color:var(--accent); }
+    .card.meeting:hover { border-color:var(--accent2); }
+    .card.meeting .go { color:var(--accent2); }
+    .dash-h { display:flex; align-items:baseline; justify-content:space-between; margin:0 0 12px; }
+    .dash-h h3 { font-size:13px; font-weight:600; color:var(--dim); letter-spacing:.04em;
+      text-transform:uppercase; margin:0; }
+    .dash-h a { color:var(--accent); text-decoration:none; font-size:13px; }
+    .dash-h a:hover { text-decoration:underline; }
+    .frame-wrap { border:1px solid var(--line); border-radius:14px; overflow:hidden; background:var(--panel); }
+    iframe { display:block; width:100%; height:70vh; border:0; background:var(--bg); }
+    .no-dash { background:var(--panel); border:1px dashed var(--line); border-radius:14px;
+      padding:22px; color:var(--dim); font-size:14px; line-height:1.55; }
+    .no-dash code { background:#0e0e14; padding:2px 6px; border-radius:5px; color:var(--text); }
+  </style>
+</head>
+<body>
+  <div class="hub">
+    <div class="head">
+      <p class="brand">Catalyst</p>
+      <h1 id="project">Project Hub</h1>
+      <p class="tagline" id="tagline"></p>
+    </div>
+
+    <div class="cards">
+      <a class="card chat" href="/chat">
+        <div class="ico">💬</div>
+        <h2>Chat with your project</h2>
+        <p>Talk through your vision, ideas, and what you'd like to build. Catalyst reads the
+           repo and thinks alongside you — notes are saved when you're done.</p>
+        <span class="go">Start chatting →</span>
+      </a>
+      <a class="card meeting" href="/meeting">
+        <div class="ico">🎙️</div>
+        <h2>Start a meeting</h2>
+        <p>Hold a spoken spec-shaping meeting. Talk it through; Catalyst investigates the
+           codebase live and writes <code>/catalyze-spec</code>-ready notes.</p>
+        <span class="go">Open meeting room →</span>
+      </a>
+    </div>
+
+    <div id="dashArea">
+      <div class="dash-h">
+        <h3>Project dashboard</h3>
+        <a href="/dashboard" target="_blank" rel="noopener">Open full view ↗</a>
+      </div>
+      <div class="frame-wrap">
+        <iframe src="/dashboard" title="Project dashboard"></iframe>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    fetch('/config').then(r => r.json()).then(c => {
+      if (c.project) document.getElementById('project').textContent = c.project;
+      const t = document.getElementById('tagline');
+      if (c.tagline) t.textContent = c.tagline; else t.remove();
+      if (!c.hasDashboard) {
+        document.getElementById('dashArea').innerHTML =
+          '<div class="dash-h"><h3>Project dashboard</h3></div>' +
+          '<div class="no-dash">No dashboard yet. Generate one with <code>/plan-project</code> ' +
+          'or any spec lifecycle command, then reopen this hub.</div>';
+      }
+    }).catch(() => {});
+  </script>
+</body>
+</html>

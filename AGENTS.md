@@ -116,7 +116,7 @@ All builders follow `test-driven-development`, `systematic-debugging`, `verifica
 
 **CRITICAL: All spec documentation MUST go through Scribe agent.**
 
-> **Structure defined in:** `.catalyst/spec-structure.yaml` (single source of truth)
+> **Structure defined in:** `.catalyst/specs/spec-structure.yaml` (single source of truth)
 
 ### STRICT ALLOWLIST
 

@@ -96,7 +96,7 @@ If `.catalyst/main/roadmap.md` exists, load the `spec-lifecycle-board` skill (si
 
 ### Phase 6: Regenerate Dashboard
 
-If `.catalyst/main/roadmap.md` exists, also regenerate `.catalyst/main/dashboard.html` so it reflects the archiving just done. Follow **Generating `dashboard.html`** in the `spec-lifecycle-board` skill (set `generatedBy: "/sync-project"`). The **Backlog stays as-is** — sync never re-plans it.
+If `.catalyst/main/roadmap.md` exists, also regenerate `.catalyst/dashboard.html` so it reflects the archiving just done. Follow **Generating `dashboard.html`** in the `spec-lifecycle-board` skill (set `generatedBy: "/sync-project"`). The **Backlog stays as-is** — sync never re-plans it.
 
 ## Output
 
@@ -119,5 +119,5 @@ Library: Added authentication.md, payment-integration.md
 Roadmap: Moved 2 specs to ✅ Shipped, re-classified active specs
          (run /plan-project to re-plan the backlog and Next Up)
 
-Dashboard: Regenerated .catalyst/main/dashboard.html (open in browser)
+Dashboard: Regenerated .catalyst/dashboard.html (open in browser)
 ```

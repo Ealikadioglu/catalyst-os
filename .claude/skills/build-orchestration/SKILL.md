@@ -229,4 +229,4 @@ This ensures `/primer-spec` always reflects actual progress, even if the orchest
 
 ## Board Sync (final step)
 
-Once the build reaches green and `tasks.md` reflects progress, the spec has moved **Planned → In Progress**. Load `spec-lifecycle-board` and run **Update the Board**: move the entry to In Progress in `roadmap.md`, re-resolve `▶ Next Up`, and regenerate `.catalyst/main/dashboard.html` (`generatedBy: "/forge-spec"`).
+Once the build reaches green and `tasks.md` reflects progress, the spec has moved **Planned → In Progress**. Load `spec-lifecycle-board` and run **Update the Board**: move the entry to In Progress in `roadmap.md`, re-resolve `▶ Next Up`, and regenerate `.catalyst/dashboard.html` (`generatedBy: "/forge-spec"`).

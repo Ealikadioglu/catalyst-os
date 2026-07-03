@@ -154,10 +154,10 @@ if (usingSkills) {
 
 // 5. spec-structure.yaml file references
 console.log('\nSpec Structure:');
-if (fileExists('.catalyst/spec-structure.yaml')) {
+if (fileExists('.catalyst/specs/spec-structure.yaml')) {
   ok('spec-structure.yaml exists');
 } else {
-  error('.catalyst/spec-structure.yaml missing');
+  error('.catalyst/specs/spec-structure.yaml missing');
 }
 
 // 6. Core files

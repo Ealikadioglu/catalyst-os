@@ -107,7 +107,7 @@ Without this, skills are optional documentation. With it, they're mandatory proc
 
 | Skill | Command | Purpose |
 |-------|---------|---------|
-| `meet-spec` | `/meet-spec` | Voice meeting → `/catalyze-spec`-ready notes (optional) |
+| `meet-spec` | `/meet-spec` | Project hub — chat or voice meeting → `/catalyze-spec`-ready notes (optional) |
 | `spec-shaping` | `/catalyze-spec` | Shape feature requests into specifications |
 | `spec-challenge` | `/challenge-spec` | Interrogate a shaped spec branch by branch (optional) |
 | `build-orchestration` | `/forge-spec` | DAG-based TDD implementation |
@@ -228,7 +228,7 @@ Guardians (Quality)
 
 ## Project Dashboard
 
-Alongside `roadmap.md`, Catalyst generates a self-contained visual panel at **`.catalyst/main/dashboard.html`** — double-click to open in any browser (no server, no network). It's a whole-`.catalyst/main` control panel tabbed across **Roadmap · Mission · Tech Stack · Architecture · Concerns**.
+Alongside `roadmap.md`, Catalyst generates a self-contained visual panel at **`.catalyst/dashboard.html`** — double-click to open in any browser (no server, no network). It's a whole-`.catalyst/main` control panel tabbed across **Roadmap · Mission · Tech Stack · Architecture · Concerns**.
 
 The Roadmap tab is a Kanban board over the spec lifecycle:
 
@@ -251,18 +251,25 @@ Run `/plan-project` to re-plan the backlog, or `/sync-project` to reconcile afte
 
 ---
 
-## Voice Meetings (`/meet-spec`)
+## Project Hub (`/meet-spec`)
 
-Shape a spec by **talking it through**. `/meet-spec` opens a local browser meeting room,
-holds a spoken conversation, and writes a `/catalyze-spec`-ready notes artifact. The
-agent can read the codebase, docs, and the web live during the meeting.
+Talk to your project. `/meet-spec` opens a local browser **hub** with two ways in —
+both reading the codebase, docs, and web live, and both writing a `/catalyze-spec`-ready
+notes artifact:
+
+- **💬 Chat with your project** — a text conversation about your vision, ideas, and what
+  you'd like to build. A thinking partner, not a formal interview. Works the same in both
+  modes (local `claude -p`).
+- **🎙️ Start a meeting** — a spoken spec-shaping meeting.
+
+If you've generated a dashboard, the hub embeds it below the two options.
 
 ```
-/meet-spec "realtime notifications"     # opens the room → talk → End meeting
+/meet-spec "realtime notifications"     # opens the hub → chat or meet → End
 /catalyze-spec @.catalyst/meetings/YYYY-MM-DD-{slug}/meeting.md
 ```
 
-Two modes (`voice.mode` in `project-config.yaml`):
+The **meeting** has two modes (`voice.mode` in `project-config.yaml`):
 
 | | **diy** (default) | **bundled** |
 |---|---|---|
@@ -271,11 +278,11 @@ Two modes (`voice.mode` in `project-config.yaml`):
 | Cost | **Free** (uses your Claude) | Per-minute, BYOK key |
 | Setup | None — just Chrome | API key + agent |
 
-The room shows **live meeting notes** (left) beside the **chat history** (right). On
-**End meeting** it saves both `meeting.html` (rendered, self-contained) and `meeting.md`
-(canonical input for `/catalyze-spec`). Notes are written in English regardless of the
-spoken language (`voice.language`, e.g. `"tr"`). Runtime lives in `.catalyst/voice/`
-(zero npm dependencies). See `.catalyst/voice/README.md` for setup.
+Both the room and the chat show **live notes** beside the conversation. On end they save
+`meeting.html` (rendered, self-contained) and `meeting.md` (canonical input for
+`/catalyze-spec`). Notes are written in English regardless of the conversation language
+(`voice.language`, e.g. `"tr"`). Runtime lives in `.catalyst/voice/` (zero npm
+dependencies). See `.catalyst/voice/README.md` for setup.
 
 ---
 

@@ -182,4 +182,4 @@ Next steps:
 
 ## Board Sync (final step)
 
-The spec just moved **Backlog → Planned**. Load `spec-lifecycle-board` and run **Update the Board**: move the entry to Planned in `roadmap.md`, re-resolve `▶ Next Up`, and regenerate `.catalyst/main/dashboard.html` (`generatedBy: "/catalyze-spec"`).
+The spec just moved **Backlog → Planned**. Load `spec-lifecycle-board` and run **Update the Board**: move the entry to Planned in `roadmap.md`, re-resolve `▶ Next Up`, and regenerate `.catalyst/dashboard.html` (`generatedBy: "/catalyze-spec"`).

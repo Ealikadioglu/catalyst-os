@@ -187,4 +187,4 @@ Action: Fix issues and re-run /audit-spec
 
 ## Board Sync (final step)
 
-**Only if the audit PASSED**, the spec has moved **In Progress → Audited**. Load `spec-lifecycle-board` and run **Update the Board**: move the entry to Audited in `roadmap.md`, re-resolve `▶ Next Up`, and regenerate `.catalyst/main/dashboard.html` (`generatedBy: "/audit-spec"`). If the audit failed, leave the board unchanged (the spec stays In Progress).
+**Only if the audit PASSED**, the spec has moved **In Progress → Audited**. Load `spec-lifecycle-board` and run **Update the Board**: move the entry to Audited in `roadmap.md`, re-resolve `▶ Next Up`, and regenerate `.catalyst/dashboard.html` (`generatedBy: "/audit-spec"`). If the audit failed, leave the board unchanged (the spec stays In Progress).
