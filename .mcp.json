@@ -12,7 +12,7 @@
       "command": "npx",
       "args": ["-y", "exa-mcp-server"],
       "env": {
-        "EXA_API_KEY": "5f849bfe-48af-4bea-a433-8491bb40a443"
+        "EXA_API_KEY": "${EXA_API_KEY}"
       }
     }
   }
