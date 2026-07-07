@@ -6,7 +6,7 @@ description: >
   - A specification needs to be implemented
   - TDD workflow needs to be coordinated
 
-  This agent orchestrates Technologists (Forger, Enforcer, Smith, Shaper, Alchemist)
+  This agent orchestrates Technologists (Forger, Enforcer, Smith, Shaper, Artificer, Alchemist)
   to break down tasks, write tests first, and implement in dependency order.
 
   DO NOT implement features yourself - delegate to Forge-Master.
@@ -163,7 +163,8 @@ Gate: Type-check passes
 ```
 # Parse DAG for parallel tasks
 parallel_backend = [api-auth, api-posts, ...]  # smith instances
-parallel_frontend = [ui-profile, ui-feed, ...]  # shaper instances
+parallel_frontend = [ui-profile, ui-feed, ...]  # shaper instances (web)
+parallel_mobile = [screen-feed, screen-profile, ...]  # artificer instances (Flutter)
 
 # Check dependency satisfaction
 for task in parallel_tasks:

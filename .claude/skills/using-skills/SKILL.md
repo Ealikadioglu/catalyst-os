@@ -53,6 +53,14 @@ Skills tell you HOW. User instructions tell you WHAT.
 | **project-sync** | `.claude/skills/project-sync/SKILL.md` | `/sync-project` — batch sync and archive specs |
 | **spec-lifecycle-board** | `.claude/skills/spec-lifecycle-board/SKILL.md` | After any spec transition, or `/plan-project` — move the spec on the board and regenerate `dashboard.html` |
 
+### Domain Skills (technologist companions)
+
+Loaded by a specific builder agent when implementing in that domain.
+
+| Skill | Path | Load when... |
+|-------|------|-------------|
+| **mobile-development** | `.claude/skills/mobile-development/SKILL.md` | Artificer — building Flutter/Dart mobile features |
+
 ---
 
 ## Skill Priority

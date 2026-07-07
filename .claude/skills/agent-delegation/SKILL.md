@@ -32,7 +32,7 @@ You may ONLY:
   ✓ Report status to user
 
 You may NEVER:
-  ✗ Write code (use smith or shaper)
+  ✗ Write code (use smith, shaper, or artificer)
   ✗ Write tests (use enforcer)
   ✗ Create task breakdowns (use forger)
   ✗ Write database schemas (use alchemist)

@@ -62,7 +62,7 @@ The build MUST follow this exact sequence:
 1. Task(subagent_type="forger")    -> Create tasks.md
 2. Task(subagent_type="enforcer")  -> Write ALL tests (must FAIL)
 3. Verify                          -> Run tests, confirm RED
-4. Task(subagent_type="smith/shaper/alchemist") -> Implement until GREEN
+4. Task(subagent_type="smith/shaper/artificer/alchemist") -> Implement until GREEN
 ```
 
 ## Execution Order (DAG-Based)
@@ -82,7 +82,7 @@ Phase 4: Contracts (Smith — shared types, sequential)
               |
          GATE 3: Type-check passes
               |
-Phase 5: Parallel Implementation (Smith × N + Shaper × M)
+Phase 5: Parallel Implementation (Smith × N + Shaper × M + Artificer × K)
          [scope-isolated parallel agents]
               |
          GATE 4: GREEN PHASE — All tests must PASS
@@ -98,7 +98,7 @@ Phase 6: Integration (Enforcer — cross-boundary tests)
 | Test Writing | Enforcer | No (must complete before impl) |
 | Foundation | Alchemist | No (DB schema first) |
 | Contracts | Smith (single) | No (shared types before parallel) |
-| Implementation | Smith × N + Shaper × M | **Yes — multiple instances** |
+| Implementation | Smith × N + Shaper × M + Artificer × K | **Yes — multiple instances** |
 | Integration | Enforcer | No (after all parallel complete) |
 
 **Multi-Instance Rules:**
@@ -213,7 +213,7 @@ NEVER report done without updating tasks.md first
 
 ### tasks.md Update Responsibility
 
-**Every agent (smith, shaper, alchemist, enforcer) MUST update tasks.md before reporting back.**
+**Every agent (smith, shaper, artificer, alchemist, enforcer) MUST update tasks.md before reporting back.**
 The orchestrator (forge-master) verifies and fills gaps, but agents are the primary updaters.
 This ensures `/primer-spec` always reflects actual progress, even if the orchestrator loses context.
 

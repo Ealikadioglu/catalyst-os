@@ -52,7 +52,7 @@ Never create separate task files.
 Each task should have:
 1. **ID**: Unique identifier (e.g., `db-schema`, `api-auth`, `ui-profile`)
 2. **Title**: Brief, action-oriented description
-3. **Agent**: Which agent type handles this (`alchemist`, `smith`, `shaper`, `enforcer`)
+3. **Agent**: Which agent type handles this (`alchemist`, `smith`, `shaper`, `artificer`, `necromancer`, `enforcer`)
 4. **Instance**: Agent instance number for parallel execution (e.g., `smith-1`, `smith-2`)
 5. **Scope**: Files/directories this task has **exclusive write access** to
 6. **Reads**: Files/directories this task can read but **not modify** (shared types, utils)
@@ -79,7 +79,8 @@ Shared types, interfaces, and API contracts. Defined BEFORE parallel work to pre
 ### Phase 3: Parallel Implementation
 Independent work units that can run simultaneously.
 - Multiple `smith` instances for separate API domains
-- Multiple `shaper` instances for separate pages/features
+- Multiple `shaper` instances for separate web pages/features
+- Multiple `artificer` instances for separate mobile screens/features (Flutter)
 - **Critical**: No overlapping scopes between parallel tasks
 
 ### Phase 4: Integration (Sequential)
@@ -210,7 +211,8 @@ db-schema
 ## Detecting Parallelization Opportunities
 
 Look for:
-- **Separate pages/routes**: Each can be a shaper instance
+- **Separate web pages/routes**: Each can be a shaper instance
+- **Separate mobile screens/routes**: Each can be an artificer instance (Flutter)
 - **Independent API domains**: Auth, Posts, Comments → separate smith instances
 - **Feature isolation**: Features that don't share state
 - **Test isolation**: Test files that don't share fixtures

@@ -13,7 +13,7 @@ Quick reference for all agents and the skills they use.
 | Scenario | Run Together |
 |----------|--------------|
 | Research phase | Oracle + Seer + Scout + Surveyor |
-| Build phase | Smith x N + Shaper x M (multiple instances) |
+| Build phase | Smith x N + Shaper x M + Artificer x K (multiple instances) |
 | Validation phase | Inquisitor + Watcher + Sentinel + Curator (DB specs) |
 
 ### Run Sequentially (Has Dependencies)
@@ -21,7 +21,7 @@ Quick reference for all agents and the skills they use.
 | First | Then | Why |
 |-------|------|-----|
 | Forger | All builders | Need task breakdown (DAG) first |
-| Alchemist | Smith/Shaper | DB schema before API/UI that uses it |
+| Alchemist | Smith/Shaper/Artificer | DB schema before API/UI/mobile that uses it |
 | Enforcer | Builders | TDD: tests before implementation |
 | Contracts | Parallel work | Shared types before parallel divergence |
 
@@ -83,6 +83,7 @@ All builders follow `test-driven-development`, `systematic-debugging`, `verifica
 | [Forger](.claude/agents/forger.md) | Task breakdown | — |
 | [Smith](.claude/agents/smith.md) | Backend/API | `test-driven-development`, `systematic-debugging` |
 | [Shaper](.claude/agents/shaper.md) | Frontend/UI | `test-driven-development`, `systematic-debugging` |
+| [Artificer](.claude/agents/artificer.md) | Mobile (Flutter) | `mobile-development`, `test-driven-development`, `systematic-debugging` |
 | [Alchemist](.claude/agents/alchemist.md) | Database/schemas | `test-driven-development`, `systematic-debugging` |
 | [Necromancer](.claude/agents/necromancer.md) | ML/AI | — |
 

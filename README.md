@@ -142,6 +142,7 @@ Technologists (Builders)
 ├── Alchemist  → Database
 ├── Smith      → Backend
 ├── Shaper     → Frontend
+├── Artificer  → Mobile (Flutter)
 └── Necromancer → ML/AI
 
 Guardians (Quality)
@@ -167,6 +168,7 @@ Guardians (Quality)
 | **TECHNOLOGISTS** | Forger | Break down specs into tasks |
 | | Smith | Implement backend/API code |
 | | Shaper | Implement frontend/UI code |
+| | Artificer | Implement mobile apps (Flutter) |
 | | Alchemist | Design schemas, create migrations |
 | | Necromancer | Implement ML/AI features |
 | **GUARDIANS** | Enforcer | Write and run unit tests |
