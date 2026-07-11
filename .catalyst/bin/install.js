@@ -149,6 +149,36 @@ function install() {
     console.log(`  ${green}✓${reset} Installed .claude/skills`);
   }
 
+  // Install .claude/rules — framework-owned always-on rules. Refresh on every
+  // (re)install so projects pick up updated coding/git/security standards.
+  const rulesSrc = path.join(src, '.claude', 'rules');
+  const rulesDest = path.join(claudeDir, 'rules');
+  if (fs.existsSync(rulesSrc)) {
+    copyDir(rulesSrc, rulesDest);
+    console.log(`  ${green}✓${reset} Installed .claude/rules`);
+  }
+
+  // Install .claude/hooks — framework-owned hook scripts (session rename,
+  // post-edit format, pre-compact save). Refresh on every (re)install.
+  const hooksSrc = path.join(src, '.claude', 'hooks');
+  const hooksDest = path.join(claudeDir, 'hooks');
+  if (fs.existsSync(hooksSrc)) {
+    copyDir(hooksSrc, hooksDest);
+    console.log(`  ${green}✓${reset} Installed .claude/hooks`);
+  }
+
+  // Install .claude/settings.json — wires the hooks above into Claude Code.
+  // User-owned: create ONLY if missing so we never clobber a project's custom
+  // hooks, permissions, or env settings on update.
+  const settingsDest = path.join(claudeDir, 'settings.json');
+  if (!fs.existsSync(settingsDest)) {
+    if (copyFile(path.join(src, '.claude', 'settings.json'), settingsDest)) {
+      console.log(`  ${green}✓${reset} Installed .claude/settings.json`);
+    }
+  } else {
+    console.log(`  ${dim}•${reset} Kept existing .claude/settings.json`);
+  }
+
   // Framework-owned config: always refresh on (re)install.
   if (copyFile(path.join(src, '.catalyst/specs/spec-structure.yaml'), path.join(cwd, '.catalyst/specs/spec-structure.yaml'))) {
     console.log(`  ${green}✓${reset} Installed .catalyst/specs/spec-structure.yaml`);
