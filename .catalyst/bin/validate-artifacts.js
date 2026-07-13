@@ -171,34 +171,6 @@ for (const f of coreFiles) {
   }
 }
 
-// 7. Hooks (if settings.json references them)
-console.log('\nHooks:');
-const settings = readFile('.claude/settings.json');
-if (settings) {
-  try {
-    const parsed = JSON.parse(settings);
-    const hooks = parsed.hooks || {};
-    for (const [event, hookList] of Object.entries(hooks)) {
-      for (const hook of hookList) {
-        const cmd = hook.command || '';
-        // Extract script path from command (first token before any args)
-        const scriptPath = cmd.split(/\s/)[0];
-        if (scriptPath && scriptPath.startsWith('.')) {
-          if (fileExists(scriptPath)) {
-            ok(`${event}: ${scriptPath}`);
-          } else {
-            error(`${event}: ${scriptPath} — referenced in settings.json but missing`);
-          }
-        }
-      }
-    }
-  } catch (e) {
-    error(`settings.json — invalid JSON: ${e.message}`);
-  }
-} else {
-  warn('No .claude/settings.json found');
-}
-
 // --- Summary ---
 console.log('\n' + '─'.repeat(40));
 if (errors > 0) {
