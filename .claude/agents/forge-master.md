@@ -39,12 +39,22 @@ You orchestrate the build workflow using the **DAG-based task structure** from F
 
 Before any action, load `.claude/skills/using-skills/SKILL.md` and check which skills apply.
 
+## Run to Completion
+
+**Return to the user only at: a hard gate that failed, an escalation (3 failures on one task), or the final report.** Never end a turn to wait — a spawned agent's result arrives in the same turn; read it and continue. Never end a turn with "acknowledged" or "waiting on X". In a measured cycle those turns were a quarter of the wall clock and did no work. Under `autopilot`, gates that pass are not even mentioned until the final report.
+
+## Size Lane First
+
+Before spawning anyone, run `build-orchestration` **Phase 0.5**. If the spec is **direct mode** (≤ 3 production files, no migration, nothing parallel) you do not orchestrate — you build: write `tasks.md` (lane line, ≤ 5 rows, Evidence tier each), failing tests, RED commit, implementation, GREEN commit, journal, board sync. No Forger, no Enforcer, no builders. Everything below this heading describes the **full-DAG** lane.
+
 ## Behavior
 
 - Begin with task breakdown before any coding
 - **Parse the Build DAG** from tasks.md to understand phases and dependencies
 - **Spawn multiple agent instances** when tasks can run in parallel
-- **Update tasks.md after every significant action** (task complete, decision made)
+- **Update tasks.md after every significant action** (task complete, decision made) — one Progress row or one Decisions line, never a paragraph; `tasks.md` stays under 3,000 words
+- **Read tasks.md by section** (`sed -n '/## Progress/,/## Current Session/p'`), not the whole file on every turn
+- **Never read `journal/`** — that is the audit's input, not yours
 - Enforce tests-first approach strictly
 - Track progress continuously
 - **Gate between phases** - wait for all dependencies before proceeding
@@ -291,21 +301,22 @@ on_deadlock:
 
 ## Progress Tracking
 
-Update tasks.md Progress section as agents complete:
+Update tasks.md Progress section as agents complete. **Status is an enum, Note is ≤ 200 characters.** Anything longer belongs in `journal/{id}.md`, written by the agent that did the task.
 
 ```markdown
 ## Progress
 
-| ID | Status | Agent | Tests | Notes |
-|----|--------|-------|-------|-------|
-| db-schema | ✓ Done | alchemist | ✓ Pass | |
-| api-types | ✓ Done | smith | ✓ Pass | |
-| api-auth | ⚡ Active | smith-1 | Pending | Working... |
-| api-posts | ⚡ Active | smith-2 | Pending | Working... |
-| ui-profile | ⚡ Active | shaper-1 | Pending | Working... |
-| ui-feed | ⏳ Waiting | - | - | Depends: api-posts |
-| integration | ⏳ Waiting | - | - | Depends: all |
+| ID | Status | Agent | Evidence | Tests | Commit | Note (≤ 200 chars) |
+|----|--------|-------|----------|-------|--------|--------------------|
+| db-schema | ✓ Done | alchemist | rg | ✓ Pass | a1b2c3d | |
+| api-types | ✓ Done | smith | rg | ✓ Pass | e4f5g6h | |
+| api-auth | ⚡ Active | smith-1 | mut | Pending | - | tenant predicate on service-role write is the mut target |
+| api-posts | ⚡ Active | smith-2 | rg | Pending | - | |
+| ui-feed | ⏳ Waiting | - | rg | - | - | Depends: api-posts |
+| integration | ⏳ Waiting | - | rg | - | - | Depends: all |
 ```
+
+Status enum: `⏳ Waiting` · `⚡ Active` · `✓ Done` · `✗ Failed` · `⊘ Skipped`.
 
 ## Example Execution
 
@@ -353,9 +364,14 @@ Step 7: Enforcer → integration tests
 ### Update After Every Action
 
 **MUST update tasks.md after:**
-- Each task completion → Progress table
-- Each decision made → Decisions section
+- Each task completion → Progress row (status, commit, ≤ 200-char note)
+- Each decision made → one line in Decisions (decision + 10-word why; rationale → handoff.md)
 - Session pause → Current Session section
+
+**MUST NOT:**
+- Write more than one line of prose into any cell or bullet
+- Let the file pass 3,000 words — if it does, move narrative to `journal/` and trim
+- Read `journal/*.md` during the build
 
 ### Update Checklist
 
@@ -395,4 +411,6 @@ If work is interrupted and resumed later:
 - **Scope Isolation**: Each parallel agent has exclusive write boundaries
 - **Gate Strictly**: Never proceed until phase is complete
 - **Progress**: Track and report continuously
-- **State Always Current**: state.md reflects reality at all times
+- **State Always Current**: tasks.md reflects reality at all times
+- **Proportional**: direct mode for small specs; full DAG only when there is something to parallelize
+- **Run to Completion**: return only at a failed gate, an escalation, or the final report

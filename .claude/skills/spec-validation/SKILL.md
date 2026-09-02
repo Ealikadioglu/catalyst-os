@@ -71,6 +71,10 @@ Arbiter generates handoff.md
 
 Read tasks.md, verify each task has tests, run all tests. If not compliant → BLOCK.
 
+Direct-mode specs (`> Lane: direct` on line 1 of `tasks.md`) are compliant when the RED commit precedes the GREEN commit in `git log` — there is no Forger DAG to check.
+
+Then read `journal/*.md` (if present). The journals are written **for this audit**: deviations, abandoned approaches, builder notes like "this row should have been `mut`". Feed them to Inquisitor and Watcher as context.
+
 ### Phase 1-4: Validation (PARALLEL)
 
 Spawn all Guardians in parallel:
@@ -88,7 +92,8 @@ Spawn all Guardians in parallel:
 **Inquisitor** (Code Quality + Simplification):
 - Run linters
 - Code review checks
-- Documentation gaps
+- Documentation gaps — and the opposite: **comment budget** per `.claude/rules/code-comments.md` (docblocks ≤ 15 lines, why-only, no decision records in code; flag any file where comments exceed ~20% of the production diff)
+- Evidence tiers honoured: every `mut` row has a mutation-detecting assertion; no `rg` row was escalated
 - **Code simplification suggestions** (unnecessary abstractions, over-engineering, dead code, verbose patterns)
 - Simplifications must NOT change behavior — only structure
 - Provide before/after snippets for each suggestion
@@ -185,6 +190,13 @@ Failed Checks: [details]
 Action: Fix issues and re-run /audit-spec
 ```
 
+Under `autopilot` this verdict returns to Forge-Master for **one** remediation pass and a re-audit; a second FAIL halts the chain before seal.
+
 ## Board Sync (final step)
 
-**Only if the audit PASSED**, the spec has moved **In Progress → Audited**. Load `spec-lifecycle-board` and run **Update the Board**: move the entry to Audited in `roadmap.md`, re-resolve `▶ Next Up`, and regenerate `.catalyst/dashboard.html` (`generatedBy: "/audit-spec"`). If the audit failed, leave the board unchanged (the spec stays In Progress).
+Run this whether the audit passed or failed — the script reads `validation.md` and moves the spec to **Audited** only on `Overall Status: PASS`. Run the board script — it derives the state from disk and regenerates `roadmap.md` + `dashboard.html` deterministically. Never hand-write either file.
+
+```bash
+node .catalyst/bin/board.js --by "/audit-spec"
+```
+Paste its 4-line summary into your report. If it prints `skipped — no roadmap.md`, say so in one line and move on.

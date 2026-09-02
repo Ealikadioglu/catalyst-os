@@ -86,17 +86,15 @@ For each spec the user confirms:
 
 4. Check for library extraction (same keyword matching as `/archive-spec`)
 
-### Phase 5: Update Roadmap (Optional)
+### Phase 5: Update Roadmap + Dashboard
 
-If `.catalyst/main/roadmap.md` exists, load the `spec-lifecycle-board` skill (single source of the lifecycle) and:
-1. Move archived/sealed specs into the **✅ Done** section
-2. Re-classify remaining on-disk specs into their current buckets (📋 Planned / 🔨 In Progress / 🔬 Audited) by re-running State Detection
+```bash
+node .catalyst/bin/board.js --by "/sync-project"
+```
 
-> **Boundary:** this is mechanical reconciliation of specs that exist on disk. Do NOT invent, reorder, or re-prioritize **🗂️ Backlog** entries or set strategic Next Up direction — that is planning, owned by `/plan-project`. If the board needs re-planning, tell the user to run `/plan-project`.
+The script re-classifies every on-disk spec (📋 Planned / 🔨 In Progress / 🔬 Audited / ✅ Done) and regenerates `roadmap.md` and `.catalyst/dashboard.html`. Backlog and Vision are preserved verbatim.
 
-### Phase 6: Regenerate Dashboard
-
-If `.catalyst/main/roadmap.md` exists, also regenerate `.catalyst/dashboard.html` so it reflects the archiving just done. Follow **Generating `dashboard.html`** in the `spec-lifecycle-board` skill (set `generatedBy: "/sync-project"`). The **Backlog stays as-is** — sync never re-plans it.
+> **Boundary:** sync is mechanical reconciliation. Do NOT invent, reorder, or re-prioritize **🗂️ Backlog** entries or set strategic Next Up direction — that is planning, owned by `/plan-project`. If the board needs re-planning, tell the user to run `/plan-project`.
 
 ## Output
 
@@ -116,8 +114,8 @@ Flagged: 1 stale spec
 
 Library: Added authentication.md, payment-integration.md
 
-Roadmap: Moved 2 specs to ✅ Shipped, re-classified active specs
-         (run /plan-project to re-plan the backlog and Next Up)
-
-Dashboard: Regenerated .catalyst/dashboard.html (open in browser)
+Board synced by /sync-project: 3 backlog · 1 planned · 0 in progress · 0 audited · 5 done
+Next Up: Password Reset → !/forge-spec @2026-06-28-password-reset
+roadmap:   .catalyst/main/roadmap.md
+dashboard: .catalyst/dashboard.html
 ```

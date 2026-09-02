@@ -182,4 +182,9 @@ Next steps:
 
 ## Board Sync (final step)
 
-The spec just moved **Backlog → Planned**. Load `spec-lifecycle-board` and run **Update the Board**: move the entry to Planned in `roadmap.md`, re-resolve `▶ Next Up`, and regenerate `.catalyst/dashboard.html` (`generatedBy: "/catalyze-spec"`).
+The spec just moved **Backlog → Planned**. Run the board script — it derives the state from disk and regenerates `roadmap.md` + `dashboard.html` deterministically. Never hand-write either file.
+
+```bash
+node .catalyst/bin/board.js --by "/catalyze-spec"
+```
+Paste its 4-line summary into your report. If it prints `skipped — no roadmap.md`, say so in one line and move on.

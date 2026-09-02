@@ -162,7 +162,7 @@ if (fileExists('.catalyst/specs/spec-structure.yaml')) {
 
 // 6. Core files
 console.log('\nCore Files:');
-const coreFiles = ['CLAUDE.md', 'AGENTS.md', 'package.json', '.catalyst/main/project-config.yaml'];
+const coreFiles = ['CLAUDE.md', 'AGENTS.md', 'package.json', '.catalyst/main/project-config.yaml', '.catalyst/bin/board.js', '.catalyst/main/temp/temp-dashboard.html'];
 for (const f of coreFiles) {
   if (fileExists(f)) {
     ok(f);
@@ -170,6 +170,28 @@ for (const f of coreFiles) {
     error(`${f} — missing`);
   }
 }
+
+// 7. Dashboard template must carry the DATA markers board.js replaces
+console.log('\nDashboard template:');
+const tpl = readFile('.catalyst/main/temp/temp-dashboard.html');
+if (tpl && /\/\/ === DATA:START/.test(tpl) && /\/\/ === DATA:END/.test(tpl) && tpl.includes('function renderDoc')) {
+  ok('DATA markers + renderer present');
+} else {
+  error('temp-dashboard.html missing DATA:START/DATA:END markers or renderDoc');
+}
+
+// 8. Board Sync sections must call the script, never describe hand-generation
+console.log('\nBoard sync:');
+for (const dir of skillDirs) {
+  const c = readFile(`.claude/skills/${dir}/SKILL.md`) || '';
+  if (/## Board Sync/.test(c) && !/node \.catalyst\/bin\/board\.js/.test(c)) {
+    error(`${dir}: Board Sync section does not call board.js`);
+  }
+  if (/Generating `dashboard\.html`|const DATA = \{/.test(c)) {
+    error(`${dir}: still describes hand-generating dashboard.html`);
+  }
+}
+if (errors === 0) ok('All Board Sync sections delegate to board.js');
 
 // --- Summary ---
 console.log('\n' + '─'.repeat(40));

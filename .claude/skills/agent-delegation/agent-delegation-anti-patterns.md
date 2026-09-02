@@ -12,11 +12,14 @@ Orchestrators coordinate. They do NOT implement. When an orchestrator writes cod
 ## The Iron Laws
 
 ```
-1. NEVER write code as an orchestrator
+1. NEVER implement a task that has a DAG entry
 2. NEVER trust agent reports without verification
 3. NEVER let agents spin — escalate after 3 failures
 4. NEVER skip review between phases
+5. NEVER end a turn to wait for an agent you already spawned
 ```
+
+Law #1 is scoped to the DAG on purpose. In **direct mode** (see `build-orchestration` Phase 0.5 — ≤ 3 production files, no migration, nothing parallel) there is no DAG and the orchestrator is the builder. The anti-pattern below is about a *full-DAG* build.
 
 ---
 
@@ -47,12 +50,37 @@ Even for one-line fixes.
 
 ```
 BEFORE using Edit/Write tool on any code file (.py/.ts/.js/.tsx/.jsx):
-  Ask: "Am I an orchestrator?"
+  Ask: "Does tasks.md have a Build DAG?"
 
-  IF yes:
-    STOP — spawn the appropriate agent instead
+  IF yes (full DAG):
+    STOP — spawn the agent the DAG names
     Even for "just one line"
     Even if "it's faster"
+
+  IF no ("Lane: direct"):
+    You are the builder. Failing test first, then code.
+```
+
+---
+
+## Anti-Pattern 1b: Orchestrator Waits Instead of Working
+
+**The violation:**
+```
+Forge-Master spawns smith-1 and smith-2.
+Forge-Master ends its turn: "Waiting for the builders to finish."
+Next turn: "Acknowledged, smith-1 is done. Waiting on smith-2."
+```
+
+**Why this is wrong:**
+- Every returned turn is a full round-trip that did no work — in one measured cycle this was ~10 turns and 20-30 minutes
+- The spawn already blocks until the agent returns; there is nothing to wait for
+- The user asked for a build, not a status feed
+
+**The fix:**
+```
+Spawn → read result → verify → update Progress row → spawn the next ready task(s).
+Return to the user only at: a failed hard gate, an escalation (3 failures), or the final report.
 ```
 
 ---
@@ -245,7 +273,8 @@ If a parallel agent needs to modify a shared file: STOP, make it sequential.
 
 | Anti-Pattern | Fix |
 |--------------|-----|
-| Orchestrator writes code | Spawn agent, even for one line |
+| Orchestrator writes code for a DAG task | Spawn the agent the DAG names, even for one line |
+| Orchestrator ends turn to wait | Read result, continue; return only at gate/escalation/final |
 | Trust agent self-report | Verify with VCS diff + run tests |
 | Let agents spin (3+ failures) | Escalate to user |
 | Skip phase gates | Every gate must pass before proceeding |

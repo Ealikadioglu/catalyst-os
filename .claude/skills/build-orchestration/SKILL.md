@@ -12,8 +12,17 @@ Orchestrate the full build workflow: task breakdown, test writing, foundation, c
 
 - `test-driven-development` — Enforcer uses during red/green phases
 - `agent-delegation` — Orchestrator follows delegation and verification rules
-- `verification-before-completion` — All agents verify before claiming done
+- `verification-before-completion` — All agents verify before claiming done; **evidence tiers** decide how much proof each task needs
 - `systematic-debugging` — Builder agents use when tests fail
+- `autopilot` — only under `/forge-spec-worktree`: no questions, recommended option + log, chain into audit and seal
+
+## Cost Discipline — read before anything else
+
+A forge cycle's token bill is dominated by **prose that gets re-read**, not by tests. Three rules keep it proportional to the change:
+
+1. **Size lane.** Small specs run in **direct mode** (no DAG, no Forger, no parallel phase, orchestrator builds). See *Phase 0.5*.
+2. **tasks.md is a state table, not a diary.** Hard cap **3,000 words**. Narrative goes to `journal/{task-id}.md`, which the build never reads. See *tasks.md vs journal*.
+3. **Run to completion.** The orchestrator never ends a turn to "wait" for an agent it has already spawned — it reads the result and continues. Returning to the user happens only at a hard gate that failed, an escalation, or the final report.
 
 ## Prerequisites
 
@@ -27,7 +36,9 @@ Orchestrate the full build workflow: task breakdown, test writing, foundation, c
 .catalyst/specs/YYYY-MM-DD-{slug}/
 ├── spec.md           # Already exists from /catalyze-spec
 ├── research.md       # Already exists from /catalyze-spec
-├── tasks.md          # Forger creates (this phase)
+├── tasks.md          # Forger (or orchestrator in direct mode) creates — state table, ≤ 3,000 words
+├── journal/          # Per-task narrative, append-only, written by the agent doing the task
+│   └── {task-id}.md  #   read by the audit, never by the build
 ├── validation.md     # Arbiter creates (in /audit-spec)
 ├── handoff.md        # Updated throughout
 └── assets/
@@ -57,13 +68,18 @@ GATE 2: GREEN FLAG
 ## TDD IS MANDATORY — NO EXCEPTIONS
 
 ```
-The build MUST follow this exact sequence:
+Full DAG lane — the build MUST follow this exact sequence:
 
 1. Task(subagent_type="forger")    -> Create tasks.md
 2. Task(subagent_type="enforcer")  -> Write ALL tests (must FAIL)
 3. Verify                          -> Run tests, confirm RED
 4. Task(subagent_type="smith/shaper/artificer/alchemist") -> Implement until GREEN
+
+Direct lane — same sequence, no spawns: the orchestrator writes tasks.md,
+writes the failing tests, confirms RED, commits, implements, confirms GREEN, commits.
 ```
+
+The lane is chosen in Phase 0.5. TDD is identical in both; only *who types* changes.
 
 ## Execution Order (DAG-Based)
 
@@ -117,13 +133,44 @@ Phase 6: Integration (Enforcer — cross-boundary tests)
    - `git worktree add {worktree_path}/{spec-slug} -b {branch_prefix}/{spec-slug} {development_branch}`
    - `cd {worktree_path}/{spec-slug}` — all subsequent work happens here
    - Record `worktree: {worktree_path}/{spec-slug}` in the spec's `handoff.md`
+   - `/forge-spec-worktree` also means **autopilot**: load the `autopilot` skill, mark `handoff.md` with `**Mode:** AUTOPILOT`, and after GATE 2 + board sync continue straight into `spec-validation` and `spec-approval` without returning to the user
 3. ELSE (default — branch checkout):
    - Checkout development branch and pull
    - Create spec feature branch: `{branch_prefix}/{spec-slug}`
 
+### Phase 0.5: Size Lane — direct mode or full DAG
+
+Decide once, before spawning anyone. Read `spec.md` frontmatter (`provides`, `affects`) and the requirements.
+
+| Signal | Direct mode | Full DAG |
+|--------|-------------|----------|
+| Production files created or modified | **≤ 3** | 4+ |
+| Database migration / schema change | none | any |
+| Independent work units that could run in parallel (separate pages, separate API domains) | none | 2+ |
+| Distinct builder domains needed (backend + frontend + mobile) | 1 | 2+ |
+
+**All four in the left column → direct mode.** Anything in the right column → full DAG. Write the lane and the reason as the first line of `tasks.md`: `> Lane: direct — 2 files, no migration`.
+
+**Direct mode (the orchestrator IS the builder):**
+
+```
+1. Write tasks.md yourself: the lane line, one task row per behaviour (≤ 5 rows), Evidence tier per row, Current Session.
+   No phases, no scope tables, no dependency graph.
+2. Load test-driven-development. Write the failing tests yourself. Run → all RED.
+3. GATE 1: commit "test({scope}): write failing tests for {spec}"
+4. Implement yourself. Run → all GREEN. Refactor. Run → still GREEN.
+5. GATE 2: commit "feat({scope}): implement {spec}"
+6. Update tasks.md Progress rows + Current Session. Append journal/direct.md (≤ 200 words).
+7. Board sync.
+```
+
+No Forger, no Enforcer, no Smith/Shaper spawn, no integration phase. `agent-delegation`'s Iron Law #1 does not apply below this threshold — a 90-line change does not need 12 agents and 2 hours of hand-offs. TDD, both gates, and verification still apply in full.
+
+**Full DAG** continues with Phase 1 below.
+
 ### Phase 1: Task Breakdown (Forger)
 
-Spawn Forger → creates `tasks.md` with Build DAG including phases, scope boundaries, dependencies, and parallel opportunities.
+Spawn Forger → creates `tasks.md` with Build DAG including phases, scope boundaries, dependencies, parallel opportunities, and an **Evidence** tier per task (`rg` = red-then-green, `mut` = mutation-prove; see `verification-before-completion`). Forger keeps the file under 3,000 words.
 
 ### Phase 2: Write Tests (Enforcer) — RED PHASE
 
@@ -203,19 +250,41 @@ FOR EACH TASK:
 3. Run test → must PASS
 4. Refactor if needed
 5. Run test → must still PASS
-6. Update tasks.md Progress — THE AGENT DOING THE WORK MUST DO THIS
+6. Prove at the task's Evidence tier (rg or mut) — never escalate the tier on your own
+7. Update your tasks.md Progress row (status + ≤ 200-char note) — THE AGENT DOING THE WORK MUST DO THIS
+8. Append your narrative to journal/{task-id}.md — NOT to tasks.md
 
 NEVER write code without a failing test first
 NEVER write more code than needed to pass the test
 NEVER modify files outside your SCOPE
-NEVER report done without updating tasks.md first
+NEVER report done without updating your tasks.md row first
+NEVER put more than one line of prose in a tasks.md cell
+Comments follow .claude/rules/code-comments.md: why-only, ≤ 15-line docblocks, decisions go to handoff.md
 ```
+
+### tasks.md vs journal
+
+`tasks.md` is **shared mutable state** read by every agent on most turns. Every word in it is paid for dozens of times. It therefore holds only:
+
+| Section | Content | Cap |
+|---------|---------|-----|
+| `## Build DAG` | Phases, task rows (ID, Agent, Scope, Reads, Depends On, Evidence, Est) | as many rows as tasks |
+| `## Progress` | One row per task: Status enum · Tests · Commit · **Note ≤ 200 chars** | one line per task |
+| `## Current Session` | Phase, active tasks, next step, file:line | 10 lines |
+| `## Decisions` | **One line each** — decision + 10-word why. Full rationale → `handoff.md` | one line per decision |
+
+**Whole file ≤ 3,000 words.** If a row needs more than 200 characters, the rest goes to the journal.
+
+`journal/{task-id}.md` (in the spec folder) is **append-only, per task, written by the agent doing the task**. What was tried, what failed, why the approach changed, test output excerpts. Rules:
+
+- The agent doing task X writes `journal/X.md`. Nobody else writes to it.
+- **No agent reads another task's journal during the build.** The orchestrator does not read journals at all.
+- The **audit** (Arbiter, Inquisitor) reads journals — that is what they are for.
+- `/primer-spec` reads `tasks.md` only.
 
 ### tasks.md Update Responsibility
 
-**Every agent (smith, shaper, artificer, alchemist, enforcer) MUST update tasks.md before reporting back.**
-The orchestrator (forge-master) verifies and fills gaps, but agents are the primary updaters.
-This ensures `/primer-spec` always reflects actual progress, even if the orchestrator loses context.
+**Every agent (smith, shaper, artificer, alchemist, enforcer) MUST update its own Progress row before reporting back**, and put everything longer than a line in its journal. The orchestrator (forge-master) verifies and fills gaps, but agents are the primary updaters. Read `tasks.md` with `grep -A` / `sed -n` for the section you need — do not `cat` the whole file on every turn.
 
 ## Failure Modes
 
@@ -226,7 +295,14 @@ This ensures `/primer-spec` always reflects actual progress, even if the orchest
 | Scope violation detected | STOP agent, revert, re-run with stricter prompt |
 | Parallel agents conflict | STOP build, revert, restructure DAG |
 | Dependency deadlock | STOP all, report to user, restructure DAG |
+| tasks.md over 3,000 words | STOP writing to it — move narrative to journal/, trim notes to ≤ 200 chars |
+| Orchestrator ends a turn to "wait" | Don't. Read the agent result and continue in the same turn |
 
 ## Board Sync (final step)
 
-Once the build reaches green and `tasks.md` reflects progress, the spec has moved **Planned → In Progress**. Load `spec-lifecycle-board` and run **Update the Board**: move the entry to In Progress in `roadmap.md`, re-resolve `▶ Next Up`, and regenerate `.catalyst/dashboard.html` (`generatedBy: "/forge-spec"`).
+Once the GREEN commit exists, the spec has moved **Planned → In Progress**. Run the board script — it derives the state from disk and regenerates `roadmap.md` + `dashboard.html` deterministically. Never hand-write either file.
+
+```bash
+node .catalyst/bin/board.js --by "/forge-spec"
+```
+Paste its 4-line summary into your report. If it prints `skipped — no roadmap.md`, say so in one line and move on.

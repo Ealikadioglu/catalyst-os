@@ -76,24 +76,26 @@ The orchestrator may lose context or the conversation may end before it updates.
 
 ### How to Update
 
-1. **Find tasks.md**: Read `.catalyst/specs/*/tasks.md` (the spec you're working on)
-2. **Update the Progress table**: Change your task's status from `⚡ Active` to `✓ Done`
-3. **Add commit hash** if you committed
-4. **Update Current Session**: Note what's next based on the DAG
+1. **Find your row**: `grep -n "^| api-auth" .catalyst/specs/*/tasks.md` — read the Progress section, not the whole file
+2. **Update your Progress row only**: status `⚡ Active` → `✓ Done` (or `✗ Failed`), commit hash if you committed, and a **Note of at most 200 characters**
+3. **Update Current Session**: one line — what's next based on the DAG
+4. **Append your narrative to `journal/api-auth.md`** in the spec folder (create the directory if needed): what you tried, what failed, why the approach changed, key test output. This is where the story goes. Nobody reads it during the build; the audit reads it afterwards.
 
 ### Example
 
 Before:
 ```
-| api-auth | ⚡ Active | smith-1 | Pending | Working... |
+| api-auth | ⚡ Active | smith-1 | rg | Pending | - | |
 ```
 
 After:
 ```
-| api-auth | ✓ Done | smith-1 | ✓ Pass | Implemented auth endpoints |
+| api-auth | ✓ Done | smith-1 | rg | ✓ Pass | e4f5g6h | Endpoints live; refresh rotation in journal |
 ```
 
-**If you skip this step, `/primer-spec` will show the spec as not started and all your progress is invisible.**
+**Never** write a paragraph into a `tasks.md` cell. **Never** read another task's journal. If your Note wants to be longer than 200 characters, the rest is journal material.
+
+**If you skip step 2, `/primer-spec` will show the spec as not started and all your progress is invisible.**
 
 ## When Receiving Review Feedback
 
@@ -139,8 +141,8 @@ Add silently, document in handoff.md under "## Additions":
 - Missing auth checks on protected routes
 - Type safety improvements
 
-### STOP and Ask (blocking)
-Present options with tradeoffs, wait for user decision:
+### STOP and Ask (blocking — except in autopilot)
+Present options with tradeoffs, wait for user decision. **Autopilot exception:** if your prompt begins with `AUTOPILOT`, do not stop — pick the option marked Recommended (or choose by spec → conventions → codebase pattern → smallest scope, and mark it), append a row to `handoff.md ## Autopilot Decisions`, and continue. The only autopilot-proof stop is a destructive database change, which halts the run.
 - Spec says X but codebase uses Y (which to follow?)
 - Scope violation (need to touch files outside my scope)
 - Ambiguous requirement (spec doesn't cover this case)

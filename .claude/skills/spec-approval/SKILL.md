@@ -12,6 +12,10 @@ Final verification, git commit, spec archival, self-documentation (propagate lea
 - `verification-before-completion` — Final TDD compliance check
 - `agent-delegation` — Scribe delegation for library extraction
 
+## Autopilot
+
+When invoked from `/forge-spec-worktree`, this skill runs inside the worktree, on the worktree branch, immediately after a passing audit, with no user present. Every "ask" below has an autopilot default (marked inline). Push and PR are authorized by the original command.
+
 ## Prerequisites — HARD GATES
 
 > **This skill is the FINAL step in the spec lifecycle.** It runs ONLY after build and validation are complete.
@@ -52,7 +56,7 @@ Read `.catalyst/main/project-config.yaml` for:
 
 For each repository with changes:
 1. Check current branch
-2. If on protected branch → create feature branch (ask user for name)
+2. If on protected branch → create feature branch (ask user for name; **autopilot:** use `{branch_prefix}/{spec-slug}` without asking)
 3. If on feature branch → continue
 
 ### Phase 5: Git Commit
@@ -98,7 +102,7 @@ Propagate learnings from completed spec back to project docs:
 
 ### Phase 9: Library Extraction (Optional)
 
-Auto-detect reusable patterns from spec name/content. Ask user if spec should be added to pattern library. If yes, delegate to Scribe for extraction.
+Auto-detect reusable patterns from spec name/content. Ask user if spec should be added to pattern library. If yes, delegate to Scribe for extraction. **Autopilot:** yes if keyword detection matched, else skip — log the choice, do not ask.
 
 ## Output
 
@@ -121,4 +125,9 @@ PR: {pr-url}
 
 ## Board Sync (final step)
 
-The spec just moved **Audited → Done (sealed)**. Load `spec-lifecycle-board` and run **Update the Board**: move the entry out of the board into the **Done** timeline in `roadmap.md`, re-resolve `▶ Next Up`, and regenerate `.catalyst/dashboard.html` (`generatedBy: "/seal-spec"`).
+The spec just moved **Audited → Done (sealed)**. Run the board script — it derives the state from disk and regenerates `roadmap.md` + `dashboard.html` deterministically. Never hand-write either file.
+
+```bash
+node .catalyst/bin/board.js --by "/seal-spec"
+```
+Paste its 4-line summary into your report. If it prints `skipped — no roadmap.md`, say so in one line and move on.

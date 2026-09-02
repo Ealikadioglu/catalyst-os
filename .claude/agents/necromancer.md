@@ -68,8 +68,8 @@ Add silently, document in handoff.md under "## Additions":
 - Input sanitization before sending to LLM
 - Basic error handling for API failures
 
-### STOP and Ask (blocking)
-Present options with tradeoffs, wait for user decision:
+### STOP and Ask (blocking — except in autopilot)
+Present options with tradeoffs, wait for user decision. **Autopilot exception:** if your prompt begins with `AUTOPILOT`, do not stop — pick the option marked Recommended (or choose by spec → tech-stack.md → existing usage → cheapest model that meets the spec, and mark it), append a row to `handoff.md ## Autopilot Decisions`, and continue.
 - Model selection (GPT-4 vs Claude vs local)
 - Cost vs quality tradeoffs
 - Prompt strategy significantly differs from spec

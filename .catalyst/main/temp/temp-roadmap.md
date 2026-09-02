@@ -6,6 +6,8 @@
 > Sections are **lifecycle states** — a spec moves across the board as it progresses:
 > `Backlog → Planned → In Progress → Audited → Done`.
 > The board shows the 4 active states; **Done** is the sealed history below.
+> Backlog and Vision are planning-owned (`/plan-project`); every other section is
+> regenerated from disk by `node .catalyst/bin/board.js`.
 
 ---
 
@@ -89,7 +91,7 @@ multiple subsystems, split it into multiple backlog entries.
 ```
 !/forge-spec @2026-02-15-feature-slug
 ```
-> Or `!/forge-spec-worktree @2026-02-15-feature-slug` if another spec is in progress.
+> Or `!/forge-spec-worktree @2026-02-15-feature-slug` to run forge → audit → seal unattended in an isolated worktree.
 
 ---
 

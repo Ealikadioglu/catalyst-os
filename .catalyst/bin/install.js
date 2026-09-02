@@ -39,8 +39,8 @@ if (hasHelp) {
     ${cyan}-h, --help${reset}    Show this help message
 
   ${yellow}What gets installed:${reset}
-    ${dim}.claude/${reset}       Agents, skills, and slash commands
-    ${dim}.catalyst/${reset}     Spec templates and project config
+    ${dim}.claude/${reset}       Agents, skills, rules, and slash commands
+    ${dim}.catalyst/${reset}     Spec templates, project config, and bin/board.js (dashboard generator)
 
   ${yellow}Example:${reset}
     ${dim}# Initialize catalyst-os in your project${reset}
@@ -161,6 +161,13 @@ function install() {
   // Framework-owned config: always refresh on (re)install.
   if (copyFile(path.join(src, '.catalyst/specs/spec-structure.yaml'), path.join(cwd, '.catalyst/specs/spec-structure.yaml'))) {
     console.log(`  ${green}✓${reset} Installed .catalyst/specs/spec-structure.yaml`);
+  }
+
+  // Framework-owned runtime: the deterministic board/dashboard generator that
+  // every lifecycle command runs instead of hand-writing dashboard.html.
+  // Always refresh on (re)install.
+  if (copyFile(path.join(src, '.catalyst/bin/board.js'), path.join(cwd, '.catalyst/bin/board.js'))) {
+    console.log(`  ${green}✓${reset} Installed .catalyst/bin/board.js (board + dashboard generator)`);
   }
 
   // Framework-owned document templates (roadmap, dashboard, mission, etc.):

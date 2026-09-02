@@ -23,14 +23,30 @@ files:
     pattern: append
 
   tasks.md:
-    owner: forger
+    owner: forger            # forge-master in direct mode
     purpose: DAG + progress + decisions + session context (THE living doc)
     created: forge-spec
     updated_by: [forger, forge-master, builders]
     pattern: living
+    max_words: 3000
     note: |
       ONE FILE to read when resuming work.
-      Contains everything about execution state.
+      A STATE TABLE, not a diary: status enum + <=200-char note per task,
+      one-line decisions. It is re-read by every agent on most turns, so
+      every word is paid for dozens of times. Narrative -> journal/.
+      Line 1 declares the lane: "> Lane: direct — ..." or "> Lane: full DAG — ...".
+
+  journal/:
+    owner: builders
+    purpose: Per-task narrative — what was tried, what failed, why it changed
+    created: forge-spec (as tasks complete)
+    updated_by: [smith, shaper, artificer, alchemist, necromancer, enforcer, forge-master]
+    pattern: append
+    file_pattern: "journal/{task-id}.md"
+    note: |
+      Written by the agent doing the task. Nobody reads another task's
+      journal during the build; the orchestrator never reads it.
+      The AUDIT reads it (arbiter, inquisitor). That is what it is for.
 
   handoff.md:
     owner: scribe
@@ -61,9 +77,11 @@ statuses:
 
 rules:
   - spec.md has frontmatter for context assembly
-  - tasks.md is THE living document during build
+  - tasks.md is THE living document during build — and stays under 3,000 words
+  - journal/{task}.md holds the narrative; the build never reads it, the audit does
   - handoff.md is human-first, no heavy YAML
   - One file to resume = tasks.md
+  - Every task row carries an Evidence tier (rg | mut); default rg
 
 # =============================================================================
 # SPEC.MD SCHEMA
@@ -168,7 +186,7 @@ tasks_schema:
     |------|--------|-------|--------|-------|
     | tests-auth | ✓ Done | 12 failing | a1b2c3d | RED phase complete |
     | db-schema | ✓ Done | 12 passing | e4f5g6h | |
-    | api-auth | ⚡ Active | 8/12 | - | Working on refresh |
+    | api-auth | ⚡ Active | 8/12 | - | Refresh rotation next; see journal/api-auth.md |
     | api-user | ⏳ Waiting | - | - | Blocked by api-auth |
 
     ## Current Session
@@ -271,6 +289,15 @@ build_dag:
       sequential: true
       description: "Cross-boundary testing"
 
+  lanes:
+    direct:
+      when: "<= 3 production files, no migration, no parallel units, one builder domain"
+      builder: forge-master   # orchestrator builds; no forger/enforcer/parallel phase
+      tasks_md: "<= 5 rows, no phases"
+    full:
+      when: "anything else"
+      builder: forger + enforcer + parallel builders
+
   task_fields:
     - id          # Unique identifier
     - agent       # Which agent type (with instance: smith-1, shaper-2)
@@ -278,7 +305,8 @@ build_dag:
     - reads       # Files with read-only access
     - depends_on  # Task IDs that must complete first
     - blocks      # Task patterns this blocks (e.g., api-*, ui-*)
-    - acceptance  # How to verify completion
+    - acceptance  # How to verify completion (one line)
+    - evidence    # rg (red-then-green, default) | mut (mutation-prove: named invariant / security boundary / load-bearing req)
     - estimate    # Time estimate (< 2 hours)
 
 # =============================================================================

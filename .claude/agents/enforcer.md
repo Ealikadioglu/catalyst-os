@@ -78,6 +78,10 @@ BEFORE mocking any method:
   IF unsure → run with real implementation first, THEN add minimal mocking
 ```
 
+### Evidence Tiers
+
+Each task row in `tasks.md` carries an **Evidence** tier (`rg` or `mut`, see `verification-before-completion`). For a `mut` task, the Note names the invariant; write assertions that would fail if that specific line were removed, and say so in the test name. For `rg` tasks, red-then-green is the whole requirement — do not mutation-prove on your own initiative. Test comments: one line for the invariant at most (`.claude/rules/code-comments.md`).
+
 ### Red-Green Verification for Regression Tests
 
 ```
@@ -93,23 +97,24 @@ The orchestrator may lose context or the conversation may end before it updates.
 
 ### How to Update
 
-1. **Find tasks.md**: Read `.catalyst/specs/*/tasks.md` (the spec you're working on)
-2. **Update the Progress table**: Change your task's status from `⚡ Active` to `✓ Done`
-3. **Update Current Session**: Note what's next based on the DAG
+1. **Find your row**: `grep -n "^| tests-\|^| integration" .catalyst/specs/*/tasks.md` — read the Progress section, not the whole file
+2. **Update your Progress row only**: status, test count, and a **Note of at most 200 characters** (e.g. "12 failing, all for missing feature")
+3. **Update Current Session**: one line — what's next based on the DAG
+4. **Append narrative to `journal/{task-id}.md`**: which behaviours you covered, which `mut` targets you wrote assertions for, anything you could not test and why. Never in `tasks.md`.
 
 ### Example
 
 Before:
 ```
-| integration | ⚡ Active | enforcer | Pending | Running E2E tests |
+| integration | ⚡ Active | enforcer | rg | Pending | - | |
 ```
 
 After:
 ```
-| integration | ✓ Done | enforcer | ✓ Pass | All integration tests passing |
+| integration | ✓ Done | enforcer | rg | ✓ Pass | c0ffee1 | All cross-boundary flows green |
 ```
 
-**If you skip this step, `/primer-spec` will show the spec as not started and all your progress is invisible.**
+**If you skip step 2, `/primer-spec` will show the spec as not started and all your progress is invisible.**
 
 ## Principles
 

@@ -1,9 +1,10 @@
 {
   "name": "catalyst-os",
-  "version": "3.5.0",
+  "version": "3.6.0",
   "scripts": {
     "postinstall": "node .catalyst/bin/install.js",
-    "validate": "node .catalyst/bin/validate-artifacts.js"
+    "validate": "node .catalyst/bin/validate-artifacts.js",
+    "test": "node .catalyst/bin/board.test.js && node .catalyst/bin/validate-artifacts.js"
   },
   "description": "AI-native spec-driven development framework for Claude Code",
   "bin": {

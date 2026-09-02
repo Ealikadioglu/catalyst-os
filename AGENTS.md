@@ -61,7 +61,7 @@ All orchestrators load `using-skills` first and follow `agent-delegation`.
 | Agent | Role | Skills Used |
 |-------|------|-------------|
 | [Catalyst](.claude/agents/catalyst.md) | Spec orchestration | `spec-shaping`, `brainstorming`, `agent-delegation` |
-| [Forge-Master](.claude/agents/forge-master.md) | Build orchestration | `build-orchestration`, `agent-delegation`, `verification-before-completion` |
+| [Forge-Master](.claude/agents/forge-master.md) | Build orchestration (direct mode or full DAG; runs the whole `/forge-spec-worktree` chain) | `build-orchestration`, `agent-delegation`, `verification-before-completion`, `autopilot` |
 | [Arbiter](.claude/agents/arbiter.md) | Validation orchestration | `spec-validation`, `agent-delegation`, `verification-before-completion` |
 
 ## SEEKERS (Research)

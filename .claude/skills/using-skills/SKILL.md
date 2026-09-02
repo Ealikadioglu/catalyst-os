@@ -36,6 +36,7 @@ Skills tell you HOW. User instructions tell you WHAT.
 | **agent-delegation** | `.claude/skills/agent-delegation/SKILL.md` | Orchestrating agents — never implement as orchestrator |
 | **receiving-code-review** | `.claude/skills/receiving-code-review/SKILL.md` | Receiving feedback from Inquisitor, user, or reviewer |
 | **workspace-detection** | `.claude/skills/workspace-detection/SKILL.md` | Initializing a project — detect single_repo, monorepo, or multirepo |
+| **autopilot** | `.claude/skills/autopilot/SKILL.md` | `/forge-spec-worktree` or any unattended run — decide with "recommended", log, never stop to ask |
 
 ### Orchestration Skills (workflow-specific)
 
@@ -51,7 +52,7 @@ Skills tell you HOW. User instructions tell you WHAT.
 | **project-initialization** | `.claude/skills/project-initialization/SKILL.md` | `/catalyze-project` — setting up a new project |
 | **spec-update** | `.claude/skills/spec-update/SKILL.md` | `/update-spec` — modifying an existing spec |
 | **project-sync** | `.claude/skills/project-sync/SKILL.md` | `/sync-project` — batch sync and archive specs |
-| **spec-lifecycle-board** | `.claude/skills/spec-lifecycle-board/SKILL.md` | After any spec transition, or `/plan-project` — move the spec on the board and regenerate `dashboard.html` |
+| **spec-lifecycle-board** | `.claude/skills/spec-lifecycle-board/SKILL.md` | After any spec transition, or `/plan-project` — run `node .catalyst/bin/board.js`; never hand-write the board |
 
 ### Domain Skills (technologist companions)
 
@@ -86,6 +87,7 @@ Examples:
 - `agent-delegation` — Orchestrators never implement, no "just this once"
 - `receiving-code-review` — Verify before implementing, no blind agreement
 - `workspace-detection` — Detect repo structure before any project work, no assumptions
+- `autopilot` — Unattended runs never end a turn to ask; recommended option + log, halt only on listed conditions
 
 **Flexible** (adapt principles to context):
 - `brainstorming` — Scale questions to task complexity

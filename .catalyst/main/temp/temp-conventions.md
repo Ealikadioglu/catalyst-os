@@ -253,6 +253,20 @@ beforeEach(() => {
 
 ## Comments & Documentation
 
+### Comment Budget
+
+Framework rule (`.claude/rules/code-comments.md`), restated here so it travels with the project:
+
+| Where | Budget |
+|-------|--------|
+| File / function docblock | **≤ 15 lines**, states *why*, links the spec (`.catalyst/specs/{slug}`) for everything else |
+| Inline | Only for a non-obvious invariant, a workaround and its cause, or a security/tenant boundary |
+| Decision records, alternatives considered, audit trails | **Never in code.** They live in the spec's `handoff.md` |
+| Tests | Name says the behaviour; at most one line naming the invariant |
+| Whole diff | Comments < 20% of production lines, < 10% of test lines |
+
+Every comment is re-read by every future agent that opens the file. Write for the reader who has the spec archive one link away.
+
 ### When to Comment
 
 ```typescript

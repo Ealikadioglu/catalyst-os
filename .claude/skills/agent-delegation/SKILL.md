@@ -10,11 +10,14 @@ Orchestrators coordinate. They do NOT implement. This skill defines the rules fo
 ## The Iron Laws
 
 ```
-1. NEVER write code as an orchestrator
+1. NEVER implement a task that has a DAG entry — spawn the agent the DAG names
 2. NEVER trust agent reports without verification
 3. NEVER let agents spin — escalate after 3 failures
 4. NEVER skip review between phases
+5. NEVER end a turn to wait for an agent you already spawned — read the result, continue
 ```
+
+**Law #1 is proportional.** It exists because a 20-task DAG with parallel builders collapses when the orchestrator starts patching files. It does **not** exist to make a 3-line change cost a spawn, a prompt, a report, and a verification round-trip. `build-orchestration` Phase 0.5 defines **direct mode** (≤ 3 production files, no migration, nothing parallel): there is no DAG, so there are no DAG entries, so the orchestrator is the builder — with TDD and both gates intact. Above that threshold the law is absolute.
 
 ## Orchestrator Behavioral Rules
 
@@ -25,20 +28,23 @@ BEFORE writing ANY code or test:
   → If YES: Use Task tool with appropriate subagent_type
   → If NO: You're probably wrong. Use the Task tool.
 
-You may ONLY:
+You may ONLY (full-DAG mode):
   ✓ Read files to understand context
   ✓ Use Task tool to spawn agents
   ✓ Run test commands to verify gates
+  ✓ Update tasks.md Progress rows and Current Session
   ✓ Report status to user
 
-You may NEVER:
+You may NEVER (full-DAG mode):
   ✗ Write code (use smith, shaper, or artificer)
   ✗ Write tests (use enforcer)
   ✗ Create task breakdowns (use forger)
   ✗ Write database schemas (use alchemist)
   ✗ Update spec documentation (use scribe)
 
-IF YOU ARE ABOUT TO USE Edit/Write TOOL ON A CODE FILE → STOP → SPAWN AN AGENT
+IF YOU ARE ABOUT TO USE Edit/Write TOOL ON A CODE FILE → STOP → is this direct mode?
+  → direct mode (tasks.md says "Lane: direct"): you are the builder, proceed with TDD
+  → full DAG: SPAWN AN AGENT
 ```
 
 ## Prompt Checklist
@@ -181,7 +187,9 @@ the feature is not yet implemented.
 
 | Anti-Pattern | Fix |
 |--------------|-----|
-| Orchestrator writes code | Spawn agent, even for one line |
+| Orchestrator writes code for a DAG task | Spawn the agent the DAG names, even for one line |
+| Full ceremony for a 3-file change | Direct mode — no DAG, orchestrator builds with TDD |
+| Ending the turn to "wait on" a spawned agent | Read the result and continue; return only at a failed gate or the final report |
 | Trust agent self-report | Verify with VCS diff + run tests |
 | Let agents spin (3+ failures) | Escalate to user |
 | Skip phase gates | Every gate must pass before proceeding |
@@ -190,7 +198,8 @@ the feature is not yet implemented.
 
 ## Red Flags
 
-- Orchestrator using Edit/Write on code files
+- Orchestrator using Edit/Write on code files **while a DAG exists**
+- Orchestrator returning "waiting on X" / "acknowledged" with no work done
 - Marking tasks "Done" without running verification
 - Agent on attempt #3+ for the same issue
 - Proceeding to next phase with failing gates

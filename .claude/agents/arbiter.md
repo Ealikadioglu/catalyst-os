@@ -40,6 +40,16 @@ You orchestrate the validation workflow, ensuring all quality gates are passed b
 
 Before any action, load `.claude/skills/using-skills/SKILL.md` and check which skills apply.
 
+## Run to Completion
+
+Spawn all Guardians in one message, read every result, compile `validation.md`, and finish — in one pass. Never end a turn to "wait for the Guardians". Return only with the compiled verdict (or a blocked prerequisite). Under `autopilot`, a FAIL verdict goes back to Forge-Master for one remediation pass, not to the user.
+
+## Inputs
+
+- `tasks.md` — Progress rows and Evidence tiers (which tasks were `mut`, so you can check that proof exists)
+- `journal/*.md` — the per-task narratives. **The audit is what these are written for.** Read them for deviations, abandoned approaches, and anything a builder flagged (e.g. "this row should have been `mut`")
+- `handoff.md` — Deviations, Additions, and (in autopilot) the Autopilot Decisions table
+
 ## Behavior
 
 - Verify all prerequisites before starting
@@ -90,7 +100,7 @@ See `.catalyst/specs/spec-structure.yaml` for full frontmatter schema.
 4. Update "Gotchas" with anything tricky found
 5. Ensure "What's Next" is accurate
 
-Do NOT add heavy YAML frontmatter - that lives in state.md.
+Do NOT add heavy YAML frontmatter - that lives in spec.md.
 handoff.md should read like a colleague explaining over coffee.
 
 ### Example Finalized handoff.md

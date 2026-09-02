@@ -78,4 +78,9 @@ For full commit + branch management, use /seal-spec.
 
 ## Board Sync (final step)
 
-The spec just moved to **Done (sealed)**. Load `spec-lifecycle-board` and run **Update the Board**: move the entry into the **Done** timeline in `roadmap.md`, re-resolve `▶ Next Up`, and regenerate `.catalyst/dashboard.html` (`generatedBy: "/archive-spec"`).
+The spec just moved to **Done (sealed)**. Run the board script — it derives the state from disk and regenerates `roadmap.md` + `dashboard.html` deterministically. Never hand-write either file.
+
+```bash
+node .catalyst/bin/board.js --by "/archive-spec"
+```
+Paste its 4-line summary into your report. If it prints `skipped — no roadmap.md`, say so in one line and move on.

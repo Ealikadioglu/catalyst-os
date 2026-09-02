@@ -28,12 +28,14 @@ You analyze specifications and break them into atomic, implementable tasks organ
 **Write to `.catalyst/specs/YYYY-MM-DD-{slug}/tasks.md`**
 
 You own this file. It's the **ONE file to read when resuming work**. Contains:
-- Build DAG (task breakdown)
-- Progress (status table)
+- Build DAG (task breakdown, with an **Evidence** tier per task)
+- Progress (status table — enum + ≤ 200-char note per row)
 - Current Session (where we are, what's next)
-- Decisions (choices made during build)
+- Decisions (one line each)
 
-Never create separate task files.
+**Hard cap: 3,000 words.** This file is re-read by every agent on most turns; every word costs dozens of times. Narrative never goes here — builders append it to `journal/{task-id}.md`, which only the audit reads. Never create separate task files; the journal directory is the only companion.
+
+You are only spawned for the **full-DAG lane**. Direct-mode specs (≤ 3 production files, no migration, nothing parallel) never reach you — the orchestrator writes a 5-row `tasks.md` itself.
 
 ## Behavior
 
@@ -58,8 +60,9 @@ Each task should have:
 6. **Reads**: Files/directories this task can read but **not modify** (shared types, utils)
 7. **Depends On**: Which task IDs must complete first
 8. **Blocks**: Which task patterns this blocks (e.g., `api-*`, `ui-*`)
-9. **Acceptance Criteria**: How to verify completion
+9. **Acceptance Criteria**: How to verify completion — **one line**
 10. **Estimate**: Time estimate (< 2 hours)
+11. **Evidence**: `rg` (red-then-green, the default) or `mut` (mutation-prove). `mut` only for a task whose tests guard a **named invariant, a security/tenant boundary, or a requirement the spec calls load-bearing** — and name that invariant in the row's Note. Builders cannot raise the tier themselves; if you leave it out they use `rg`.
 
 ## DAG Structure
 
@@ -126,10 +129,10 @@ If you detect overlapping scopes → **split differently or make sequential**.
 | api-types | smith | src/types/api.ts | db-schema | api-*, ui-* | 30m |
 
 ### Phase 3: Parallel Backend (smith × 2)
-| ID | Agent | Scope | Reads | Depends On | Est |
-|----|-------|-------|-------|------------|-----|
-| api-auth | smith-1 | src/api/auth/**, tests/api/auth/** | src/types/** | api-types | 1.5h |
-| api-posts | smith-2 | src/api/posts/**, tests/api/posts/** | src/types/** | api-types | 1.5h |
+| ID | Agent | Scope | Reads | Depends On | Evidence | Est |
+|----|-------|-------|-------|------------|----------|-----|
+| api-auth | smith-1 | src/api/auth/**, tests/api/auth/** | src/types/** | api-types | mut (tenant predicate) | 1.5h |
+| api-posts | smith-2 | src/api/posts/**, tests/api/posts/** | src/types/** | api-types | rg | 1.5h |
 
 ### Phase 4: Parallel Frontend (shaper × 3)
 | ID | Agent | Scope | Reads | Depends On | Est |
@@ -167,18 +170,21 @@ db-schema
 - **Scope**: `prisma/schema.prisma`, `src/db/**`
 - **Blocks**: api-*, ui-*
 - **Acceptance**: Migrations run, types generated
+- **Evidence**: rg
 - **Estimate**: 1h
 
-[... additional task details ...]
+[... one block per task, six lines each, no prose ...]
 
 ## Progress
 
-| Task | Status | Tests | Commit | Notes |
-|------|--------|-------|--------|-------|
-| db-schema | ✓ Done | tests/db/schema.test.ts | a1b2c3d | |
-| api-auth | ⚡ Active | tests/api/auth/** | - | smith-1 working |
-| api-posts | ⚡ Active | tests/api/posts/** | - | smith-2 working |
-| ui-profile | ⏳ Waiting | - | - | Blocked by api-types |
+| Task | Status | Evidence | Tests | Commit | Note (≤ 200 chars) |
+|------|--------|----------|-------|--------|--------------------|
+| db-schema | ✓ Done | rg | tests/db/schema.test.ts | a1b2c3d | |
+| api-auth | ⚡ Active | mut | tests/api/auth/** | - | mut target: tenant predicate on service-role write |
+| api-posts | ⚡ Active | rg | tests/api/posts/** | - | |
+| ui-profile | ⏳ Waiting | rg | - | - | Blocked by api-types |
+
+<!-- Status enum: ⏳ Waiting · ⚡ Active · ✓ Done · ✗ Failed · ⊘ Skipped. Narrative → journal/{task}.md -->
 
 ## Current Session
 
@@ -190,8 +196,9 @@ db-schema
 
 ## Decisions
 
-- **Decision 1** - Rationale
-- **Decision 2** - Rationale
+<!-- One line each. Full rationale lives in handoff.md ## Key Decisions. -->
+- **Decision 1** — ten-word why
+- **Decision 2** — ten-word why
 
 ## Risk Areas
 
@@ -207,6 +214,7 @@ db-schema
 2. **Contract-First**: Shared types defined before parallelization
 3. **Read-Only Shared**: Parallel tasks can read but not modify shared code
 4. **Integration Gate**: Cross-boundary testing after parallel completion
+5. **Size Budget**: `tasks.md` ≤ 3,000 words when you hand it over. Count. If you are over, you have written prose that belongs in `spec.md` or nowhere.
 
 ## Detecting Parallelization Opportunities
 

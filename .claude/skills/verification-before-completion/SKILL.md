@@ -63,6 +63,21 @@ CORRECT:  Agent reports success → Check VCS diff → Verify changes exist → 
 WRONG:    Trust agent report at face value
 ```
 
+## Evidence Tiers — how much proof, decided up front
+
+Evidence has a **stop rule**. Without one it escalates without bound: in one measured cycle every restored assertion was mutation-proved (mutate → run → revert → run), uniformly, at 2+ full runs per assertion. The tier is set **per task, in the task row, before the work starts** — by Forger in a full DAG, by the orchestrator in direct mode. A builder may not raise its own tier.
+
+| Tier | Written as | Proof required | Use for |
+|------|-----------|----------------|---------|
+| **Red-then-green** | `rg` | Test seen failing before the change, passing after. One run each. | **Default.** Everything not listed below. |
+| **Mutation-prove** | `mut` | `rg` **plus**: mutate the guarded line → run → assertion fails → revert → run → passes. | Assertions guarding a **named invariant**, a **security or tenant boundary**, or a requirement the spec marks **load-bearing**. |
+
+Rules:
+- The tier applies to the *task*, not to every assertion in it. In a `mut` task, mutation-prove only the assertions that guard the invariant named in the row; the rest are `rg`.
+- `rg` is not "less rigorous". It is the TDD cycle. `mut` is for the handful of lines whose silent removal would be a security or correctness incident.
+- If a builder believes a task needs `mut` and the row says `rg`, it writes that in its journal and reports it — it does not escalate on its own.
+- Regression tests for a bug fix are `rg` with revert-check (the "Red-Green Verification for Regression Tests" pattern above). That is still one tier below `mut`.
+
 ## Common Failures
 
 | Claim | Requires | Not Sufficient |
@@ -72,6 +87,8 @@ WRONG:    Trust agent report at face value
 | "Build succeeds" | Build command exit 0 | Linter passing, logs look good |
 | "Bug fixed" | Test original symptom: passes | Code changed, assumed fixed |
 | "Regression test works" | Red-green cycle verified | Test passes once |
+| "Invariant is guarded" (`mut` row) | Mutation fails the test, revert passes it | Red-green alone |
+| "Fully verified" | Proof at the task's stated tier | Mutation-proving everything because it felt safer |
 | "Agent completed task" | VCS diff shows changes | Agent reports "success" |
 | "All requirements met" | Line-by-line spec checklist | Tests passing |
 
