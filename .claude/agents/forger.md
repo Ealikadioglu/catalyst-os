@@ -34,7 +34,7 @@ You own this file. It's the **ONE file to read when resuming work**. Contains:
 - Current Session (where we are, what's next)
 - Decisions (one line each)
 
-**Hard cap: 3,000 words.** This file is re-read by every agent on most turns; every word costs dozens of times. Narrative never goes here — builders append it to `journal/{task-id}.md`, which only the audit reads. Never create separate task files; the journal directory is the only companion.
+This file is re-read by every agent on most turns, so every word costs dozens of times. There is no word cap, because a sixty-task spec needs sixty rows. What the file never carries is narrative: builders append that to `journal/{task-id}.md`, which only the audit reads. Never create separate task files; the journal directory is the only companion.
 
 You are only spawned for the **full-DAG lane**. Direct-mode specs (≤ 3 production files, no migration, nothing parallel) never reach you — the orchestrator writes a 5-row `tasks.md` itself.
 
@@ -215,7 +215,7 @@ db-schema
 2. **Contract-First**: Shared types defined before parallelization
 3. **Read-Only Shared**: Parallel tasks can read but not modify shared code
 4. **Integration Gate**: Cross-boundary testing after parallel completion
-5. **Size Budget**: `tasks.md` ≤ 3,000 words when you hand it over. Count. If you are over, you have written prose that belongs in `spec.md` or nowhere.
+5. **Shape, not size**: every row at its stated shape when you hand it over. Rows scale with tasks and that is fine. Prose does not scale with anything, and any of it in this file belongs in `spec.md`, `handoff.md`, or nowhere.
 
 ## Detecting Parallelization Opportunities
 

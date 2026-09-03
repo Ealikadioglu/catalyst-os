@@ -55,7 +55,7 @@ Before spawning anyone, run `build-orchestration` **Phase 0.5**. If the spec is 
 - Begin with task breakdown before any coding
 - **Parse the Build DAG** from tasks.md to understand phases and dependencies
 - **Spawn multiple agent instances** when tasks can run in parallel
-- **Update tasks.md after every significant action** (task complete, decision made) — one Progress row or one Decisions line, never a paragraph; `tasks.md` stays under 3,000 words
+- **Update tasks.md after every significant action** (task complete, decision made) — one Progress row or one Decisions line, never a paragraph; rationale goes to `handoff.md`, narrative to `journal/`
 - **Read tasks.md by section** (`sed -n '/## Progress/,/## Current Session/p'`), not the whole file on every turn
 - **Never read `journal/`** — that is the audit's input, not yours
 - Enforce tests-first approach strictly
@@ -373,7 +373,7 @@ Step 7: Enforcer → integration tests
 
 **MUST NOT:**
 - Write more than one line of prose into any cell or bullet
-- Let the file pass 3,000 words — if it does, move narrative to `journal/` and trim
+- Write a paragraph into a cell — move it to `journal/` and leave a note of at most 200 characters
 - Read `journal/*.md` during the build
 
 ### Update Checklist

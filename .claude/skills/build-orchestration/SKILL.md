@@ -21,7 +21,7 @@ Orchestrate the full build workflow: task breakdown, test writing, foundation, c
 A forge cycle's token bill is dominated by **prose that gets re-read**, not by tests. Three rules keep it proportional to the change:
 
 1. **Size lane.** Small specs run in **direct mode** (no DAG, no Forger, no parallel phase, orchestrator builds). See *Phase 0.5*.
-2. **tasks.md is a state table, not a diary.** Hard cap **3,000 words**. Narrative goes to `journal/{task-id}.md`, which the build never reads. See *tasks.md vs journal*.
+2. **tasks.md is a state table, not a diary.** It records what is true now. How it got there goes to `journal/{task-id}.md`, which the build never reads. A big spec earns a big DAG; it does not earn rationale, attempts, or abandoned approaches. See *tasks.md vs journal*.
 3. **Run to completion.** The orchestrator never ends a turn to "wait" for an agent it has already spawned — it reads the result and continues. Returning to the user happens only at a hard gate that failed, an escalation, or the final report.
 
 ## Prerequisites
@@ -36,7 +36,7 @@ A forge cycle's token bill is dominated by **prose that gets re-read**, not by t
 .catalyst/specs/YYYY-MM-DD-{slug}/
 ├── spec.md           # Already exists from /catalyze-spec
 ├── research.md       # Already exists from /catalyze-spec
-├── tasks.md          # Forger (or orchestrator in direct mode) creates — state table, ≤ 3,000 words
+├── tasks.md          # Forger (or orchestrator in direct mode) creates — state table, no narrative
 ├── journal/          # Per-task narrative, append-only, written by the agent doing the task
 │   └── {task-id}.md  #   read by the audit, never by the build
 ├── validation.md     # Arbiter creates (in /audit-spec)
@@ -170,7 +170,7 @@ No Forger, no Enforcer, no Smith/Shaper spawn, no integration phase. `agent-dele
 
 ### Phase 1: Task Breakdown (Forger)
 
-Spawn Forger → creates `tasks.md` with Build DAG including phases, scope boundaries, dependencies, parallel opportunities, and an **Evidence** tier per task (`rg` = red-then-green, `mut` = mutation-prove; see `verification-before-completion`). Forger keeps the file under 3,000 words.
+Spawn Forger → creates `tasks.md` with Build DAG including phases, scope boundaries, dependencies, parallel opportunities, and an **Evidence** tier per task (`rg` = red-then-green, `mut` = mutation-prove; see `verification-before-completion`). Forger keeps every row at its stated shape and every rationale out.
 
 ### Phase 2: Write Tests (Enforcer) — RED PHASE
 
@@ -273,7 +273,7 @@ Comments follow .claude/rules/code-comments.md: why-only, ≤ 15-line docblocks,
 | `## Current Session` | Phase, active tasks, next step, file:line | 10 lines |
 | `## Decisions` | **One line each** — decision + 10-word why. Full rationale → `handoff.md` | one line per decision |
 
-**Whole file ≤ 3,000 words.** If a row needs more than 200 characters, the rest goes to the journal.
+The shapes above are the whole budget. There is no file-level word cap: a spec with sixty tasks writes sixty rows, and that is correct. What never enters the file is rationale, an attempt, or an approach that was dropped. If a row needs more than 200 characters, the rest goes to the journal.
 
 `journal/{task-id}.md` (in the spec folder) is **append-only, per task, written by the agent doing the task**. What was tried, what failed, why the approach changed, test output excerpts. Rules:
 
@@ -295,7 +295,7 @@ Comments follow .claude/rules/code-comments.md: why-only, ≤ 15-line docblocks,
 | Scope violation detected | STOP agent, revert, re-run with stricter prompt |
 | Parallel agents conflict | STOP build, revert, restructure DAG |
 | Dependency deadlock | STOP all, report to user, restructure DAG |
-| tasks.md over 3,000 words | STOP writing to it — move narrative to journal/, trim notes to ≤ 200 chars |
+| A paragraph appears in a tasks.md cell | Move it to journal/, trim the note to ≤ 200 chars |
 | Orchestrator ends a turn to "wait" | Don't. Read the agent result and continue in the same turn |
 
 ## Board Sync (final step)

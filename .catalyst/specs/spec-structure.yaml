@@ -28,12 +28,14 @@ files:
     created: forge-spec
     updated_by: [forger, forge-master, builders]
     pattern: living
-    max_words: 3000
     note: |
       ONE FILE to read when resuming work.
       A STATE TABLE, not a diary: status enum + <=200-char note per task,
       one-line decisions. It is re-read by every agent on most turns, so
       every word is paid for dozens of times. Narrative -> journal/.
+      No file-level word cap. A big spec earns a big DAG. It does not earn
+      rationale, attempts, or abandoned approaches. The per-section shapes
+      are the budget: one row per task, one line per decision.
       Line 1 declares the lane: "> Lane: direct — ..." or "> Lane: full DAG — ...".
 
   journal/:
@@ -96,7 +98,7 @@ statuses:
 
 rules:
   - spec.md has frontmatter for context assembly
-  - tasks.md is THE living document during build — and stays under 3,000 words
+  - tasks.md is THE living document during build — state only, never rationale
   - journal/{task}.md holds the narrative; the build never reads it, the audit does
   - handoff.md is human-first, no heavy YAML
   - One file to resume = tasks.md
