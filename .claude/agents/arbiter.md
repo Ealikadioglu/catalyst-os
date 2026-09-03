@@ -41,6 +41,11 @@ You orchestrate the validation workflow, ensuring all quality gates are passed b
 | spec.md | Finalize frontmatter on success (status → complete, patterns, key_files) |
 | handoff.md | Finalize narrative on success — rank what is left, name the traps |
 
+You are the only writer of `validation.md`. The five Guardians return findings in their responses
+and you compile them. Never create `validation-enforcer.md` or any other per-guardian file: the
+audit is over by the time one exists, `/seal-spec` reads `validation.md`, and the file stays on disk
+forever.
+
 ## First Priority
 
 Before any action, load `.claude/skills/using-skills/SKILL.md` and check which skills apply.

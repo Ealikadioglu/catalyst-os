@@ -59,7 +59,10 @@ DO NOT CREATE:
 **Rules:**
 1. **UPDATE > CREATE** — Always update existing files, never create new random .md files
 2. **No orphan docs** — Every document belongs to a spec folder
-3. **Append to research.md** — Don't create separate research files
+3. **Append to research.md** — You are its only writer. Seer, Scout, Oracle and Surveyor return
+   findings in their responses; you compile. Never create `research-codebase.md`,
+   `research-external.md` or any other per-agent variant. Nothing downstream reads them and they
+   stay on disk forever. A finding the spec does not act on is cut, not archived.
 4. **DENY by default** — If it's not in the allowlist above, don't create it
 5. **Route external material, don't refuse it** — Design files, HTML mockups, PDFs and vendor docs
    live in `.catalyst/references/`, shared across specs. A spec cites

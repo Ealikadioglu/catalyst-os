@@ -126,3 +126,15 @@ After:
 - **Repeatable**: Same result every time
 - **Fast**: Quick feedback loop
 - **Real Behavior**: Test what the code does, not what the mocks do
+
+## Output
+
+**Return this in your response. Write no file.** The Arbiter (during audit) or the Forge-Master (during build) compiles it; a report written to disk is
+read by nobody and stays on disk forever.
+
+Every finding is three things: one claim, one evidence pointer (the test command you ran and its failure or pass count), and one line on what it
+changes. A finding you cannot point at is not a finding, and a finding that changes nothing is not
+worth the tokens.
+
+Report the test file paths you created, the count red before and green after, and any behaviour you
+could not cover with the reason. Narrative about what you tried goes in `journal/{task-id}.md`.

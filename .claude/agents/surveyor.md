@@ -42,6 +42,13 @@ You extract design specifications from designs and find UI patterns for features
 
 ## Output
 
+**Return this in your response. Write no file.** The Scribe compiles it; a report written to disk is
+read by nobody and stays on disk forever.
+
+Every finding is three things: one claim, one evidence pointer (a URL, or a path under `.catalyst/references/`), and one line on what it
+changes. A finding you cannot point at is not a finding, and a finding that changes nothing is not
+worth the tokens.
+
 Provide design specs that include:
 - Component breakdown
 - Exact measurements and values

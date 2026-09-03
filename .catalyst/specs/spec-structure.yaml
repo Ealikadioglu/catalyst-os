@@ -19,8 +19,14 @@ files:
     owner: scribe
     purpose: All research findings (append-only)
     created: catalyze-spec
-    updated_by: [scout, seer, oracle, scribe]
+    updated_by: [scribe]
     pattern: append
+    note: |
+      SCRIBE IS THE ONLY WRITER. Seer, Scout, Oracle and Surveyor return
+      findings in their response; Scribe compiles. A researcher that writes
+      its own file produces a research-{agent}.md nothing downstream reads,
+      and it stays on disk forever.
+      A finding the spec does not act on is cut, not archived.
 
   tasks.md:
     owner: forger            # forge-master in direct mode
@@ -67,7 +73,12 @@ files:
     owner: arbiter
     purpose: Test results, quality checks
     created: audit-spec
-    updated_by: [arbiter, enforcer, sentinel, inquisitor, watcher, curator]
+    updated_by: [arbiter]
+    note: |
+      ARBITER IS THE ONLY WRITER. The five Guardians return findings in their
+      response; Arbiter compiles. A validation-{guardian}.md on disk is a
+      report nothing reads: the audit is over by the time it exists, and
+      /seal-spec reads validation.md.
 
   assets/:
     owner: any

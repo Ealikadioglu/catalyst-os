@@ -17,16 +17,18 @@ Orchestrate the full spec-shaping workflow: requirements gathering, research, de
 
 ```
 .catalyst/specs/YYYY-MM-DD-{slug}/
-├── spec.md           # Scribe owns
-├── research.md       # Scout, Seer, Oracle append to
+├── spec.md           # Scribe writes
+├── research.md       # Scribe writes, compiled from researcher responses
 ├── handoff.md        # Living document, updated throughout
 └── assets/           # Images, diagrams, mockups
 ```
 
-**All outputs go to the spec folder. Do NOT allow agents to create files elsewhere.**
+**Scribe is the only agent that writes here.** Researchers return findings in their responses.
+Give every researcher prompt the sentence "Return findings in your response; write no file",
+because a researcher left to choose invents `research-codebase.md` and nothing downstream reads it.
 
-In agent prompts, include exact file paths:
-- "Append findings to `.catalyst/specs/{slug}/research.md`"
+Scribe's own prompts carry the exact path:
+- "Compile the findings below into `.catalyst/specs/{slug}/research.md`"
 - "Create spec.md at `.catalyst/specs/{slug}/spec.md`"
 
 ## Parallel Execution
@@ -78,21 +80,34 @@ Oracle will use the `brainstorming` skill:
 
 ### Phase 3: Research (Seer + Scout) — PARALLEL
 
-Spawn in parallel:
-```
-Seer: "Analyze codebase for [feature]. Append findings to:
-.catalyst/specs/{slug}/research.md under '## Codebase Analysis'"
+Researchers **return findings in their response**. They write no file. Scribe compiles `research.md`
+in Phase 6, and Scribe is the only writer. A researcher that writes its own file produces something
+nothing downstream reads: `build-orchestration` does not read `research.md`, `spec-validation` does
+not mention it, and `/primer-spec` reads its first 30 lines.
 
-Scout: "Research best practices for [feature]. Append findings to:
-.catalyst/specs/{slug}/research.md under '## External Research'"
+Spawn in parallel, and put the shape in the prompt:
+
 ```
+Seer: "Analyze the codebase for [feature]. Return findings in your response;
+write no file. Each finding: one claim, one `file:line`, one line on what it
+changes for the spec. Report the integration points and the patterns this
+feature must follow. Skip anything the spec will not act on."
+
+Scout: "Research [specific question] for [feature]. Return findings in your
+response; write no file. Each finding: one claim, one URL to a primary source
+(official docs, source, spec), one line on what it changes for the spec.
+Skip anything the spec will not act on."
+```
+
+Give Scout a **question**, not a topic. "Research best practices for X" has no stopping condition,
+which is how a researcher ends up returning an essay.
 
 ### Phase 4: UI Research (Surveyor) — If Applicable
 
-Spawn Surveyor:
 ```
-"Research UI patterns for [feature]. Save references to:
-.catalyst/specs/{slug}/assets/"
+Surveyor: "Research UI patterns for [feature]. Return findings in your response;
+write no file. Put any image or mockup under .catalyst/references/ and cite the
+path. Each finding: the pattern, where you saw it, what it changes for the spec."
 ```
 
 ### Phase 5: Design Validation (Orchestrator — Direct)

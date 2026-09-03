@@ -77,6 +77,20 @@ Then read `journal/*.md` (if present). The journals are written **for this audit
 
 ### Phase 1-4: Validation (PARALLEL)
 
+Guardians **return findings in their response**. None of them writes a file. Arbiter compiles
+`validation.md`, and Arbiter is its only writer. A `validation-{guardian}.md` on disk is a report
+nothing reads: the audit is over by the time it exists, and `/seal-spec` reads `validation.md`.
+
+Put the shape in every Guardian prompt, because an unshaped "report your findings" is what turns a
+verdict into an essay:
+
+```
+"Return findings in your response; write no file. Each finding: one claim, one
+evidence pointer (the command you ran and its output, or file:line), one line
+on whether it blocks. Lead with the verdict: PASS, PASS WITH CONCERNS, or FAIL.
+A finding you cannot point at is not a finding."
+```
+
 Spawn all Guardians in parallel:
 
 **Enforcer** (Unit Tests):
