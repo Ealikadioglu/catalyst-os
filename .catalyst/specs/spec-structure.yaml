@@ -69,6 +69,25 @@ files:
     purpose: Images, diagrams, mockups
     created: as-needed
 
+# =============================================================================
+# PROJECT PATHS
+# Outside the spec folder. Listed here so agents route material instead of
+# refusing it, and so Scribe's allowlist stays an allowlist.
+# =============================================================================
+
+project_paths:
+  .catalyst/references/:
+    owner: human
+    purpose: External material the specs point at — design files, HTML mockups,
+             PDFs, vendor docs, competitor output
+    created: by hand, never by a command
+    note: |
+      Project-level and shared across specs. Agents read it and cite paths
+      into it; they never generate it.
+      Not `.catalyst/specs/references/`, and never inside a spec folder.
+      A spec cites `.catalyst/references/{name}` the same way it cites a
+      source file.
+
 statuses:
   - DRAFT
   - IN_PROGRESS

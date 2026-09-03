@@ -17,3 +17,5 @@
 # This repo ships the .claude framework, so re-include it or new skills,
 # agents and rules are silently never committed.
 !.claude/
+.DS_Store
+.claude/.DS_Store

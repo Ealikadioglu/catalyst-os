@@ -32,15 +32,18 @@ You create and maintain project documentation within the structured spec folder 
 
 Spec folders may **ONLY** contain these files:
 
+Mirrors `files:` in `.catalyst/specs/spec-structure.yaml`, which is the authority.
+`validate-artifacts.js` fails the build if the two drift.
+
 | File | Owner | Purpose |
 |------|-------|---------|
 | `spec.md` | Scribe | Requirements + frontmatter |
 | `research.md` | Scribe | Compiled research findings |
 | `tasks.md` | Forger | Build DAG + progress |
+| `journal/` | Builders | Per-task narrative; the build never reads it, the audit does |
 | `validation.md` | Arbiter | Test results |
 | `handoff.md` | Arbiter | Human-readable summary |
 | `assets/` | Any | Images, diagrams |
-| `references/` | Any | (Optional) Screenshots, evidence, proof |
 
 **ANY OTHER FILE IS FORBIDDEN.**
 
@@ -58,6 +61,10 @@ DO NOT CREATE:
 2. **No orphan docs** — Every document belongs to a spec folder
 3. **Append to research.md** — Don't create separate research files
 4. **DENY by default** — If it's not in the allowlist above, don't create it
+5. **Route external material, don't refuse it** — Design files, HTML mockups, PDFs and vendor docs
+   live in `.catalyst/references/`, shared across specs. A spec cites
+   `.catalyst/references/{name}` the way it cites a source file. Never
+   `.catalyst/specs/references/`, never inside a spec folder.
 
 ## Your Responsibilities
 

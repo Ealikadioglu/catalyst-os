@@ -170,8 +170,34 @@ if (usingSkills) {
 
 // 5. spec-structure.yaml file references
 console.log('\nSpec Structure:');
-if (fileExists('.catalyst/specs/spec-structure.yaml')) {
+const specStructure = readFile('.catalyst/specs/spec-structure.yaml');
+if (specStructure) {
   ok('spec-structure.yaml exists');
+
+  // Scribe mirrors the spec-folder allowlist in its own table. A copy that
+  // drifts is how `journal/` ended up forbidden by the gatekeeper that was
+  // supposed to permit it. spec-structure.yaml is the authority.
+  const filesBlock = specStructure.match(/^files:\n([\s\S]*?)^\S/m)?.[1] || '';
+  const schemaFiles = new Set(
+    [...filesBlock.matchAll(/^  ([\w.\-/]+):$/gm)].map(m => m[1])
+  );
+  const scribe = readFile('.claude/agents/scribe.md') || '';
+  const table = scribe.match(/### STRICT ALLOWLIST[\s\S]*?\n\n\*\*ANY OTHER FILE/);
+  const scribeFiles = new Set(
+    [...(table?.[0] || '').matchAll(/^\| `([\w.\-/]+)` \|/gm)].map(m => m[1])
+  );
+
+  if (schemaFiles.size === 0 || scribeFiles.size === 0) {
+    error('could not parse the allowlist from spec-structure.yaml or scribe.md');
+  } else {
+    const missing = [...schemaFiles].filter(f => !scribeFiles.has(f));
+    const extra = [...scribeFiles].filter(f => !schemaFiles.has(f));
+    if (missing.length) error(`scribe.md allowlist is missing: ${missing.join(', ')}`);
+    if (extra.length) error(`scribe.md allows what the schema does not: ${extra.join(', ')}`);
+    if (!missing.length && !extra.length) {
+      ok(`allowlist parity (${schemaFiles.size} entries)`);
+    }
+  }
 } else {
   error('.catalyst/specs/spec-structure.yaml missing');
 }
