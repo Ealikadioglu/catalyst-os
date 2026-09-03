@@ -37,6 +37,7 @@ Skills tell you HOW. User instructions tell you WHAT.
 | **receiving-code-review** | `.claude/skills/receiving-code-review/SKILL.md` | Receiving feedback from Inquisitor, user, or reviewer |
 | **workspace-detection** | `.claude/skills/workspace-detection/SKILL.md` | Initializing a project — detect single_repo, monorepo, or multirepo |
 | **autopilot** | `.claude/skills/autopilot/SKILL.md` | `/forge-spec-worktree` or any unattended run — decide with "recommended", log, never stop to ask |
+| **unslop** | `.claude/skills/unslop/SKILL.md` | Writing any artifact a human reads — spec, research, handoff, validation, journal, commit, PR, your reply |
 
 ### Orchestration Skills (workflow-specific)
 
@@ -88,6 +89,7 @@ Examples:
 - `receiving-code-review` — Verify before implementing, no blind agreement
 - `workspace-detection` — Detect repo structure before any project work, no assumptions
 - `autopilot` — Unattended runs never end a turn to ask; recommended option + log, halt only on listed conditions
+- `unslop` — Write it clean as you draft it; the cleanup pass afterward does not work
 
 **Flexible** (adapt principles to context):
 - `brainstorming` — Scale questions to task complexity
