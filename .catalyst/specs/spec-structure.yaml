@@ -50,7 +50,7 @@ files:
     created: forge-spec (as tasks complete)
     updated_by: [smith, shaper, artificer, alchemist, necromancer, enforcer, forge-master]
     pattern: append
-    file_pattern: "journal/{task-id}.md"
+    file_pattern: ".catalyst/specs/{spec-slug}/journal/{task-id}.md"
     note: |
       Written by the agent doing the task. Nobody reads another task's
       journal during the build; the orchestrator never reads it.

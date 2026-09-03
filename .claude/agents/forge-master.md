@@ -304,7 +304,7 @@ on_deadlock:
 
 ## Progress Tracking
 
-Update tasks.md Progress section as agents complete. **Status is an enum, Note is ≤ 200 characters.** Anything longer belongs in `journal/{id}.md`, written by the agent that did the task.
+Update tasks.md Progress section as agents complete. **Status is an enum, Note is ≤ 200 characters.** Anything longer belongs in `.catalyst/specs/{spec-slug}/journal/{id}.md`, written by the agent that did the task.
 
 ```markdown
 ## Progress

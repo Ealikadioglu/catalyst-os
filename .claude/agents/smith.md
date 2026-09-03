@@ -81,7 +81,7 @@ The orchestrator may lose context or the conversation may end before it updates.
 1. **Find your row**: `grep -n "^| api-auth" .catalyst/specs/*/tasks.md` — read the Progress section, not the whole file
 2. **Update your Progress row only**: status `⚡ Active` → `✓ Done` (or `✗ Failed`), commit hash if you committed, and a **Note of at most 200 characters**
 3. **Update Current Session**: one line — what's next based on the DAG
-4. **Append your narrative to `journal/api-auth.md`** in the spec folder (create the directory if needed): what you tried, what failed, why the approach changed, key test output. This is where the story goes. Nobody reads it during the build; the audit reads it afterwards.
+4. **Append your narrative to `.catalyst/specs/{spec-slug}/journal/api-auth.md`** (create the `journal/` directory inside the spec folder if needed — never at the repo root): what you tried, what failed, why the approach changed, key test output. This is where the story goes. Nobody reads it during the build; the audit reads it afterwards.
 
 ### Example
 

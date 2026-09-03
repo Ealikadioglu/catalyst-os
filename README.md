@@ -290,7 +290,7 @@ A forge cycle's token bill is dominated by prose that gets re-read, not by tests
 | Mechanism | What it does |
 |-----------|--------------|
 | **Size lane** | Specs touching ≤ 3 production files with no migration run in **direct mode**: no DAG, no Forger, no parallel phase — the orchestrator writes the tests and the code itself, TDD and both gates intact. |
-| **tasks.md ≤ 3,000 words** | `tasks.md` is a state table (status enum + ≤ 200-char note per task). Narrative goes to `journal/{task}.md`, written by the builder, read only by the audit. |
+| **tasks.md ≤ 3,000 words** | `tasks.md` is a state table (status enum + ≤ 200-char note per task). Narrative goes to `.catalyst/specs/{slug}/journal/{task}.md`, written by the builder, read only by the audit. |
 | **Evidence tiers** | Each task row says `rg` (red-then-green, default) or `mut` (mutation-prove — only for named invariants, security/tenant boundaries, load-bearing requirements). Builders cannot escalate on their own. |
 
 Plus two always-on rules: orchestrators **run to completion** (never end a turn to "wait"), and code comments follow a **budget** (`.claude/rules/code-comments.md`: why-only, ≤ 15-line docblocks, decisions live in `handoff.md`).

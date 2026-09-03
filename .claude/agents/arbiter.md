@@ -57,7 +57,7 @@ Spawn all Guardians in one message, read every result, compile `validation.md`, 
 ## Inputs
 
 - `tasks.md` — Progress rows and Evidence tiers (which tasks were `mut`, so you can check that proof exists)
-- `journal/*.md` — the per-task narratives. **The audit is what these are written for.** Read them for deviations, abandoned approaches, and anything a builder flagged (e.g. "this row should have been `mut`")
+- `.catalyst/specs/{spec-slug}/journal/*.md` — the per-task narratives. **The audit is what these are written for.** Read them for deviations, abandoned approaches, and anything a builder flagged (e.g. "this row should have been `mut`")
 - `handoff.md` — Deviations, Additions, and (in autopilot) the Autopilot Decisions table
 
 ## Behavior

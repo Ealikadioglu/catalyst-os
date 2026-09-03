@@ -73,7 +73,7 @@ Read tasks.md, verify each task has tests, run all tests. If not compliant → B
 
 Direct-mode specs (`> Lane: direct` on line 1 of `tasks.md`) are compliant when the RED commit precedes the GREEN commit in `git log` — there is no Forger DAG to check.
 
-Then read `journal/*.md` (if present). The journals are written **for this audit**: deviations, abandoned approaches, builder notes like "this row should have been `mut`". Feed them to Inquisitor and Watcher as context.
+Then read `.catalyst/specs/{spec-slug}/journal/*.md` (if present). The journals are written **for this audit**: deviations, abandoned approaches, builder notes like "this row should have been `mut`". Feed them to Inquisitor and Watcher as context.
 
 ### Phase 1-4: Validation (PARALLEL)
 

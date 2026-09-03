@@ -102,7 +102,7 @@ The orchestrator may lose context or the conversation may end before it updates.
 1. **Find your row**: `grep -n "^| tests-\|^| integration" .catalyst/specs/*/tasks.md` — read the Progress section, not the whole file
 2. **Update your Progress row only**: status, test count, and a **Note of at most 200 characters** (e.g. "12 failing, all for missing feature")
 3. **Update Current Session**: one line — what's next based on the DAG
-4. **Append narrative to `journal/{task-id}.md`**: which behaviours you covered, which `mut` targets you wrote assertions for, anything you could not test and why. Never in `tasks.md`.
+4. **Append narrative to `.catalyst/specs/{spec-slug}/journal/{task-id}.md`** (inside the spec folder, never at the repo root): which behaviours you covered, which `mut` targets you wrote assertions for, anything you could not test and why. Never in `tasks.md`.
 
 ### Example
 
@@ -137,4 +137,4 @@ changes. A finding you cannot point at is not a finding, and a finding that chan
 worth the tokens.
 
 Report the test file paths you created, the count red before and green after, and any behaviour you
-could not cover with the reason. Narrative about what you tried goes in `journal/{task-id}.md`.
+could not cover with the reason. Narrative about what you tried goes in `.catalyst/specs/{spec-slug}/journal/{task-id}.md`.

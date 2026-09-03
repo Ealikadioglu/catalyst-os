@@ -34,7 +34,7 @@ You own this file. It's the **ONE file to read when resuming work**. Contains:
 - Current Session (where we are, what's next)
 - Decisions (one line each)
 
-This file is re-read by every agent on most turns, so every word costs dozens of times. There is no word cap, because a sixty-task spec needs sixty rows. What the file never carries is narrative: builders append that to `journal/{task-id}.md`, which only the audit reads. Never create separate task files; the journal directory is the only companion.
+This file is re-read by every agent on most turns, so every word costs dozens of times. There is no word cap, because a sixty-task spec needs sixty rows. What the file never carries is narrative: builders append that to `.catalyst/specs/{spec-slug}/journal/{task-id}.md`, which only the audit reads. Never create separate task files; the journal directory is the only companion.
 
 You are only spawned for the **full-DAG lane**. Direct-mode specs (≤ 3 production files, no migration, nothing parallel) never reach you — the orchestrator writes a 5-row `tasks.md` itself.
 
@@ -185,7 +185,7 @@ db-schema
 | api-posts | ⚡ Active | rg | tests/api/posts/** | - | |
 | ui-profile | ⏳ Waiting | rg | - | - | Blocked by api-types |
 
-<!-- Status enum: ⏳ Waiting · ⚡ Active · ✓ Done · ✗ Failed · ⊘ Skipped. Narrative → journal/{task}.md -->
+<!-- Status enum: ⏳ Waiting · ⚡ Active · ✓ Done · ✗ Failed · ⊘ Skipped. Narrative → .catalyst/specs/{spec-slug}/journal/{task}.md (inside this spec folder) -->
 
 ## Current Session
 

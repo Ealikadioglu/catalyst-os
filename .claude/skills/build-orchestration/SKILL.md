@@ -21,7 +21,7 @@ Orchestrate the full build workflow: task breakdown, test writing, foundation, c
 A forge cycle's token bill is dominated by **prose that gets re-read**, not by tests. Three rules keep it proportional to the change:
 
 1. **Size lane.** Small specs run in **direct mode** (no DAG, no Forger, no parallel phase, orchestrator builds). See *Phase 0.5*.
-2. **tasks.md is a state table, not a diary.** It records what is true now. How it got there goes to `journal/{task-id}.md`, which the build never reads. A big spec earns a big DAG; it does not earn rationale, attempts, or abandoned approaches. See *tasks.md vs journal*.
+2. **tasks.md is a state table, not a diary.** It records what is true now. How it got there goes to `.catalyst/specs/{spec-slug}/journal/{task-id}.md`, which the build never reads. A big spec earns a big DAG; it does not earn rationale, attempts, or abandoned approaches. See *tasks.md vs journal*.
 3. **Run to completion.** The orchestrator never ends a turn to "wait" for an agent it has already spawned — it reads the result and continues. Returning to the user happens only at a hard gate that failed, an escalation, or the final report.
 
 ## Prerequisites
@@ -160,7 +160,7 @@ Decide once, before spawning anyone. Read `spec.md` frontmatter (`provides`, `af
 3. GATE 1: commit "test({scope}): write failing tests for {spec}"
 4. Implement yourself. Run → all GREEN. Refactor. Run → still GREEN.
 5. GATE 2: commit "feat({scope}): implement {spec}"
-6. Update tasks.md Progress rows + Current Session. Append journal/direct.md (≤ 200 words).
+6. Update tasks.md Progress rows + Current Session. Append .catalyst/specs/{spec-slug}/journal/direct.md (≤ 200 words).
 7. Board sync.
 ```
 
@@ -252,7 +252,7 @@ FOR EACH TASK:
 5. Run test → must still PASS
 6. Prove at the task's Evidence tier (rg or mut) — never escalate the tier on your own
 7. Update your tasks.md Progress row (status + ≤ 200-char note) — THE AGENT DOING THE WORK MUST DO THIS
-8. Append your narrative to journal/{task-id}.md — NOT to tasks.md
+8. Append your narrative to .catalyst/specs/{spec-slug}/journal/{task-id}.md — NOT to tasks.md, NOT to a journal/ at the repo root
 
 NEVER write code without a failing test first
 NEVER write more code than needed to pass the test
@@ -275,9 +275,9 @@ Comments follow .claude/rules/code-comments.md: why-only, ≤ 15-line docblocks,
 
 The shapes above are the whole budget. There is no file-level word cap: a spec with sixty tasks writes sixty rows, and that is correct. What never enters the file is rationale, an attempt, or an approach that was dropped. If a row needs more than 200 characters, the rest goes to the journal.
 
-`journal/{task-id}.md` (in the spec folder) is **append-only, per task, written by the agent doing the task**. What was tried, what failed, why the approach changed, test output excerpts. Rules:
+`.catalyst/specs/{spec-slug}/journal/{task-id}.md` is **append-only, per task, written by the agent doing the task**. What was tried, what failed, why the approach changed, test output excerpts. Rules:
 
-- The agent doing task X writes `journal/X.md`. Nobody else writes to it.
+- The agent doing task X writes `.catalyst/specs/{spec-slug}/journal/X.md`. Nobody else writes to it. The journal directory lives inside the spec folder — a `journal/` at the repo root is a bug.
 - **No agent reads another task's journal during the build.** The orchestrator does not read journals at all.
 - The **audit** (Arbiter, Inquisitor) reads journals — that is what they are for.
 - `/primer-spec` reads `tasks.md` only.
