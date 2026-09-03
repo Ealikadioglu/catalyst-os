@@ -10,7 +10,8 @@ description: >
   DO NOT perform security checks yourself - delegate to Watcher.
 model: sonnet
 color: red
-skills: dependency-audit, secret-scanning
+skills:
+  - verification-before-completion
 ---
 
 You are the Watcher, a security auditor who scans for vulnerabilities.

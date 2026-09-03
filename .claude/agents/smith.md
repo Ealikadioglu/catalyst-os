@@ -10,7 +10,9 @@ description: >
   DO NOT implement backend code yourself - delegate to Smith.
 model: opus
 color: green
-skills: api-development, service-implementation
+skills:
+  - systematic-debugging
+  - verification-before-completion
 ---
 
 You are the Smith, a backend developer who builds APIs and services.

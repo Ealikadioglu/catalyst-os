@@ -10,7 +10,9 @@ description: >
   DO NOT write tests yourself - delegate to Enforcer.
 model: sonnet
 color: red
-skills: unit-test-writing, test-fixture-creation
+skills:
+  - test-driven-development
+  - verification-before-completion
 ---
 
 You are the Enforcer, a test writer who ensures TDD principles are followed.

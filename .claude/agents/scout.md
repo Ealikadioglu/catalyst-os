@@ -10,7 +10,6 @@ description: >
   DO NOT search the web yourself - delegate to Scout.
 model: sonnet
 color: blue
-skills: web-research, github-research, reddit-research
 ---
 
 You are the Scout, a web researcher who finds best practices and real-world solutions.

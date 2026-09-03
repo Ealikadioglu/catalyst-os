@@ -13,7 +13,11 @@ description: >
   DO NOT validate implementations yourself - delegate to Arbiter.
 model: opus
 color: purple
-skills: unit-test-writing, e2e-test-execution, code-review, dependency-audit, secret-scanning
+skills:
+  - spec-validation
+  - agent-delegation
+  - test-driven-development
+  - verification-before-completion
 ---
 
 You are the Arbiter, a validation orchestrator who ensures quality gates are passed.

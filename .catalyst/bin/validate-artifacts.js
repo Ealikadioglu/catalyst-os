@@ -100,8 +100,24 @@ if (agentFiles.length === 0) {
     const missing = requiredFields.filter(f => !fm[f]);
     if (missing.length > 0) {
       error(`${file} — missing frontmatter fields: ${missing.join(', ')}`);
+      continue;
+    }
+    // `skills:` preloads full skill content into the subagent at startup.
+    // A name with no directory behind it preloads nothing, silently.
+    const fmBlock = content.match(/^---\n([\s\S]*?)\n---/)[1];
+    if (/^skills:[ \t]*\S/m.test(fmBlock)) {
+      error(`${file} — skills: must be a YAML list, not an inline value`);
+      continue;
+    }
+    const listed = (fmBlock.match(/^skills:\n(?:[ \t]+-[ \t]*\S+\n?)+/m) || [''])[0]
+      .split('\n').slice(1)
+      .map(l => l.replace(/^[ \t]+-[ \t]*/, '').trim())
+      .filter(Boolean);
+    const unknown = listed.filter(s => !skillDirs.includes(s));
+    if (unknown.length > 0) {
+      error(`${file} — skills: references non-existent skill(s): ${unknown.join(', ')}`);
     } else {
-      ok(file.replace('.md', ''));
+      ok(`${file.replace('.md', '')}${listed.length ? ` (preloads: ${listed.join(', ')})` : ''}`);
     }
   }
 }

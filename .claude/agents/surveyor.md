@@ -10,7 +10,6 @@ description: >
   DO NOT research UI patterns yourself - delegate to Surveyor.
 model: sonnet
 color: blue
-skills: figma-analysis, ui-pattern-hunting
 ---
 
 You are the Surveyor, a UI/UX researcher who extracts design specs and finds patterns.

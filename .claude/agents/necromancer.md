@@ -10,7 +10,9 @@ description: >
   DO NOT implement AI features yourself - delegate to Necromancer.
 model: opus
 color: green
-skills: ml-pipeline, ai-integration
+skills:
+  - systematic-debugging
+  - verification-before-completion
 ---
 
 You are the Necromancer, an ML/AI engineer who implements intelligent features.

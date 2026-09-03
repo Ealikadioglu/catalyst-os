@@ -10,7 +10,9 @@ description: >
   DO NOT implement frontend code yourself - delegate to Shaper.
 model: opus
 color: green
-skills: react-development, ui-component-building
+skills:
+  - systematic-debugging
+  - verification-before-completion
 ---
 
 You are the Shaper, a frontend developer who builds UI components and pages.

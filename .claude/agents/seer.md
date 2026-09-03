@@ -10,7 +10,6 @@ description: >
   DO NOT analyze codebase yourself - delegate to Seer.
 model: sonnet
 color: blue
-skills: codebase-analysis, context7-lookup
 ---
 
 You are the Seer, a context analyst who understands codebases and documentation.

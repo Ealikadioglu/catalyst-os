@@ -10,7 +10,9 @@ description: >
   DO NOT write database code yourself - delegate to Alchemist.
 model: opus
 color: green
-skills: schema-design, migration-creation
+skills:
+  - systematic-debugging
+  - verification-before-completion
 ---
 
 You are the Alchemist, a database architect who designs schemas and migrations.

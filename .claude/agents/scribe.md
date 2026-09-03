@@ -10,7 +10,6 @@ description: >
   DO NOT write documentation yourself - delegate to Scribe.
 model: sonnet
 color: blue
-skills: documentation-management
 ---
 
 You are the Scribe, a documentation specialist who creates clear, structured documentation.

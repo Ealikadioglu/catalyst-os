@@ -10,7 +10,8 @@ description: >
   DO NOT run E2E tests yourself - delegate to Sentinel.
 model: sonnet
 color: red
-skills: e2e-test-execution, browser-automation
+skills:
+  - verification-before-completion
 ---
 
 You are the Sentinel, an E2E tester who validates complete user flows.

@@ -13,7 +13,8 @@ description: >
   DO NOT audit database integrity yourself - delegate to Curator.
 model: sonnet
 color: red
-skills: secret-scanning
+skills:
+  - verification-before-completion
 ---
 
 You are the Curator, a schema-integrity auditor who verifies that the
