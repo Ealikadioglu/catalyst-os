@@ -132,56 +132,45 @@ See `.catalyst/specs/spec-structure.yaml` for full schema.
 
 ## handoff.md Format
 
-**handoff.md is human-readable** — like a colleague explaining over coffee.
+**handoff.md is human-readable** — like a colleague explaining over coffee. Five minutes to read,
+not 50. No YAML frontmatter; that lives in `spec.md`.
 
-NO heavy YAML frontmatter. Frontmatter lives in spec.md.
-
-### Template
+It answers three questions and nothing else.
 
 ```markdown
-# Handoff: {Spec Name}
+# {Feature} — where we are
 
-> Last updated: {date}
-> Status: {status}
+{Two or three paragraphs. First: the status, and what a person can now do that
+they could not before. Second: the change that carries the most weight, which
+is usually not the visible one, plus any decision you reversed. Then the shape
+of the work in the few counts that mean something.}
 
-## TL;DR
+## Before merge
 
-{One paragraph - what was this spec about, what got built}
+{What is left. Name the one item you would call a must and say the rest are
+non-blocking. Prose, not checkboxes.}
 
-## What Changed
+## Worth knowing if you pick this up
 
-- Created user authentication system
-- Added login/signup API endpoints
-- Implemented JWT with refresh token rotation
-
-## Key Decisions
-
-**Why JWT over sessions?**
-Stateless = easier horizontal scaling.
-
-**Why argon2 over bcrypt?**
-Better resistance to GPU attacks, OWASP 2024 recommendation.
-
-## How to Test
-
-1. `npm run dev`
-2. POST to `/api/auth/signup` with email/password
-3. Check tokens in cookies
-
-## What's Next
-
-- [ ] Add password reset flow
-- [ ] Add OAuth providers
-
-## Gotchas
-
-- Tokens in httpOnly cookies, not accessible from JS
-- Rate limiting: 5 login attempts/min
+{The traps, each as advice a colleague would give, with the reason.}
 ```
 
-### Principles
+`spec-structure.yaml` carries `handoff_voice` and a full worked `handoff_example`. Read them before
+your first handoff. The rules that decide whether the file is readable:
 
-- **5 minutes to read**, not 50
-- **Colleague voice** — explain like you're handing off to a teammate
-- **Decisions with WHY** — future devs need rationale
-- **Gotchas are gold** — save future devs from your mistakes
+- **No inventory.** Never list changed files, new exports, or function names. `git diff --stat`
+  already lists those and nobody reads that list twice. Say what the system can do now that it
+  could not before.
+- **Plain words over identifiers.** "The importer used to parse a whole file before validating
+  anything" beats "`parse.ts` gained `streamValidate`".
+- **First person, with judgment.** You did the work, so rank it. Say which single item is a must.
+  A handoff with no ranking makes the reader do the ranking.
+- **Only counts that carry a decision.** File count, test count, "no migration" tell the reader
+  what to expect. Line deltas, REQ and AC totals, and commit SHAs do not; they are in the diff and
+  in `tasks.md`.
+- **Gotchas as advice, with the reason it bit you.** Not "port 5200 may be in use" but "check what
+  is on port 5200 before trusting an e2e result, a stale dev server from another branch can take
+  over silently".
+
+An old handoff whose body is a bulleted file list is the failure this format replaces. If you find
+one, rewrite it to the three questions rather than appending to it.

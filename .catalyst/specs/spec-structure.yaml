@@ -57,8 +57,11 @@ files:
     updated_by: [scribe, arbiter]
     pattern: narrative
     note: |
-      Written like explaining to a colleague.
-      5 minutes to read, not 50.
+      Written like explaining to a colleague. 5 minutes to read, not 50.
+      Answers three questions and nothing else: where are we, what is left
+      before merge, what should someone picking this up know.
+      NOT an inventory of changed files. `git diff --stat` already lists
+      those and nobody reads that list twice. See handoff_template.
 
   validation.md:
     owner: arbiter
@@ -229,37 +232,78 @@ tasks_schema:
 # Human-readable - colleague explaining over coffee
 # =============================================================================
 
+# handoff.md answers three questions. The shape below is the whole file.
+# The voice rules matter more than the headings: a section list invites an
+# inventory, which is the failure this template replaces.
+
+handoff_voice:
+  - No inventory. Never list changed files, new exports, or function names.
+    Say what the system can do now that it could not before.
+  - Plain words over identifiers. "The importer used to parse the whole file
+    before validating anything" beats "parse.ts gained streamValidate".
+  - First person, with judgment. You did the work, so rank it: say which
+    single item is a must. A handoff with no ranking makes the reader rank.
+  - Only counts that carry a decision. File count, test count, "no migration"
+    tell the reader what to expect. Line deltas, REQ/AC totals and commit
+    SHAs do not; they are in the diff and in tasks.md.
+  - Gotchas as advice, with the reason it bit you. Not "port 5200 may be in
+    use" but "check what is on port 5200 before trusting an e2e result, a
+    stale dev server from another branch can take over silently".
+  - No frontmatter and no metadata blockquote. Status goes in the first
+    sentence; branch and commits are in git.
+
 handoff_template: |
-  # Handoff: {Spec Name}
+  # {Feature} — where we are
 
-  > Status: {status}
+  {Two or three paragraphs. First: the status, and what a person can now do
+  that they could not before. Second: the change that carries the most
+  weight, which is usually not the visible one, plus any decision you
+  reversed. Then the shape of the work in the few counts that mean
+  something.}
 
-  ## TL;DR
+  ## Before merge
 
-  {One paragraph - what was built}
+  {What is left. Name the one item you would call a must and say the rest
+  are non-blocking. Prose, not checkboxes.}
 
-  ## What Changed
+  ## Worth knowing if you pick this up
 
-  - Change 1
-  - Change 2
+  {The traps, each as advice a colleague would give, with the reason.}
 
-  ## Key Decisions
+handoff_example: |
+  # Bulk import — where we are
 
-  **Why X over Y?**
-  Rationale here.
+  Bulk import is built and has passed its audit (pass, no concerns). Someone
+  can now upload a CSV of up to 50,000 rows, see which rows will fail before
+  anything is committed, fix them in place, and import the rest. A run that
+  fails halfway leaves nothing behind, so retrying is safe.
 
-  ## How to Test
+  The load-bearing change is not the upload screen. The importer used to parse
+  a whole file into memory before validating anything, which is why large
+  files timed out instead of reporting errors. It now streams and validates
+  row by row, and that is what makes the preview possible at all. I reversed
+  an earlier decision here: validation runs on the server as well as the
+  client, because the client check turned out to be bypassable with a
+  hand-made request. Scope: 23 files, 412 unit tests passing, one migration.
 
-  1. Step 1
-  2. Step 2
+  ## Before merge
 
-  ## What's Next
+  One real upload against a production-sized file. My evidence comes from a
+  5,000-row fixture, and the timeout this feature exists to fix only appears
+  above roughly 20,000 rows. This is the only item I would call a must.
 
-  - [ ] Next item
+  Two spec corrections are open and the error copy has had no reviewer but
+  me. Neither blocks.
 
-  ## Gotchas
+  ## Worth knowing if you pick this up
 
-  - Thing that might trip you up
+  The preview and the commit share one validator on purpose. Change a rule in
+  one and not the other and the preview will promise an import that then
+  fails. No test catches that today.
+
+  Row numbers in error messages are 1-based to match what the user sees in a
+  spreadsheet, while the parser is 0-based. The offset is applied once, at the
+  boundary. Move it and every error shifts by one row, silently.
 
 # =============================================================================
 # CONTEXT ASSEMBLY

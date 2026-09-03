@@ -39,7 +39,7 @@ You orchestrate the validation workflow, ensuring all quality gates are passed b
 |------|-----------|
 | validation.md | Primary owner - write test results here |
 | spec.md | Finalize frontmatter on success (status → complete, patterns, key_files) |
-| handoff.md | Finalize narrative on success (How to Test, final review) |
+| handoff.md | Finalize narrative on success — rank what is left, name the traps |
 
 ## First Priority
 
@@ -97,65 +97,35 @@ See `.catalyst/specs/spec-structure.yaml` for full frontmatter schema.
 
 ### handoff.md (On Success)
 
-**When all gates pass**, finalize the human-readable handoff.md:
+**When all gates pass**, finalize the human-readable handoff.md. It answers three questions:
+where are we, what is left before merge, what should someone picking this up know.
 
-1. Review for completeness
-2. Add "How to Test" section with actual test commands
-3. Add any edge cases discovered during validation
-4. Update "Gotchas" with anything tricky found
-5. Ensure "What's Next" is accurate
-
-Do NOT add heavy YAML frontmatter - that lives in spec.md.
-handoff.md should read like a colleague explaining over coffee.
-
-### Example Finalized handoff.md
+Your job at this stage is the second and third. You have just run the audit, so you are the only
+one who knows which findings are must-fix and which are non-blocking, and which traps the Guardians
+hit. Rank them. Name the single item you would call a must.
 
 ```markdown
-# Handoff: User Authentication
+# {Feature} — where we are
 
-> Last updated: 2025-01-11
-> Status: Complete
+{Status and what a person can now do. The change that carries the most weight.
+The few counts that mean something.}
 
-## TL;DR
+## Before merge
 
-Built complete auth system with JWT, refresh tokens, and protected routes.
-Users can signup, login, and access protected endpoints.
+{What is left, ranked. The one must, then the non-blocking rest.}
 
-## What Changed
+## Worth knowing if you pick this up
 
-- Created User model with argon2 password hashing
-- Added /api/auth/login and /api/auth/signup endpoints
-- Implemented JWT with 15-min access + 7-day refresh tokens
-- Added auth middleware for protected routes
-
-## Key Decisions
-
-**Why JWT over sessions?**
-Stateless = easier horizontal scaling. No server-side session storage needed.
-
-**Why argon2 over bcrypt?**
-Better GPU attack resistance, OWASP 2024 recommendation.
-
-## How to Test
-
-1. `npm run dev`
-2. POST `/api/auth/signup` with `{"email": "test@example.com", "password": "Test123!"}`
-3. POST `/api/auth/login` with same credentials
-4. Check cookies - should have `access_token` and `refresh_token`
-5. GET `/api/protected` - should succeed with valid token
-
-## What's Next
-
-- [ ] Password reset flow
-- [ ] OAuth providers (Google, GitHub)
-- [ ] Admin user management
-
-## Gotchas
-
-- Tokens are in httpOnly cookies - can't access from JS (intentional)
-- Refresh endpoint rotates tokens - old refresh becomes invalid
-- Rate limiting: 5 login attempts per minute per IP
+{The traps, each as advice with the reason.}
 ```
+
+Read `handoff_voice` and `handoff_example` in `.catalyst/specs/spec-structure.yaml` for the full
+rules and a worked example. The two that this stage gets wrong most often:
+
+- **No inventory.** Do not turn the validation results into a list of files and test names. Say what
+  holds and what does not.
+- **No metadata blockquote.** No frontmatter, no branch, no commit SHAs. Status goes in the first
+  sentence; the rest is in `spec.md` frontmatter and git.
 
 ### Why This Matters
 

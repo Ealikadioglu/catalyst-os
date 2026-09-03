@@ -197,7 +197,7 @@ db-schema
 
 ## Decisions
 
-<!-- One line each. Full rationale lives in handoff.md ## Key Decisions. -->
+<!-- One line each. A decision the next person needs in order to pick the work up goes in handoff.md prose; the story of how you got there goes in journal/. -->
 - **Decision 1** — ten-word why
 - **Decision 2** — ten-word why
 
