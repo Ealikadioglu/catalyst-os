@@ -45,6 +45,8 @@ Then run `/catalyze-project` to initialize — this detects your workspace type,
 │   ├── agent-delegation/
 │   ├── receiving-code-review/
 │   ├── workspace-detection/
+│   ├── autopilot/
+│   ├── unslop/
 │   ├── meet-spec/
 │   ├── spec-shaping/
 │   ├── spec-challenge/
@@ -102,6 +104,8 @@ Without this, skills are optional documentation. With it, they're mandatory proc
 | `agent-delegation` | Orchestrators never implement, verify agent claims |
 | `receiving-code-review` | Technical evaluation over performative agreement |
 | `workspace-detection` | Detect single_repo, monorepo, or multirepo structure |
+| `autopilot` | Unattended runs decide with the recommended option and log it |
+| `unslop` | Cut the length that carries no information from every artifact |
 
 ### Orchestration Skills (workflow-specific)
 
