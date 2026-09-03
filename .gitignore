@@ -1,3 +1,11 @@
+# A global gitignore (~/.config/git/ignore) excludes .claude/ and .catalyst/ in
+# every project. That is right for projects that consume the framework and wrong
+# for this one, which ships both. Re-include them first, then apply the specific
+# ignores below, or new skills, agents, rules and schema files are silently never
+# committed.
+!.claude/
+!.catalyst/
+
 # Temporary spec files
 .catalyst/specs/*/*.tmp
 
@@ -13,9 +21,5 @@
 # Voice meeting artifacts (local, not part of the framework)
 .catalyst/meetings/
 
-# A global gitignore (~/.config/git/ignore) commonly excludes .claude/.
-# This repo ships the .claude framework, so re-include it or new skills,
-# agents and rules are silently never committed.
-!.claude/
 .DS_Store
 .claude/.DS_Store
