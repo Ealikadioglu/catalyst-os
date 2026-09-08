@@ -1,3 +1,8 @@
+---
+name: receiving-code-review
+description: Evaluate review feedback on technical merit rather than agreeing reflexively or defending the original. Use when receiving code review from an agent, a reviewer, or the user, before implementing any suggestion.
+---
+
 # Receiving Code Review
 
 > Load this skill when: receiving code review feedback from Inquisitor, Arbiter, user, or any external reviewer — before implementing any suggestions.

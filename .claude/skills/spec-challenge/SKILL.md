@@ -1,3 +1,8 @@
+---
+name: spec-challenge
+description: Interrogate a freshly shaped spec branch by branch, patching spec.md and logging decisions until understanding is shared. Use for /challenge-spec, optionally between catalyze and forge.
+---
+
 # Spec Challenge
 
 > **When to invoke:** When stress-testing a freshly shaped spec — interviewing the user across every branch of the design tree until shared understanding is reached.

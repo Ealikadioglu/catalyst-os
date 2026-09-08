@@ -1,3 +1,8 @@
+---
+name: spec-approval
+description: Close out an accepted implementation with final verification, a git commit, spec archival, and propagating learnings back into the framework. Use for /seal-spec.
+---
+
 # Spec Approval
 
 > **When to invoke:** When accepting an implementation and archiving the spec.

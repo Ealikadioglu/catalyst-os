@@ -1,3 +1,8 @@
+---
+name: spec-archival
+description: Complete a spec without git ceremony by moving it to the completed folder, extracting library patterns, and updating status. Use for /archive-spec.
+---
+
 # Spec Archival
 
 > **When to invoke:** When archiving a spec without git ceremony.

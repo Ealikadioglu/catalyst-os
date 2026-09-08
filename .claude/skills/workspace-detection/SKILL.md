@@ -1,3 +1,8 @@
+---
+name: workspace-detection
+description: Determine whether the working directory is a single repo, a monorepo, or a multirepo, and where code belongs in it. Use when initializing a project or when a workflow needs repository context.
+---
+
 # Workspace Detection
 
 > Load this skill when: initializing a project, or any time you need to understand the repository structure of the working directory.

@@ -1,3 +1,8 @@
+---
+name: spec-shaping
+description: Turn a feature request into a specification with requirements, design, and a build DAG, orchestrating the Seeker agents. Use for /catalyze-spec.
+---
+
 # Spec Shaping
 
 > **When to invoke:** When shaping a new specification from a feature request.

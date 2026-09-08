@@ -1,3 +1,8 @@
+---
+name: spec-update
+description: Revise an existing specification for new requirements, scope changes, or clarifications without losing its history. Use for /update-spec.
+---
+
 # Spec Update
 
 > **When to invoke:** When updating an existing specification with new requirements, scope changes, or clarifications.

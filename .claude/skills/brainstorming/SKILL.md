@@ -1,3 +1,8 @@
+---
+name: brainstorming
+description: Explore intent, requirements, and design through dialogue before any code is written. Use before creating a feature, building a component, or making a design decision.
+---
+
 # Brainstorming
 
 > **When to invoke:** Before any creative work — creating features, building components, adding functionality, or modifying behavior. Any time design decisions are needed.

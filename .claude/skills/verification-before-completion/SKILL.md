@@ -1,3 +1,8 @@
+---
+name: verification-before-completion
+description: Back every completion claim with fresh evidence from a command run in the same response. Use before claiming work is done, fixed, or passing, and before committing or reporting status.
+---
+
 # Verification Before Completion
 
 > **When to invoke:** Before claiming work is complete, fixed, or passing. Before committing, creating PRs, or reporting task status.
