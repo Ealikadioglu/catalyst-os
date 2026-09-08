@@ -1,3 +1,8 @@
+---
+name: project-sync
+description: Scan every active spec, detect which are actually complete, update their tasks, and archive the finished ones. Use for /sync-project or to catch up when audit and seal were skipped.
+---
+
 # Project Sync
 
 > **When to invoke:** When syncing spec statuses with reality across the project.

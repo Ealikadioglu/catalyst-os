@@ -1,3 +1,8 @@
+---
+name: spec-validation
+description: Validate a finished implementation for test coverage, code quality, security, and schema integrity by orchestrating the Guardian agents. Use for /audit-spec.
+---
+
 # Spec Validation
 
 > **When to invoke:** When running validation checks on a completed implementation.

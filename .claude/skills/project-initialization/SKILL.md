@@ -1,3 +1,8 @@
+---
+name: project-initialization
+description: Detect greenfield or brownfield, gather project information, set up the git workflow, and generate the foundation documents. Use for /catalyze-project.
+---
+
 # Project Initialization
 
 > **When to invoke:** When initializing the project foundation.

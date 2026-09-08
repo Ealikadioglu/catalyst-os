@@ -1,3 +1,8 @@
+---
+name: mobile-development
+description: Build Flutter and Dart features including widgets, Riverpod or Bloc state, GoRouter navigation, and platform channels. Use when implementing mobile code during a build phase.
+---
+
 # Mobile Development
 
 > **When to invoke:** When implementing mobile features with Flutter and Dart.

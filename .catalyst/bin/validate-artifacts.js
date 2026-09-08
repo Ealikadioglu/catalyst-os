@@ -71,11 +71,41 @@ if (skillDirs.length === 0) {
     const content = readFile(skillPath);
     if (!content) {
       error(`${skillPath} — missing`);
-    } else if (content.trim().length < 10) {
-      error(`${skillPath} — empty or too short`);
-    } else {
-      ok(dir);
+      continue;
     }
+    if (content.trim().length < 10) {
+      error(`${skillPath} — empty or too short`);
+      continue;
+    }
+    // Strict Agent Skills readers (pi, and any other spec-compliant host) reject a
+    // skill with no frontmatter outright. Claude Code falls back to the H1, so the
+    // omission is invisible here until another tool loads the same directory.
+    const fm = extractFrontmatter(content);
+    if (!fm) {
+      error(`${skillPath} — missing YAML frontmatter (name, description)`);
+      continue;
+    }
+    const missingFields = ['name', 'description'].filter(f => !fm[f]);
+    if (missingFields.length > 0) {
+      error(`${skillPath} — missing frontmatter fields: ${missingFields.join(', ')}`);
+      continue;
+    }
+    if (fm.name !== dir) {
+      error(`${skillPath} — frontmatter name "${fm.name}" does not match directory "${dir}"`);
+      continue;
+    }
+    // An unquoted ": " turns the scalar into a mapping under a real YAML parser.
+    const rawDesc = (content.match(/^description:[ \t]*(.*)$/m) || [])[1] || '';
+    const quoted = /^['"].*['"]$/.test(rawDesc.trim());
+    if (!quoted && /:\s/.test(rawDesc)) {
+      error(`${skillPath} — description contains an unquoted ": " (invalid YAML scalar)`);
+      continue;
+    }
+    if (fm.description.length > 1024) {
+      error(`${skillPath} — description exceeds 1024 characters`);
+      continue;
+    }
+    ok(dir);
   }
 }
 

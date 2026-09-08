@@ -1,3 +1,8 @@
+---
+name: spec-lifecycle-board
+description: Regenerate roadmap.md and dashboard.html by running board.js, never by hand. Use after any spec lifecycle transition (catalyze, forge, audit, seal, archive) and for /plan-project.
+---
+
 # Spec Lifecycle Board
 
 > **When to invoke:** After ANY spec lifecycle transition (catalyze / forge / audit / seal / archive), and whenever the roadmap or dashboard must reflect reality.

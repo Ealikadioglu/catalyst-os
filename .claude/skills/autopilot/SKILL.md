@@ -1,3 +1,8 @@
+---
+name: autopilot
+description: Run an unattended chain end to end, taking the recommended option at every decision, logging it, and never stopping to ask. Use for /forge-spec-worktree or whenever the user says the run is AFK, overnight, or should not stop for questions.
+---
+
 # Autopilot
 
 > **When to invoke:** `/forge-spec-worktree`, or whenever the user says the run should be unattended ("AFK", "don't ask me", "run it to the end", "overnight").

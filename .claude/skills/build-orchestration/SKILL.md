@@ -1,3 +1,8 @@
+---
+name: build-orchestration
+description: Implement a specification under strict TDD, coordinating builder agents in dependency order across the task DAG. Use for /forge-spec and /forge-spec-worktree.
+---
+
 # Build Orchestration
 
 > **When to invoke:** When implementing a specification using strict TDD.

@@ -1,3 +1,8 @@
+---
+name: unslop
+description: Cut the length that carries no information out of prose a human will read. Use before writing spec.md, research.md, handoff.md, validation.md, journal entries, commit messages, PR bodies, or a reply.
+---
+
 # Unslop
 
 > **When to invoke:** Before writing any artifact a human will read: `spec.md`, `research.md`,

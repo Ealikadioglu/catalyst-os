@@ -1,3 +1,8 @@
+---
+name: using-skills
+description: The bootstrap skill that indexes every Catalyst skill and states the rule that one must be loaded before acting. Load this first, before any other action, on every task.
+---
+
 # Using Skills
 
 > Load this skill FIRST. Before any other action. Before clarifying questions. Before exploring code.

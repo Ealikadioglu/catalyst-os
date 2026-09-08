@@ -1,3 +1,8 @@
+---
+name: agent-delegation
+description: Delegate implementation to specialist agents, verify their output, and escalate blockers instead of building as an orchestrator. Use when orchestrating agents, reviewing agent output, or tempted to do the work yourself.
+---
+
 # Agent Delegation
 
 > **When to invoke:** When orchestrating agents, reviewing agent output, or tempted to do work yourself as an orchestrator.

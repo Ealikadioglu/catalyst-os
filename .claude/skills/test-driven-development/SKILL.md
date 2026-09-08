@@ -1,3 +1,8 @@
+---
+name: test-driven-development
+description: Write failing tests first, then implement, then refactor, verifying red before green. Use before writing any implementation code, fixing a bug, or changing behavior.
+---
+
 # Test-Driven Development
 
 > **When to invoke:** Before writing ANY implementation code. When implementing features, fixing bugs, or modifying behavior.

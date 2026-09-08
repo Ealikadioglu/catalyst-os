@@ -1,3 +1,8 @@
+---
+name: meet-spec
+description: Talk through a project as free-form chat or a spoken meeting, then shape the result into a spec. Use for /meet-spec.
+---
+
 # Meet Spec
 
 > **When to invoke:** When the user wants to talk through their project — either a

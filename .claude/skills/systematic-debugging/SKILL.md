@@ -1,3 +1,8 @@
+---
+name: systematic-debugging
+description: Find the root cause before proposing a fix, using a phased investigation instead of guessing. Use for any bug, test failure, or unexpected behavior.
+---
+
 # Systematic Debugging
 
 > **When to invoke:** When encountering ANY bug, test failure, or unexpected behavior. Before proposing fixes.
