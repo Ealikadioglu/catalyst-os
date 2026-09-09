@@ -85,30 +85,35 @@ Create in `.catalyst/main/`:
 - Granularity guardrail: if a backlog idea would need more than ~5-8 tasks or spans multiple subsystems, split it into multiple entries.
 - After writing `roadmap.md` (Backlog + Vision are all you author), run `node .catalyst/bin/board.js --by "/catalyze-project" --init`. It fills the lifecycle sections from disk and generates `.catalyst/dashboard.html`. Point the user to the dashboard — double-click to open in a browser. Never write `dashboard.html` yourself.
 
-### Phase 5: Bootstrap CLAUDE.md
+### Phase 5: Bootstrap Instructions (AGENTS.md / CLAUDE.md)
 
-The project's `CLAUDE.md` must contain the Catalyst OS bootstrap directive. This is what makes skills load automatically.
+The project's `AGENTS.md` (and `CLAUDE.md` if using Claude Code) must contain the Catalyst OS bootstrap directive. This is what makes skills load automatically across Claude Code, Pi, and Codex.
 
 ```
-IF CLAUDE.md exists:
+IF AGENTS.md exists:
   Read it
   Check if it already contains the Catalyst OS bootstrap section
   IF missing: Append the bootstrap section at the TOP of the file
   IF present: Leave it as-is
 
-IF CLAUDE.md does NOT exist:
+IF AGENTS.md does NOT exist:
   Create it with the bootstrap section
+
+IF CLAUDE.md exists (or Claude Code is used):
+  If CLAUDE.md does not exist, create it with:
+    @AGENTS.md
+  If CLAUDE.md exists, ensure it imports @AGENTS.md or contains the bootstrap directive
 ```
 
 **Bootstrap section to add:**
 ```markdown
 ## Catalyst OS
 
-Before any action, read `.claude/skills/using-skills/SKILL.md` and follow it.
+Before any action, read `.claude/skills/using-skills/SKILL.md` (or `.pi/skills/using-skills/SKILL.md` / `.codex/skills/using-skills/SKILL.md`) and follow it.
 ```
 
 **Rules:**
-- NEVER overwrite an existing CLAUDE.md — only append
+- NEVER overwrite existing custom instructions — only append/prepend
 - Add the section at the TOP so it's read first
 - Keep it minimal — the skill file has the full index
 - Preserve all existing project-specific content
@@ -116,7 +121,7 @@ Before any action, read `.claude/skills/using-skills/SKILL.md` and follow it.
 ## Output
 
 ```
-CLAUDE.md                  (bootstrap — created or updated)
+AGENTS.md                  (bootstrap — created or updated)
 .catalyst/main/
 ├── project-config.yaml
 ├── mission.md

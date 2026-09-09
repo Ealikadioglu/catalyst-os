@@ -2,6 +2,7 @@
 
 const fs = require('fs');
 const path = require('path');
+const readline = require('readline');
 
 // Colors
 const cyan = '\x1b[36m';
@@ -22,42 +23,171 @@ ${cyan}   ██████╗ █████╗ ████████╗ �
    ╚═════╝╚═╝  ╚═╝   ╚═╝   ╚═╝  ╚═╝╚══════╝╚═╝   ╚══════╝   ╚═╝${reset}
 
   Catalyst OS ${dim}v${pkg.version}${reset}
-  AI-native spec-driven development framework for Claude Code
+  AI-native spec-driven development framework for Claude Code, Pi & Codex
 `;
 
-// Parse args
-const args = process.argv.slice(2);
-const hasHelp = args.includes('--help') || args.includes('-h');
+/**
+ * Harness metadata and directory conventions
+ */
+const HARNESS_CONFIGS = {
+  claude: {
+    name: 'Claude Code',
+    dir: '.claude',
+    commandsDir: 'commands',
+    writeClaudeMd: true,
+  },
+  pi: {
+    name: 'Pi',
+    dir: '.pi',
+    commandsDir: 'prompts',
+    writeClaudeMd: false,
+  },
+  codex: {
+    name: 'OpenAI Codex',
+    dir: '.codex',
+    commandsDir: 'prompts',
+    writeClaudeMd: false,
+  },
+};
 
-console.log(banner);
+/**
+ * Parse CLI args
+ */
+function parseArgs() {
+  const args = process.argv.slice(2);
+  let harness = null;
+  let hasHelp = false;
 
-// Show help if requested
-if (hasHelp) {
-  console.log(`  ${yellow}Usage:${reset} npx catalyst-os [options]
+  for (let i = 0; i < args.length; i++) {
+    const arg = args[i];
+    if (arg === '--help' || arg === '-h') {
+      hasHelp = true;
+    } else if (arg === '--harness' || arg === '-H') {
+      harness = args[i + 1] ? args[i + 1].toLowerCase() : null;
+      i++;
+    } else if (arg.startsWith('--harness=')) {
+      harness = arg.split('=')[1].toLowerCase();
+    } else if (arg.startsWith('-H=')) {
+      harness = arg.split('=')[1].toLowerCase();
+    }
+  }
 
-  ${yellow}Options:${reset}
-    ${cyan}-h, --help${reset}    Show this help message
-
-  ${yellow}What gets installed:${reset}
-    ${dim}.claude/${reset}       Agents, skills, rules, and slash commands
-    ${dim}.catalyst/${reset}     Spec templates, project config, and bin/board.js (dashboard generator)
-
-  ${yellow}Example:${reset}
-    ${dim}# Initialize catalyst-os in your project${reset}
-    cd your-project
-    npx catalyst-os
-
-  ${yellow}After installation:${reset}
-    Run ${cyan}/catalyze-project${reset} to initialize your project
-    Run ${cyan}/catalyze-spec${reset} to create your first specification
-`);
-  process.exit(0);
+  return { hasHelp, harness };
 }
 
 /**
- * Recursively copy directory
+ * Normalize harness input string
  */
-function copyDir(srcDir, destDir) {
+function normalizeHarness(input) {
+  if (!input) return null;
+  const val = input.trim().toLowerCase();
+  if (['1', 'claude', 'claude-code', 'claudecode'].includes(val)) return 'claude';
+  if (['2', 'pi'].includes(val)) return 'pi';
+  if (['3', 'codex', 'openai', 'openai-codex'].includes(val)) return 'codex';
+  if (['4', 'all', 'both', 'every'].includes(val)) return 'all';
+  return null;
+}
+
+/**
+ * Prompt user for harness selection if not supplied via CLI
+ */
+async function resolveHarness(cliHarness) {
+  if (cliHarness) {
+    const normalized = normalizeHarness(cliHarness);
+    if (normalized) return normalized;
+    console.log(`  ${yellow}Warning:${reset} Unknown harness '${cliHarness}'. Defaulting to Claude Code.\n`);
+    return 'claude';
+  }
+
+  // If in CI, default to Claude Code immediately
+  if (process.env.CI) {
+    return 'claude';
+  }
+
+  return new Promise((resolve) => {
+    let resolved = false;
+
+    if (process.stdin.isTTY) {
+      console.log(`  ${yellow}? Which AI coding harness do you use?${reset}`);
+      console.log(`    ${cyan}1)${reset} Claude Code  ${dim}(.claude/)${reset} ${dim}[default]${reset}`);
+      console.log(`    ${cyan}2)${reset} Pi           ${dim}(.pi/)${reset}`);
+      console.log(`    ${cyan}3)${reset} OpenAI Codex ${dim}(.codex/)${reset}`);
+      console.log(`    ${cyan}4)${reset} All          ${dim}(Claude Code + Pi + Codex)${reset}\n`);
+    }
+
+    const rl = readline.createInterface({
+      input: process.stdin,
+      output: process.stdout,
+      terminal: Boolean(process.stdin.isTTY),
+    });
+
+    const promptText = process.stdin.isTTY ? '  Select [1-4] (default: 1): ' : '';
+
+    rl.question(promptText, (answer) => {
+      if (resolved) return;
+      resolved = true;
+      rl.close();
+      const choice = answer.trim();
+      const normalized = normalizeHarness(choice);
+      if (normalized) {
+        resolve(normalized);
+      } else if (!choice) {
+        resolve('claude');
+      } else {
+        if (process.stdin.isTTY) {
+          console.log(`  ${dim}Unrecognized selection '${choice}', defaulting to Claude Code.${reset}\n`);
+        }
+        resolve('claude');
+      }
+    });
+
+    rl.on('close', () => {
+      if (!resolved) {
+        resolved = true;
+        resolve('claude');
+      }
+    });
+  });
+}
+
+const TEXT_EXTS = new Set(['.md', '.yaml', '.yml', '.json', '.txt', '.js', '.sh', '.py']);
+
+/**
+ * Rewrite path references (e.g. .claude/ -> .pi/) in text files
+ */
+function rewriteContent(content, targetPrefix, commandsDir) {
+  if (targetPrefix === '.claude') return content;
+  return content
+    .replaceAll('.claude/commands/', `${targetPrefix}/${commandsDir}/`)
+    .replaceAll('.claude/commands', `${targetPrefix}/${commandsDir}`)
+    .replaceAll('.claude/', `${targetPrefix}/`);
+}
+
+/**
+ * Copy file if it exists, optionally rewriting path references
+ */
+function copyFileWithRewrite(src, dest, targetPrefix = '.claude', commandsDir = 'commands') {
+  if (!fs.existsSync(src)) return false;
+  if (path.resolve(src) === path.resolve(dest)) return true; // Don't copy onto itself
+
+  fs.mkdirSync(path.dirname(dest), { recursive: true });
+
+  const ext = path.extname(src).toLowerCase();
+  if (TEXT_EXTS.has(ext) && targetPrefix !== '.claude') {
+    const original = fs.readFileSync(src, 'utf8');
+    const rewritten = rewriteContent(original, targetPrefix, commandsDir);
+    fs.writeFileSync(dest, rewritten, 'utf8');
+  } else {
+    fs.copyFileSync(src, dest);
+  }
+  return true;
+}
+
+/**
+ * Recursively copy directory, optionally rewriting path references
+ */
+function copyDirWithRewrite(srcDir, destDir, targetPrefix = '.claude', commandsDir = 'commands') {
+  if (!fs.existsSync(srcDir)) return;
   fs.mkdirSync(destDir, { recursive: true });
 
   const entries = fs.readdirSync(srcDir, { withFileTypes: true });
@@ -67,23 +197,11 @@ function copyDir(srcDir, destDir) {
     const destPath = path.join(destDir, entry.name);
 
     if (entry.isDirectory()) {
-      copyDir(srcPath, destPath);
+      copyDirWithRewrite(srcPath, destPath, targetPrefix, commandsDir);
     } else {
-      fs.copyFileSync(srcPath, destPath);
+      copyFileWithRewrite(srcPath, destPath, targetPrefix, commandsDir);
     }
   }
-}
-
-/**
- * Copy file if it exists
- */
-function copyFile(src, dest) {
-  if (fs.existsSync(src)) {
-    fs.mkdirSync(path.dirname(dest), { recursive: true });
-    fs.copyFileSync(src, dest);
-    return true;
-  }
-  return false;
 }
 
 /**
@@ -108,82 +226,139 @@ function ensureGitignore(cwd) {
 }
 
 /**
- * Install catalyst-os to current directory
+ * Install agents, commands/prompts, skills, and rules for a specific harness
  */
-function install() {
+function installHarness(harnessKey, src, cwd) {
+  const config = HARNESS_CONFIGS[harnessKey];
+  const targetDir = path.join(cwd, config.dir);
+
+  console.log(`  ${cyan}Configuring ${config.name}${reset} ${dim}(${config.dir}/)${reset}:`);
+
+  if (fs.existsSync(path.join(targetDir, 'agents'))) {
+    console.log(`  ${yellow}Warning:${reset} ${config.dir}/agents already exists`);
+    console.log(`  ${dim}Files will be overwritten${reset}`);
+  }
+
+  // Install agents
+  const agentsSrc = path.join(src, '.claude', 'agents');
+  const agentsDest = path.join(targetDir, 'agents');
+  if (fs.existsSync(agentsSrc)) {
+    copyDirWithRewrite(agentsSrc, agentsDest, config.dir, config.commandsDir);
+    console.log(`  ${green}✓${reset} Installed ${config.dir}/agents`);
+  }
+
+  // Install commands/prompts
+  const commandsSrc = path.join(src, '.claude', 'commands');
+  const commandsDest = path.join(targetDir, config.commandsDir);
+  if (fs.existsSync(commandsSrc)) {
+    copyDirWithRewrite(commandsSrc, commandsDest, config.dir, config.commandsDir);
+    console.log(`  ${green}✓${reset} Installed ${config.dir}/${config.commandsDir} ${config.commandsDir === 'prompts' ? '(prompt templates)' : '(slash commands)'}`);
+  }
+
+  // Install skills
+  const skillsSrc = path.join(src, '.claude', 'skills');
+  const skillsDest = path.join(targetDir, 'skills');
+  if (fs.existsSync(skillsSrc)) {
+    copyDirWithRewrite(skillsSrc, skillsDest, config.dir, config.commandsDir);
+    console.log(`  ${green}✓${reset} Installed ${config.dir}/skills`);
+  }
+
+  // Install rules
+  const rulesSrc = path.join(src, '.claude', 'rules');
+  const rulesDest = path.join(targetDir, 'rules');
+  if (fs.existsSync(rulesSrc)) {
+    copyDirWithRewrite(rulesSrc, rulesDest, config.dir, config.commandsDir);
+    console.log(`  ${green}✓${reset} Installed ${config.dir}/rules`);
+  }
+
+  // If Claude Code, write 1-line import bridge so Claude Code loads AGENTS.md
+  if (config.writeClaudeMd) {
+    const claudeMdDest = path.join(cwd, 'CLAUDE.md');
+    if (!fs.existsSync(claudeMdDest)) {
+      fs.writeFileSync(claudeMdDest, '@AGENTS.md\n');
+      console.log(`  ${green}✓${reset} Created CLAUDE.md (@AGENTS.md import bridge)`);
+    }
+  }
+
+  console.log('');
+}
+
+/**
+ * Main install entrypoint
+ */
+async function install() {
+  console.log(banner);
+
+  const { hasHelp, harness: cliHarness } = parseArgs();
+
+  // Show help if requested
+  if (hasHelp) {
+    console.log(`  ${yellow}Usage:${reset} npx catalyst-os [options]
+
+  ${yellow}Options:${reset}
+    ${cyan}-h, --help${reset}            Show this help message
+    ${cyan}-H, --harness <name>${reset}  Target harness: claude, pi, codex, or all (default: interactive prompt)
+
+  ${yellow}Supported harnesses:${reset}
+    ${cyan}claude${reset}                Claude Code (.claude/ directory, slash commands in commands/)
+    ${cyan}pi${reset}                    Pi coding agent (.pi/ directory, prompt templates in prompts/)
+    ${cyan}codex${reset}                 OpenAI Codex (.codex/ directory, prompt templates in prompts/)
+    ${cyan}all${reset}                   Install for Claude Code, Pi, and Codex simultaneously
+
+  ${yellow}What gets installed:${reset}
+    ${dim}<harness-dir>/${reset}        Agents, skills, rules, and commands/prompts
+    ${dim}.catalyst/${reset}            Spec templates, project config, and bin/board.js (dashboard generator)
+    ${dim}AGENTS.md${reset}             Universal instructions, architecture, and agent registry
+
+  ${yellow}Example:${reset}
+    ${dim}# Interactive setup${reset}
+    npx catalyst-os
+
+    ${dim}# Directly initialize for Pi${reset}
+    npx catalyst-os --harness pi
+`);
+    process.exit(0);
+  }
+
+  const selectedHarness = await resolveHarness(cliHarness);
+
   const src = path.join(__dirname, '../..');
   const cwd = process.cwd();
 
-  console.log(`  Installing to ${cyan}${cwd}${reset}\n`);
+  console.log(`  Installing Catalyst OS to ${cyan}${cwd}${reset}\n`);
 
-  // Check if already installed
-  const claudeDir = path.join(cwd, '.claude');
   const catalystDir = path.join(cwd, '.catalyst');
 
-  if (fs.existsSync(path.join(claudeDir, 'agents'))) {
-    console.log(`  ${yellow}Warning:${reset} .claude/agents already exists`);
-    console.log(`  ${dim}Files will be overwritten${reset}\n`);
-  }
-
-  // Install .claude/agents
-  const agentsSrc = path.join(src, '.claude', 'agents');
-  const agentsDest = path.join(claudeDir, 'agents');
-  if (fs.existsSync(agentsSrc)) {
-    copyDir(agentsSrc, agentsDest);
-    console.log(`  ${green}✓${reset} Installed .claude/agents`);
-  }
-
-  // Install .claude/commands
-  const commandsSrc = path.join(src, '.claude', 'commands');
-  const commandsDest = path.join(claudeDir, 'commands');
-  if (fs.existsSync(commandsSrc)) {
-    copyDir(commandsSrc, commandsDest);
-    console.log(`  ${green}✓${reset} Installed .claude/commands`);
-  }
-
-  // Install .claude/skills
-  const skillsSrc = path.join(src, '.claude', 'skills');
-  const skillsDest = path.join(claudeDir, 'skills');
-  if (fs.existsSync(skillsSrc)) {
-    copyDir(skillsSrc, skillsDest);
-    console.log(`  ${green}✓${reset} Installed .claude/skills`);
-  }
-
-  // Install .claude/rules — framework-owned always-on rules. Refresh on every
-  // (re)install so projects pick up updated coding/git/security standards.
-  const rulesSrc = path.join(src, '.claude', 'rules');
-  const rulesDest = path.join(claudeDir, 'rules');
-  if (fs.existsSync(rulesSrc)) {
-    copyDir(rulesSrc, rulesDest);
-    console.log(`  ${green}✓${reset} Installed .claude/rules`);
+  // Install chosen harness directories
+  const targetHarnesses = selectedHarness === 'all' ? ['claude', 'pi', 'codex'] : [selectedHarness];
+  for (const h of targetHarnesses) {
+    installHarness(h, src, cwd);
   }
 
   // Framework-owned config: always refresh on (re)install.
-  if (copyFile(path.join(src, '.catalyst/specs/spec-structure.yaml'), path.join(cwd, '.catalyst/specs/spec-structure.yaml'))) {
+  if (copyFileWithRewrite(path.join(src, '.catalyst/specs/spec-structure.yaml'), path.join(cwd, '.catalyst/specs/spec-structure.yaml'))) {
     console.log(`  ${green}✓${reset} Installed .catalyst/specs/spec-structure.yaml`);
   }
 
-  // Framework-owned runtime: the deterministic board/dashboard generator that
-  // every lifecycle command runs instead of hand-writing dashboard.html.
-  // Always refresh on (re)install.
-  if (copyFile(path.join(src, '.catalyst/bin/board.js'), path.join(cwd, '.catalyst/bin/board.js'))) {
+  // Framework-owned runtime: deterministic board/dashboard generator.
+  if (copyFileWithRewrite(path.join(src, '.catalyst/bin/board.js'), path.join(cwd, '.catalyst/bin/board.js'))) {
     console.log(`  ${green}✓${reset} Installed .catalyst/bin/board.js (board + dashboard generator)`);
   }
 
   // Framework-owned document templates (roadmap, dashboard, mission, etc.):
-  // always refresh — the commands read these to generate .catalyst/main docs.
   const tempSrc = path.join(src, '.catalyst', 'main', 'temp');
   const tempDest = path.join(catalystDir, 'main', 'temp');
   if (fs.existsSync(tempSrc)) {
-    copyDir(tempSrc, tempDest);
+    const targetDir = selectedHarness === 'pi' ? '.pi' : selectedHarness === 'codex' ? '.codex' : '.claude';
+    const commandsDir = selectedHarness === 'claude' ? 'commands' : 'prompts';
+    copyDirWithRewrite(tempSrc, tempDest, targetDir, commandsDir);
     console.log(`  ${green}✓${reset} Installed .catalyst/main/temp/ (doc templates)`);
   }
 
-  // User-owned config: create ONLY if missing — never clobber a customized
-  // project-config.yaml (branch settings, voice.language, agent_id, etc.) on update.
+  // User-owned config: create ONLY if missing.
   const pcDest = path.join(cwd, '.catalyst/main/project-config.yaml');
   if (!fs.existsSync(pcDest)) {
-    if (copyFile(path.join(src, '.catalyst/main/project-config.yaml'), pcDest)) {
+    if (copyFileWithRewrite(path.join(src, '.catalyst/main/project-config.yaml'), pcDest)) {
       console.log(`  ${green}✓${reset} Installed .catalyst/main/project-config.yaml`);
     }
   } else {
@@ -194,7 +369,7 @@ function install() {
   const voiceSrc = path.join(src, '.catalyst', 'voice');
   const voiceDest = path.join(catalystDir, 'voice');
   if (fs.existsSync(voiceSrc)) {
-    copyDir(voiceSrc, voiceDest);
+    copyDirWithRewrite(voiceSrc, voiceDest);
     console.log(`  ${green}✓${reset} Installed .catalyst/voice/`);
   }
 
@@ -205,8 +380,7 @@ function install() {
     console.log(`  ${green}✓${reset} Created .catalyst/specs/`);
   }
 
-  // Create a local secrets file (git-ignored) if it doesn't exist yet.
-  // Optional — only needed for voice meetings (/meet-spec).
+  // Create local secrets file (git-ignored) if it doesn't exist yet
   const secretsPath = path.join(catalystDir, 'secrets.local.yaml');
   if (!fs.existsSync(secretsPath)) {
     fs.writeFileSync(
@@ -219,14 +393,17 @@ function install() {
     console.log(`  ${green}✓${reset} Created .catalyst/secrets.local.yaml`);
   }
 
-  // Safety belt: ensure the local secrets file can never be committed.
+  // Safety belt: ensure local secrets file can never be committed
   ensureGitignore(cwd);
 
-  // Install AGENTS.md
+  // Install AGENTS.md (rewritten for selected harness)
   const agentsMdSrc = path.join(src, 'AGENTS.md');
   const agentsMdDest = path.join(cwd, 'AGENTS.md');
-  if (copyFile(agentsMdSrc, agentsMdDest)) {
-    console.log(`  ${green}✓${reset} Installed AGENTS.md`);
+  if (fs.existsSync(agentsMdSrc)) {
+    const targetDir = selectedHarness === 'pi' ? '.pi' : selectedHarness === 'codex' ? '.codex' : '.claude';
+    const commandsDir = selectedHarness === 'claude' ? 'commands' : 'prompts';
+    copyFileWithRewrite(agentsMdSrc, agentsMdDest, targetDir, commandsDir);
+    console.log(`  ${green}✓${reset} Installed AGENTS.md${selectedHarness !== 'claude' && selectedHarness !== 'all' ? ` (configured for ${targetDir}/)` : ''}`);
   }
 
   console.log(`

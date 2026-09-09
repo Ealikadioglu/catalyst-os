@@ -1,12 +1,12 @@
 {
   "name": "catalyst-os",
-  "version": "3.8.0",
+  "version": "3.8.1",
   "scripts": {
     "postinstall": "node .catalyst/bin/install.js",
     "validate": "node .catalyst/bin/validate-artifacts.js",
     "test": "node .catalyst/bin/board.test.js && node .catalyst/bin/validate-artifacts.js"
   },
-  "description": "AI-native spec-driven development framework for Claude Code",
+  "description": "AI-native spec-driven development framework for Claude Code, Pi, and Codex",
   "bin": {
     "catalyst-os": ".catalyst/bin/install.js"
   },
@@ -22,6 +22,8 @@
   "keywords": [
     "claude",
     "claude-code",
+    "pi",
+    "codex",
     "ai",
     "agents",
     "specification",

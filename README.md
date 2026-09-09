@@ -25,16 +25,28 @@ npx catalyst-os                        # Install to your project
 npx catalyst-os
 ```
 
-This installs `.claude/` (agents, skills, commands) to your project root.
+During installation, select your AI harness:
+1. **Claude Code** (`.claude/` directory, slash commands in `commands/`)
+2. **Pi** (`.pi/` directory, prompt templates in `prompts/`)
+3. **OpenAI Codex** (`.codex/` directory, prompt templates in `prompts/`)
+4. **All** (installs support for Claude Code, Pi, and Codex simultaneously)
 
-Then run `/catalyze-project` to initialize — this detects your workspace type, generates foundation docs, and bootstraps `CLAUDE.md` with the skill enforcement directive.
+You can also specify the harness directly with `--harness`:
+```bash
+npx catalyst-os --harness pi
+# or: claude | codex | all
+```
+
+This installs your chosen harness directory (`.claude/`, `.pi/`, or `.codex/`) and universal instructions (`AGENTS.md`) to your project root.
+
+Then run `/catalyze-project` to initialize — this detects your workspace type, generates foundation docs, and bootstraps instructions with the skill enforcement directive.
 
 ---
 
 ## Architecture
 
 ```
-.claude/
+.claude/ (or .pi/ or .codex/)
 ├── agents/              # WHO - Agent personas and behavior
 ├── skills/              # HOW - Process knowledge and workflows
 │   ├── using-skills/    # Bootstrap: enforces skill loading
@@ -57,7 +69,7 @@ Then run `/catalyze-project` to initialize — this detects your workspace type,
 │   ├── project-initialization/
 │   ├── project-sync/
 │   └── spec-update/
-└── commands/            # WHEN - Thin triggers (invoke skills)
+└── commands/            # WHEN - Thin triggers (prompts/ in Pi & Codex)
 
 .catalyst/
 ├── main/                # Mission, roadmap, tech-stack, project-config
@@ -66,6 +78,8 @@ Then run `/catalyze-project` to initialize — this detects your workspace type,
 ├── specs/               # Active specifications
 ├── completed/           # Archived specs
 └── library/             # Reusable patterns
+
+AGENTS.md                # Universal instructions, architecture, and agent registry
 ```
 
 ---
@@ -74,15 +88,15 @@ Then run `/catalyze-project` to initialize — this detects your workspace type,
 
 | Layer | Contains | Location | Role |
 |-------|----------|----------|------|
-| **Command** | WHEN - User trigger | `.claude/commands/` | Thin wrapper (16-18 lines) |
-| **Skill** | HOW - Process knowledge | `.claude/skills/` | Rich workflow logic |
-| **Agent** | WHO - Persona + behavior | `.claude/agents/` | Specialized executor |
+| **Command / Prompt** | WHEN - User trigger | `.claude/commands/` or `.pi/prompts/` | Thin wrapper (16-18 lines) |
+| **Skill** | HOW - Process knowledge | `.claude/skills/` or `.pi/skills/` | Rich workflow logic |
+| **Agent** | WHO - Persona + behavior | `.claude/agents/` or `.pi/agents/` | Specialized executor |
 
 Commands invoke skills. Skills define process. Agents execute within skill boundaries.
 
 ### Skill Enforcement
 
-`CLAUDE.md` bootstraps the system by loading `using-skills` at conversation start. This skill contains the full index and the hard rule:
+`AGENTS.md` bootstraps the system across all harnesses by loading `using-skills` at conversation start. This skill contains the full index and the hard rule:
 
 > **If there is even a 1% chance a skill applies, you MUST load it.**
 

@@ -234,7 +234,7 @@ if (specStructure) {
 
 // 6. Core files
 console.log('\nCore Files:');
-const coreFiles = ['CLAUDE.md', 'AGENTS.md', 'package.json', '.catalyst/main/project-config.yaml', '.catalyst/bin/board.js', '.catalyst/main/temp/temp-dashboard.html'];
+const coreFiles = ['AGENTS.md', 'package.json', '.catalyst/main/project-config.yaml', '.catalyst/bin/board.js', '.catalyst/main/temp/temp-dashboard.html'];
 for (const f of coreFiles) {
   if (fileExists(f)) {
     ok(f);
