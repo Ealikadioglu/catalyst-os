@@ -11,6 +11,7 @@ description: >
 
   DO NOT implement features yourself - delegate to Forge-Master.
 model: opus
+effort: medium
 color: purple
 skills:
   - build-orchestration

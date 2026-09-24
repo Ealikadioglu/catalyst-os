@@ -41,7 +41,7 @@ PHASE 4  Board       node .catalyst/bin/board.js --by "/forge-spec-worktree"
 REPORT               PR URL, worktree path, decisions table, halt (if any)
 ```
 
-Do not return to the user between phases. Do not say "waiting on X" and end the turn — read the result and continue. Context checkpoints ("good time to compact") are **not** emitted in autopilot; write `tasks.md ## Current Session` silently instead.
+Do not return to the user between phases. Do not say "waiting on X" and end the turn — read the result and continue. A progress update is not the finish line: before ending any turn, check `tasks.md` and the chain above; if a phase is still open and no halt condition applies, keep going. A builder that stops with open items gets the nudge from `agent-delegation` (max 2), then counts as a failed attempt. Context checkpoints ("good time to compact") are **not** emitted in autopilot; write `tasks.md ## Current Session` silently instead.
 
 ## Decision Policy
 
@@ -131,5 +131,6 @@ The decisions table goes in the report itself, every row, not a pointer to `hand
 | "This one is important, I should check with the user" | The user chose autopilot to not be checked with. Pick recommended, log, continue. |
 | "There is no recommended option" | Then rule 2 makes one. Precedence: spec → conventions → codebase → smallest scope. |
 | "I'll just report progress and wait" | Ending the turn IS stopping. Read the result and continue. |
+| "The agent said it's done" | A text-only end of turn is a report. Check its open items; nudge if any remain. |
 | "The audit failed, better stop now" | One remediation pass is part of the chain. Halt only on the second failure. |
 | "It's safer to skip the PR" | `/forge-spec-worktree` authorizes the PR. Skipping it is stopping short. |

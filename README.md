@@ -39,6 +39,8 @@ npx catalyst-os --harness pi
 
 This installs your chosen harness directory (`.claude/`, `.pi/`, or `.codex/`) and universal instructions (`AGENTS.md`) to your project root.
 
+No `CLAUDE.md` is created: Claude Code 2.1.277+ reads `AGENTS.md` when a folder has no `CLAUDE.md` (toggle in `/config`). If your project already has a `CLAUDE.md`, it wins — add `@AGENTS.md` to it or merge it into `AGENTS.md`.
+
 Then run `/catalyze-project` to initialize — this detects your workspace type, generates foundation docs, and bootstraps instructions with the skill enforcement directive.
 
 ---

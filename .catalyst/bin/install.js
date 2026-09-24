@@ -34,19 +34,19 @@ const HARNESS_CONFIGS = {
     name: 'Claude Code',
     dir: '.claude',
     commandsDir: 'commands',
-    writeClaudeMd: true,
+    checkClaudeMd: true,
   },
   pi: {
     name: 'Pi',
     dir: '.pi',
     commandsDir: 'prompts',
-    writeClaudeMd: false,
+    checkClaudeMd: false,
   },
   codex: {
     name: 'OpenAI Codex',
     dir: '.codex',
     commandsDir: 'prompts',
-    writeClaudeMd: false,
+    checkClaudeMd: false,
   },
 };
 
@@ -280,12 +280,12 @@ function installHarness(harnessKey, src, cwd) {
     console.log(`  ${green}✓${reset} Installed ${config.dir}/rules`);
   }
 
-  // If Claude Code, write 1-line import bridge so Claude Code loads AGENTS.md
-  if (config.writeClaudeMd) {
-    const claudeMdDest = path.join(cwd, 'CLAUDE.md');
-    if (!fs.existsSync(claudeMdDest)) {
-      fs.writeFileSync(claudeMdDest, '@AGENTS.md\n');
-      console.log(`  ${green}✓${reset} Created CLAUDE.md (@AGENTS.md import bridge)`);
+  // Claude Code >= 2.1.277 reads AGENTS.md when a folder has no CLAUDE.md, but a CLAUDE.md still wins.
+  if (config.checkClaudeMd) {
+    const claudeMdPath = path.join(cwd, 'CLAUDE.md');
+    if (fs.existsSync(claudeMdPath) && !fs.readFileSync(claudeMdPath, 'utf8').includes('AGENTS.md')) {
+      console.log(`  ${yellow}Warning:${reset} CLAUDE.md exists and hides AGENTS.md from Claude Code`);
+      console.log(`  ${dim}Add a line "@AGENTS.md" to it, or merge it into AGENTS.md and delete it${reset}`);
     }
   }
 

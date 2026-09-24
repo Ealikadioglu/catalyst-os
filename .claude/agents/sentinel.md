@@ -9,6 +9,7 @@ description: >
 
   DO NOT run E2E tests yourself - delegate to Sentinel.
 model: sonnet
+effort: medium
 color: red
 skills:
   - verification-before-completion

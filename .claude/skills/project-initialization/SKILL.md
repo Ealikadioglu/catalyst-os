@@ -87,7 +87,7 @@ Create in `.catalyst/main/`:
 
 ### Phase 5: Bootstrap Instructions (AGENTS.md / CLAUDE.md)
 
-The project's `AGENTS.md` (and `CLAUDE.md` if using Claude Code) must contain the Catalyst OS bootstrap directive. This is what makes skills load automatically across Claude Code, Pi, and Codex.
+The project's `AGENTS.md` must contain the Catalyst OS bootstrap directive. This is what makes skills load automatically across Claude Code, Pi, and Codex. Claude Code (2.1.277+) reads `AGENTS.md` itself when the folder has no `CLAUDE.md`, so do not create one.
 
 ```
 IF AGENTS.md exists:
@@ -99,10 +99,10 @@ IF AGENTS.md exists:
 IF AGENTS.md does NOT exist:
   Create it with the bootstrap section
 
-IF CLAUDE.md exists (or Claude Code is used):
-  If CLAUDE.md does not exist, create it with:
-    @AGENTS.md
-  If CLAUDE.md exists, ensure it imports @AGENTS.md or contains the bootstrap directive
+IF CLAUDE.md exists:
+  It takes precedence, so Claude Code will not read AGENTS.md on its own
+  Ensure it imports @AGENTS.md or contains the bootstrap directive
+  (Do NOT create a CLAUDE.md when none exists)
 ```
 
 **Bootstrap section to add:**

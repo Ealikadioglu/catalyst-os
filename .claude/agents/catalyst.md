@@ -11,6 +11,7 @@ description: >
 
   DO NOT shape specifications yourself - delegate to Catalyst.
 model: opus
+effort: medium
 color: purple
 skills:
   - spec-shaping

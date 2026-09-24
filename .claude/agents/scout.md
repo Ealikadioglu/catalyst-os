@@ -9,6 +9,7 @@ description: >
 
   DO NOT search the web yourself - delegate to Scout.
 model: sonnet
+effort: low
 color: blue
 ---
 

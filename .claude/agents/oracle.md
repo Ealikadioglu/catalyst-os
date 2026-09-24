@@ -9,6 +9,7 @@ description: >
 
   DO NOT gather requirements yourself - delegate to Oracle.
 model: sonnet
+effort: medium
 color: blue
 skills:
   - brainstorming
