@@ -42,4 +42,4 @@ echo "=== PROJECT CONFIG ===" && cat .catalyst/main/project-config.yaml 2>/dev/n
 
 Invoking this command is the user's explicit authorization for the **entire** chain, including `git push` and `gh pr create`. There is no confirmation step anywhere in the run. The only things that end the run early are the **halt conditions** listed in the `autopilot` skill (three failed attempts on one task, a second audit failure, a git/gh error, a secret in the diff, or a destructive database change).
 
-When it halts, it writes `## Autopilot Halt` to the spec's `handoff.md` with the exact command to resume, and reports. When it finishes, it reports the PR URL, the worktree path, and the `## Autopilot Decisions` table.
+When it halts, it writes `## Autopilot Halt` to the spec's `handoff.md` with the exact command to resume, and reports. When it finishes, it reports the PR URL, the worktree path, and every row of the `## Autopilot Decisions` table inline, so each choice made while the user was away can be reviewed in the report.

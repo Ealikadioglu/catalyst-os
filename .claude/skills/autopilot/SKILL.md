@@ -98,7 +98,7 @@ On halt:
 **Resume:** fix, then `/audit-spec @2026-09-02-retry` from inside the worktree, then `/seal-spec @2026-09-02-retry`
 ```
 
-Then report and end the turn. **Never** `git worktree remove`, `git push --force`, or merge on halt.
+Then report, with the decisions table so far, and end the turn. **Never** `git worktree remove`, `git push --force`, or merge on halt.
 
 ## Escalation replaces "ask"
 
@@ -114,9 +114,15 @@ Commits:   RED {hash} · GREEN {hash} · seal {hash}
 Audit:     PASS (first run | after 1 remediation pass)
 PR:        {url}  (base: {development_branch})
 Worktree:  {path}   — remove with: git worktree remove {path}
-Decisions: {count} (see handoff.md ## Autopilot Decisions)
 Board:     {board.js summary line}
+
+Decisions ({count}):
+| # | Phase | Decision point | Chosen | Alternatives | Why |
+|---|-------|----------------|--------|--------------|-----|
+{every row of handoff.md ## Autopilot Decisions, verbatim}
 ```
+
+The decisions table goes in the report itself, every row, not a pointer to `handoff.md`: the user was away while each choice was made, and this is where they review them. Zero decisions → `Decisions: none`.
 
 ## Rationalization Prevention
 

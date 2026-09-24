@@ -226,6 +226,15 @@ function ensureGitignore(cwd) {
 }
 
 /**
+ * Harnesses whose agents/ dir already exists in the project
+ */
+function detectInstalledHarnesses(cwd) {
+  return Object.keys(HARNESS_CONFIGS).filter((key) =>
+    fs.existsSync(path.join(cwd, HARNESS_CONFIGS[key].dir, 'agents'))
+  );
+}
+
+/**
  * Install agents, commands/prompts, skills, and rules for a specific harness
  */
 function installHarness(harnessKey, src, cwd) {
@@ -329,8 +338,19 @@ async function install() {
 
   const catalystDir = path.join(cwd, '.catalyst');
 
-  // Install chosen harness directories
+  // Harnesses already installed here are refreshed too: updating only the selected one
+  // leaves the others on an old framework version that still loads and runs.
   const targetHarnesses = selectedHarness === 'all' ? ['claude', 'pi', 'codex'] : [selectedHarness];
+  for (const h of detectInstalledHarnesses(cwd)) {
+    if (!targetHarnesses.includes(h)) {
+      targetHarnesses.push(h);
+      console.log(`  ${dim}•${reset} Also refreshing existing ${HARNESS_CONFIGS[h].dir}/ so it does not go stale\n`);
+    }
+  }
+  // AGENTS.md and templates can point at one harness dir only; prefer .claude when present.
+  const primaryHarness = targetHarnesses.includes('claude') ? 'claude' : targetHarnesses[0];
+  const primaryDir = HARNESS_CONFIGS[primaryHarness].dir;
+  const primaryCommandsDir = HARNESS_CONFIGS[primaryHarness].commandsDir;
   for (const h of targetHarnesses) {
     installHarness(h, src, cwd);
   }
@@ -349,9 +369,7 @@ async function install() {
   const tempSrc = path.join(src, '.catalyst', 'main', 'temp');
   const tempDest = path.join(catalystDir, 'main', 'temp');
   if (fs.existsSync(tempSrc)) {
-    const targetDir = selectedHarness === 'pi' ? '.pi' : selectedHarness === 'codex' ? '.codex' : '.claude';
-    const commandsDir = selectedHarness === 'claude' ? 'commands' : 'prompts';
-    copyDirWithRewrite(tempSrc, tempDest, targetDir, commandsDir);
+    copyDirWithRewrite(tempSrc, tempDest, primaryDir, primaryCommandsDir);
     console.log(`  ${green}✓${reset} Installed .catalyst/main/temp/ (doc templates)`);
   }
 
@@ -400,10 +418,8 @@ async function install() {
   const agentsMdSrc = path.join(src, 'AGENTS.md');
   const agentsMdDest = path.join(cwd, 'AGENTS.md');
   if (fs.existsSync(agentsMdSrc)) {
-    const targetDir = selectedHarness === 'pi' ? '.pi' : selectedHarness === 'codex' ? '.codex' : '.claude';
-    const commandsDir = selectedHarness === 'claude' ? 'commands' : 'prompts';
-    copyFileWithRewrite(agentsMdSrc, agentsMdDest, targetDir, commandsDir);
-    console.log(`  ${green}✓${reset} Installed AGENTS.md${selectedHarness !== 'claude' && selectedHarness !== 'all' ? ` (configured for ${targetDir}/)` : ''}`);
+    copyFileWithRewrite(agentsMdSrc, agentsMdDest, primaryDir, primaryCommandsDir);
+    console.log(`  ${green}✓${reset} Installed AGENTS.md${primaryHarness !== 'claude' ? ` (configured for ${primaryDir}/)` : ''}`);
   }
 
   console.log(`
