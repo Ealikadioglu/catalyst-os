@@ -9,6 +9,7 @@ description: >
 
   DO NOT implement mobile code yourself - delegate to Artificer.
 model: opus
+effort: medium
 color: green
 skills:
   - mobile-development

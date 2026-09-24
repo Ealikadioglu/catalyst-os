@@ -62,6 +62,7 @@ Every agent prompt MUST include:
 - [ ] Requirements or acceptance criteria
 - [ ] Test file references
 - [ ] Expected output format
+- [ ] Closing line: "Before you end your turn, check your task list: if anything is still open, keep going, or say what is blocking it."
 ```
 
 ### Good Prompt Example
@@ -101,6 +102,16 @@ Agent reports "task complete, tests pass":
 ```
 
 **NEVER mark a task as Done based solely on an agent's self-report.**
+
+### Stopped With Open Items
+
+A text-only end of turn is a report, not proof the task is done. If the agent stopped while its `tasks.md` rows or acceptance criteria are still open and it named no blocker, continue the same agent (SendMessage) with the open items listed:
+
+```
+Your task list still has open items: {item}, {item}. Continue with them. If one is blocked, say what is blocking it.
+```
+
+At most **2 nudges** per task. If it stops again with the same items open, count it as a failed attempt and follow the Escalation Protocol.
 
 ## Parallel Execution Rules
 

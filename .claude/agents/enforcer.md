@@ -9,6 +9,7 @@ description: >
 
   DO NOT write tests yourself - delegate to Enforcer.
 model: sonnet
+effort: medium
 color: red
 skills:
   - test-driven-development

@@ -9,6 +9,7 @@ description: >
 
   DO NOT write database code yourself - delegate to Alchemist.
 model: opus
+effort: high
 color: green
 skills:
   - systematic-debugging

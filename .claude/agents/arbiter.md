@@ -12,6 +12,7 @@ description: >
 
   DO NOT validate implementations yourself - delegate to Arbiter.
 model: opus
+effort: medium
 color: purple
 skills:
   - spec-validation

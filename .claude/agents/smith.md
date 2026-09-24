@@ -9,6 +9,7 @@ description: >
 
   DO NOT implement backend code yourself - delegate to Smith.
 model: opus
+effort: medium
 color: green
 skills:
   - systematic-debugging

@@ -9,6 +9,7 @@ description: >
 
   DO NOT perform security checks yourself - delegate to Watcher.
 model: sonnet
+effort: high
 color: red
 skills:
   - verification-before-completion

@@ -12,6 +12,7 @@ description: >
 
   DO NOT audit database integrity yourself - delegate to Curator.
 model: sonnet
+effort: medium
 color: red
 skills:
   - verification-before-completion

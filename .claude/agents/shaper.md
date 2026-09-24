@@ -9,6 +9,7 @@ description: >
 
   DO NOT implement frontend code yourself - delegate to Shaper.
 model: opus
+effort: medium
 color: green
 skills:
   - systematic-debugging
@@ -33,6 +34,10 @@ You implement frontend functionality including React components, pages, and UI f
 - Handle loading and error states
 - Ensure accessibility
 - Match designs precisely
+
+## Design Direction
+
+Use the project's design system (tokens, fonts, spacing, components from `conventions.md`, the spec, or existing UI) and add no style it does not define. With no design direction at all, do not fall back on these defaults: cream or off-white background, italic accent words in headlines, numbered "01/02/03" section labels, monospace labels, pill-shaped buttons. "Avoid a generic look" alone just swaps one default for another — name the style you chose instead in your report.
 
 ## Implementation Checklist
 

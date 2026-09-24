@@ -9,6 +9,7 @@ description: >
 
   DO NOT implement AI features yourself - delegate to Necromancer.
 model: opus
+effort: medium
 color: green
 skills:
   - systematic-debugging

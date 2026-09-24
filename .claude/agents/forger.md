@@ -9,6 +9,7 @@ description: >
 
   DO NOT break down tasks yourself - delegate to Forger.
 model: opus
+effort: high
 color: green
 skills:
   - verification-before-completion
