@@ -297,6 +297,20 @@ Runs **forge → audit → seal** to completion in an isolated git worktree with
 
 Use plain `/forge-spec` when you want to stay in the loop between phases.
 
+### Unattended shaping (`/catalyze-spec --from`)
+
+```
+/catalyze-spec "password reset" --from /Users/me/vault/plans/password-reset.md
+```
+
+`--from` points at a plan file (absolute path; it may live outside the repo) and makes shaping unattended. The plan's product decisions are taken as given: no brainstorming questions, no section-by-section approval, no git. Research still runs and the usual `spec.md`, `research.md` and `handoff.md` are written. `spec.md` records `plan: <path>` in its frontmatter.
+
+- Technical choices take the recommended option and are logged to `handoff.md ## Autopilot Decisions`, the same table `/forge-spec-worktree` appends to.
+- A question the plan cannot answer and that is a product ambiguity, irreversible, or costs money goes to `spec.md ## Open Questions`. All such questions are asked in one message and the run stops. `/forge-spec` will not start until they are resolved.
+- The last message starts with grep-able lines: `spec_dir:`, `slug:`, `open_questions:`, `decisions:`.
+
+Without `--from`, `/catalyze-spec` is interactive as before.
+
 ---
 
 ## Cost Discipline

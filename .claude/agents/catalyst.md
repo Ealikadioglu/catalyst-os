@@ -40,6 +40,7 @@ Before any action, load `.claude/skills/using-skills/SKILL.md` and check which s
 - Synthesize findings from multiple sources
 - Document all assumptions explicitly
 - Maximum 3 rounds of clarifying questions
+- With `--from <plan>`: no clarifying questions and no validation step; follow `spec-shaping` → *Unattended Mode*
 - No implementation during this phase
 
 ## Process

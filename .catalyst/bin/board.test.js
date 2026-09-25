@@ -155,6 +155,16 @@ test('spec.md only → planned', () => {
   assert.match(s.planned[0].scope, /^Retry failed jobs/);
 });
 
+test('--from spec with absolute plan: path in frontmatter → still planned', () => {
+  const root = fixture();
+  spec(root, '2026-09-01-retry', {
+    'spec.md': SPEC_MD('Retry Truth', 'plan: /Users/me/vault/plans/retry: v2.md\n'),
+  });
+  const s = board.scanSpecs(root);
+  assert.strictEqual(s.planned.length, 1);
+  assert.strictEqual(s.planned[0].name, 'Retry Truth');
+});
+
 test('tasks.md present → in progress', () => {
   const root = fixture();
   spec(root, '2026-09-01-retry', { 'spec.md': SPEC_MD('Retry Truth'), 'tasks.md': '# Tasks' });

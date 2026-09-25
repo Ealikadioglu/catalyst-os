@@ -41,7 +41,7 @@ Skills tell you HOW. User instructions tell you WHAT.
 | **agent-delegation** | `.claude/skills/agent-delegation/SKILL.md` | Orchestrating agents — never implement as orchestrator |
 | **receiving-code-review** | `.claude/skills/receiving-code-review/SKILL.md` | Receiving feedback from Inquisitor, user, or reviewer |
 | **workspace-detection** | `.claude/skills/workspace-detection/SKILL.md` | Initializing a project — detect single_repo, monorepo, or multirepo |
-| **autopilot** | `.claude/skills/autopilot/SKILL.md` | `/forge-spec-worktree` or any unattended run — decide with "recommended", log, never stop to ask |
+| **autopilot** | `.claude/skills/autopilot/SKILL.md` | `/forge-spec-worktree`, `/catalyze-spec --from`, or any unattended run — decide with "recommended", log, never stop to ask |
 | **unslop** | `.claude/skills/unslop/SKILL.md` | Writing any artifact a human reads — spec, research, handoff, validation, journal, commit, PR, your reply |
 
 ### Orchestration Skills (workflow-specific)

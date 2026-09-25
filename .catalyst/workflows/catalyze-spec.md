@@ -8,6 +8,8 @@
 
 ```
 Command:      /catalyze-spec "feature description"
+Unattended:   /catalyze-spec "feature description" --from /abs/plan.md
+              (no questions, no approvals, no git; see spec-shaping → Unattended Mode)
 Orchestrator: Catalyst (Opus)
 Agents:       Oracle → [Seer + Scout + Surveyor] → Scribe
 Output:       .catalyst/specs/YYYY-MM-DD-{slug}/

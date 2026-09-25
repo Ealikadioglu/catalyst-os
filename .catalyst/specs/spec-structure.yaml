@@ -14,6 +14,7 @@ files:
     note: |
       Frontmatter enables cross-spec context assembly.
       Body contains requirements and acceptance criteria.
+      Optional `plan: <absolute path>` records the plan file of a --from run.
 
   research.md:
     owner: scribe
@@ -59,7 +60,7 @@ files:
   handoff.md:
     owner: scribe
     purpose: Human-readable summary (colleague walkthrough)
-    created: forge-spec (started), audit-spec (finalized)
+    created: catalyze-spec (--from: Autopilot Decisions) or forge-spec (started), audit-spec (finalized)
     updated_by: [scribe, arbiter]
     pattern: narrative
     note: |

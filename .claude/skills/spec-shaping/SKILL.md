@@ -48,6 +48,52 @@ RIGHT:  oracle → [seer + scout + surveyor] (parallel research)
 | Seer + Scout + Surveyor | Oracle → All (need requirements first) |
 | All research agents | Research → Scribe (compile after) |
 
+## Unattended Mode (`--from`)
+
+`/catalyze-spec "<description>" --from <path-to-plan.md>` shapes a spec with nobody watching, for callers (a kanban factory, `claude -p`) whose product decisions already live in a plan file. Without `--from`, skip this section: the phases below run as written.
+
+The plan is the product source of truth. Its decisions are given; never re-ask them. Load the `autopilot` skill (section *Catalyze*): its decision policy and `## Autopilot Decisions` table apply here.
+
+| Phase | Change in unattended mode |
+|-------|---------------------------|
+| Start | Resolve the path (relative → against cwd; log it as a decision). Unreadable file → stop with one line: `error: cannot read plan <path>`. |
+| 0–1 | Unchanged. |
+| 2 | Oracle runs in **plan-extraction mode** (prompt below). It asks nothing. |
+| 3–4 | Unchanged, parallel. |
+| 5 | **Skipped.** Sort every gap Oracle returned (next table). No "Does this look right so far?". |
+| 6 | Scribe writes `spec.md` with `plan: <absolute path>` in frontmatter, `research.md`, and `handoff.md` starting with `**Mode:** AUTOPILOT (catalyze)` plus the `## Autopilot Decisions` table. |
+| Git | None. No branch, no commit. |
+| Board | Unchanged (file-only). |
+
+Oracle prompt: *"PLAN-EXTRACTION MODE — ask the user nothing. Read `<plan path>`. Return requirements in your usual Output format, then `### Gaps`: every question the plan does not answer, one line each, with your recommended answer."*
+
+Sort each gap:
+
+| Gap is… | Do |
+|---------|----|
+| Technical (library, file layout, pattern, default value) | Decide by autopilot's precedence (plan → conventions/tech-stack → codebase → smallest scope). One table row, Phase `catalyze`. |
+| **Blocking**: a product ambiguity the plan leaves open, an irreversible choice, or one with cost impact | Blocking question (below). |
+
+When in doubt, it is technical. A blocking question stops an unattended pipeline; spend one only when a wrong guess would ship the wrong product or cost money.
+
+**Blocking questions.** Scribe writes them to `spec.md ## Open Questions` first, one bullet each. Then ask all of them in **one** message and end the turn. If the answer comes in the same session, patch `spec.md`, mark each bullet `~~question~~ Resolved: <answer>`, add a decision row per answer, and finish. A headless run simply ends there; `/forge-spec` refuses to start until the questions are resolved. With no blocking questions, `## Open Questions` reads `None.`
+
+**Final message** (replaces *Output* below). Key-value lines first, so a caller can grep them; one `spec_dir`/`slug` pair per spec if the plan yields several:
+
+```
+spec_dir: .catalyst/specs/YYYY-MM-DD-{slug}
+slug: YYYY-MM-DD-{slug}
+open_questions: 0
+decisions: 4
+board: {board.js summary line}
+
+| # | Phase | Decision point | Chosen | Alternatives | Why |
+|---|-------|----------------|--------|--------------|-----|
+{every row of handoff.md ## Autopilot Decisions}
+
+{if open_questions > 0: the questions, numbered}
+```
+
 ## Workflow
 
 ### Phase 0: Roadmap Impact Assessment
@@ -70,6 +116,8 @@ Create the spec structure:
 ```
 
 ### Phase 2: Requirements Gathering (Oracle)
+
+> `--from`: plan-extraction mode instead. See *Unattended Mode*.
 
 Spawn Oracle agent:
 ```
@@ -116,6 +164,8 @@ path. Each finding: the pattern, where you saw it, what it changes for the spec.
 ```
 
 ### Phase 5: Design Validation (Orchestrator — Direct)
+
+> `--from`: skipped. See *Unattended Mode*.
 
 **Before compiling the final spec, validate the proposed design with the user.**
 

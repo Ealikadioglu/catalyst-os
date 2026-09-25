@@ -112,6 +112,7 @@ DO NOT CREATE:
 spec: YYYY-MM-DD-slug
 status: draft              # draft | in_progress | validating | complete
 domain: auth               # auth, payments, ui, api, database, etc.
+plan: /abs/path/plan.md    # only for /catalyze-spec --from; omit otherwise
 
 provides:                  # What this spec creates
   - Capability 1

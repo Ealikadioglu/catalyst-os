@@ -144,6 +144,8 @@ For complex features, validate the design in sections before compiling the full 
 
 ## Gate Function
 
+Does not apply to `/catalyze-spec --from`: the plan file stands in for the dialogue (`spec-shaping` → *Unattended Mode*).
+
 ```
 BEFORE starting implementation on any feature:
   Ask: "Have I brainstormed with the user?"

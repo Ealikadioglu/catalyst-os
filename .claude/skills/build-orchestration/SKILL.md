@@ -33,7 +33,7 @@ A forge cycle's token bill is dominated by **prose that gets re-read**, not by t
 
 - Spec must exist in `.catalyst/specs/`
 - `spec.md` must be complete
-- No unresolved "Open Questions"
+- No unresolved "Open Questions": `spec.md ## Open Questions` must read `None.`, be empty, or have every bullet marked `~~…~~ Resolved: …`
 
 ## Output Location
 

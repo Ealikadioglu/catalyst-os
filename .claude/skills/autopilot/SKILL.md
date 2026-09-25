@@ -1,12 +1,12 @@
 ---
 name: autopilot
-description: Run an unattended chain end to end, taking the recommended option at every decision, logging it, and never stopping to ask. Use for /forge-spec-worktree or whenever the user says the run is AFK, overnight, or should not stop for questions.
+description: Run an unattended chain end to end, taking the recommended option at every decision, logging it, and never stopping to ask. Use for /forge-spec-worktree, /catalyze-spec --from, or whenever the user says the run is AFK, overnight, or should not stop for questions.
 ---
 
 # Autopilot
 
-> **When to invoke:** `/forge-spec-worktree`, or whenever the user says the run should be unattended ("AFK", "don't ask me", "run it to the end", "overnight").
-> **Used by:** Forge-Master (owner of the chain), Arbiter, and every builder agent spawned during the run.
+> **When to invoke:** `/forge-spec-worktree`, `/catalyze-spec --from <plan>` (see *Catalyze*), or whenever the user says the run should be unattended ("AFK", "don't ask me", "run it to the end", "overnight").
+> **Used by:** Forge-Master (owner of the chain), Arbiter, and every builder agent spawned during the run; Catalyst for `--from` runs.
 > **Type:** Rigid.
 
 ## Purpose
@@ -123,6 +123,14 @@ Decisions ({count}):
 ```
 
 The decisions table goes in the report itself, every row, not a pointer to `handoff.md`: the user was away while each choice was made, and this is where they review them. Zero decisions → `Decisions: none`.
+
+## Catalyze (`/catalyze-spec --from`)
+
+Shaping a spec from a plan file uses this skill's Decision Policy and table, with three differences. The phase-by-phase changes live in `spec-shaping` → *Unattended Mode*.
+
+- **Precedence starts with the plan.** Plan → `conventions.md`/`tech-stack.md` → codebase → smallest scope. Rows use Phase `catalyze`. Forge's autopilot later appends to the same table; it never opens a second one.
+- **One question message is allowed.** A gap the plan leaves open that is a product ambiguity, an irreversible choice, or has cost impact is a blocking question. Write all of them to `spec.md ## Open Questions`, ask them in one message, end the turn. Everything else is decided and logged. This replaces Iron Law 1 for catalyze only.
+- **No git and no chain.** Catalyze never branches or commits, and never starts `/forge-spec` itself. The final message is the key-value block in `spec-shaping`.
 
 ## Rationalization Prevention
 
