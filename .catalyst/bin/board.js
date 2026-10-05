@@ -19,8 +19,9 @@
  *   Done         folder lives in .catalyst/specs/completed/      → (none)
  *
  * Planning judgment (Backlog order, Vision) is human/model-owned: those
- * sections of roadmap.md are preserved verbatim. Everything derivable from
- * disk is regenerated. Exit 0 on success, 1 when no project root is found.
+ * sections of roadmap.md are preserved verbatim. Backlog `### N.` numbers are
+ * permanent IDs, not ranks. Done rows are merged, never dropped. Everything
+ * else derivable from disk is regenerated. Exit 0 on success, 1 when no project root is found.
  */
 
 'use strict';
@@ -261,30 +262,100 @@ function parsePriority(raw) {
   return '';
 }
 
+const NEXT_ID_RE = /^<!--\s*board:next-id\s+(\d+)\s*-->\s*$/;
+const EMPTY_BACKLOG = '_Empty. Run `/plan-project` to queue the next specs._';
+const BACKLOG_INTRO =
+  '<!--\nIdeas we WILL build, not yet catalyzed. ORDERED queue: position is priority, top is next.\n`### N.` is a permanent ID that `Depends on: #N` refers to. Never renumber; write new\nentries without a number and board.js assigns one. One entry = one spec.\nEntries drop off once catalyzed or marked ✅. Free text between `---` separators is kept.\n-->';
+
+function parseEntry(raw, name, id) {
+  const slug = field(raw, 'Catalyze as').replace(/`/g, '').trim();
+  return {
+    id,
+    name,
+    slug,
+    scope: field(raw, 'Scope'),
+    doneWhen: field(raw, 'Done when'),
+    dependsOn: field(raw, 'Depends on'),
+    priority: parsePriority(field(raw, 'Priority')),
+    command: lastCommandBlock(raw),
+    raw: raw.replace(/\s+$/, ''),
+  };
+}
+
+/**
+ * Split the Backlog body into a verbatim preamble and an ordered list of blocks:
+ * `### ` entries and free-text blocks (track headers, notes). An entry ends at a
+ * `---` line or a blockquoted heading (`> ### Track`), so free text is never
+ * swallowed into the entry above it.
+ */
 function parseBacklog(body) {
-  const entries = [];
-  const parts = body.split(/^(?=###\s)/m).filter((p) => /^###\s/.test(p));
-  parts.forEach((raw, i) => {
-    const head = raw.match(/^###\s+(?:(\d+)\.\s*)?(.+?)\s*$/m);
-    const name = head ? head[2].trim() : `Entry ${i + 1}`;
-    const rank = head && head[1] ? parseInt(head[1], 10) : i + 1;
-    const slug = field(raw, 'Catalyze as').replace(/`/g, '').trim();
-    const bodyOnly = raw.replace(/^###[^\n]*\n?/, '').replace(/\n---\s*$/, '').replace(/\s+$/, '');
-    entries.push({
-      rank,
-      name,
-      slug,
-      scope: field(raw, 'Scope'),
-      doneWhen: field(raw, 'Done when'),
-      dependsOn: field(raw, 'Depends on'),
-      priority: parsePriority(field(raw, 'Priority')),
-      command: lastCommandBlock(raw),
-      raw: bodyOnly,
-    });
+  const preamble = [];
+  const blocks = [];
+  let cur = null;
+  let inFence = false;
+  let nextId = 0;
+  const close = () => {
+    if (cur && (cur.type === 'entry' || cur.lines.join('').trim())) blocks.push(cur);
+    cur = null;
+  };
+  for (const line of body.split(/\r?\n/)) {
+    const marker = !inFence && line.trim().match(NEXT_ID_RE);
+    if (marker) {
+      nextId = Math.max(nextId, parseInt(marker[1], 10));
+      continue;
+    }
+    const fence = /^```/.test(line.trim());
+    const head = !inFence && line.match(/^###\s+(?:(\d+)\.\s*)?(.+?)\s*$/);
+    if (head) {
+      close();
+      cur = { type: 'entry', id: head[1] ? parseInt(head[1], 10) : null, name: head[2].trim(), lines: [] };
+    } else if (!inFence && cur && line.trim() === '---') {
+      close();
+      cur = { type: 'text', lines: [] };
+    } else if (!inFence && cur && cur.type === 'entry' && /^>\s*#{1,6}\s/.test(line)) {
+      close();
+      cur = { type: 'text', lines: [line] };
+    } else if (cur) {
+      cur.lines.push(line);
+    } else if (line.trim() !== EMPTY_BACKLOG) {
+      preamble.push(line);
+    }
+    if (fence) inFence = !inFence;
+  }
+  close();
+
+  // IDs are permanent: keep every written number, give unnumbered or duplicate
+  // entries a fresh one past the high-water mark so a graduated ID is never reused.
+  const seen = new Set();
+  for (const b of blocks) if (b.type === 'entry' && b.id) nextId = Math.max(nextId, b.id + 1);
+  nextId = Math.max(nextId, 1);
+  const items = blocks.map((b) => {
+    if (b.type === 'text') return { type: 'text', text: b.lines.join('\n').trim() };
+    let id = b.id;
+    if (!id || seen.has(id)) id = nextId++;
+    seen.add(id);
+    return { type: 'entry', entry: parseEntry(b.lines.join('\n').replace(/^\s*\n/, ''), b.name, id) };
   });
-  entries.sort((a, b) => a.rank - b.rank);
-  entries.forEach((e, i) => (e.rank = i + 1));
-  return entries;
+
+  let intro = preamble.join('\n').trim();
+  if (!intro || /the number IS the priority/i.test(intro)) {
+    intro = intro.replace(/<!--[\s\S]*?the number IS the priority[\s\S]*?-->/i, '').trim();
+    intro = intro ? `${BACKLOG_INTRO}\n\n${intro}` : BACKLOG_INTRO;
+  }
+  return { intro, items, nextId };
+}
+
+/** A Backlog entry the planner already marked finished: ✅ in the title, ~~struck~~, or **Status:** done. */
+function markedDone(e) {
+  return /✅/.test(e.name) || /^~~.+~~$/.test(e.name) || /^(✅|done|shipped|complete[d]?)\b/i.test(field(e.raw, 'Status'));
+}
+
+function cleanDoneName(name) {
+  return name
+    .replace(/~~/g, '')
+    .replace(/✅/g, '')
+    .replace(/[\s—–:(\[-]*\b(done|shipped)\b[\])]*\s*$/i, '')
+    .trim();
 }
 
 function parseTable(body) {
@@ -303,14 +374,24 @@ function parseVision(body) {
     .filter((v) => v.goal);
 }
 
+function parseDone(body) {
+  return parseTable(body)
+    .map(([name = '', slug = '', date = '']) => ({ name, slug: slug.replace(/`/g, '').trim(), date }))
+    .filter((d) => d.name && !/^_none yet_$/.test(d.name));
+}
+
 /** Parse roadmap.md into planning-owned data + preserved raw sections. */
 function parseRoadmap(md) {
   const { header, sections } = splitSections(md || '');
   const backlogSection = sections.find((s) => s.kind === 'backlog');
   const visionSection = sections.find((s) => s.kind === 'vision');
+  const doneSection = sections.find((s) => s.kind === 'done');
+  const layout = parseBacklog(backlogSection ? backlogSection.body : '');
   return {
     header,
-    backlog: backlogSection ? parseBacklog(backlogSection.body) : [],
+    backlog: layout.items.filter((i) => i.type === 'entry').map((i) => i.entry),
+    backlogLayout: layout,
+    done: doneSection ? parseDone(doneSection.body) : [],
     vision: visionSection ? parseVision(visionSection.body) : [],
     preserved: sections.filter((s) => !['nextUp', 'planned', 'inProgress', 'audited', 'done'].includes(s.kind)),
   };
@@ -335,7 +416,7 @@ function resolveNextUp(r) {
   }
   if (r.backlog && r.backlog.length) {
     const b = r.backlog[0];
-    return { name: b.name, slug: b.slug || '', why: 'Backlog #1 — nothing is in flight, catalyze the next spec.', command: b.command };
+    return { name: b.name, slug: b.slug || '', why: `Top of Backlog (#${b.id}) — nothing is in flight, catalyze the next spec.`, command: b.command };
   }
   return null;
 }
@@ -363,12 +444,14 @@ function renderNextUp(nu) {
   return `## ▶ Next Up\n\n${body}\n\n---`;
 }
 
-function renderBacklog(entries) {
-  const intro =
-    '<!--\nIdeas we WILL build, not yet catalyzed. ORDERED queue — the number IS the priority.\nOne entry = one spec. Split anything that needs more than ~5-8 tasks.\nEdited by /plan-project only; entries drop off automatically once catalyzed.\n-->';
-  if (!entries.length) return `## 🗂️ Backlog\n\n${intro}\n\n_Empty. Run \`/plan-project\` to queue the next specs._\n\n---`;
-  const items = entries.map((e) => `### ${e.rank}. ${e.name}\n${e.raw}`.replace(/\s+$/, '')).join('\n\n---\n\n');
-  return `## 🗂️ Backlog\n\n${intro}\n\n${items}\n\n---`;
+function renderBacklog(layout, entries) {
+  const live = new Set(entries.map((e) => e.id));
+  const blocks = layout.items
+    .filter((i) => i.type === 'text' || live.has(i.entry.id))
+    .map((i) => (i.type === 'text' ? i.text : `### ${i.entry.id}. ${i.entry.name}\n${i.entry.raw}`.replace(/\s+$/, '')));
+  if (!entries.length) blocks.push(EMPTY_BACKLOG);
+  const marker = `<!-- board:next-id ${layout.nextId} -->`;
+  return `## 🗂️ Backlog\n\n${layout.intro}\n\n${marker}\n\n${blocks.join('\n\n---\n\n')}\n\n---`;
 }
 
 function renderSpecList(title, comment, items, extra) {
@@ -384,7 +467,7 @@ function renderSpecList(title, comment, items, extra) {
 
 function renderDone(items) {
   const rows = items.length
-    ? items.map((d) => `| ${d.name} | \`${d.slug}\` | ${d.date || ''} |`).join('\n')
+    ? items.map((d) => `| ${d.name} | ${d.slug ? `\`${d.slug}\`` : ''} | ${d.date || ''} |`).join('\n')
     : '| _none yet_ | | |';
   return `## ✅ Done\n\n<!-- Sealed/archived specs (.catalyst/specs/completed/). Newest first. -->\n\n| Spec | Slug | Sealed |\n|------|------|--------|\n${rows}\n\n---`;
 }
@@ -393,7 +476,7 @@ function renderRoadmap(parsed, specs, nextUp) {
   const parts = [
     parsed.header || DEFAULT_HEADER,
     renderNextUp(nextUp),
-    renderBacklog(parsed.backlog),
+    renderBacklog(parsed.backlogLayout, parsed.backlog),
     renderSpecList('📋 Planned', '<!-- spec.md exists (catalyzed), no tasks.md yet. Ready to forge. -->', specs.planned, (s) =>
       `> Or \`!/forge-spec-worktree @${s.slug}\` to run forge → audit → seal unattended in an isolated worktree.`
     ),
@@ -492,12 +575,29 @@ function sync(root, opts = {}) {
   const specs = scanSpecs(root);
   const parsed = parseRoadmap(existing || '');
 
-  // A Backlog entry graduates the moment a spec folder carries its slug.
-  const onDisk = [...specs.planned, ...specs.inProgress, ...specs.audited, ...specs.done].map((s) => s.slug);
-  parsed.backlog = parsed.backlog.filter(
-    (b) => !b.slug || !onDisk.some((slug) => slug === b.slug || slug.endsWith(`-${b.slug}`))
-  );
-  parsed.backlog.forEach((b, i) => (b.rank = i + 1));
+  // Done keeps every row it ever had; disk wins for the slugs it still holds,
+  // and a spec reopened out of completed/ leaves the history.
+  const active = new Set([...specs.planned, ...specs.inProgress, ...specs.audited].map((s) => s.slug));
+  const history = [...specs.done];
+  const known = (d) => history.some((h) => (d.slug ? h.slug === d.slug : !h.slug && normalizeTitle(h.name) === normalizeTitle(d.name)));
+  for (const d of parsed.done) if (!active.has(d.slug) && !known(d)) history.push(d);
+
+  // A Backlog entry graduates once a spec carries its slug (or, slugless, its
+  // name), or once the planner marks it done; a marked one with no spec joins Done.
+  const onDisk = [...specs.planned, ...specs.inProgress, ...specs.audited, ...specs.done];
+  const shipped = (b) =>
+    b.slug
+      ? [...onDisk, ...history].some((s) => s.slug && (s.slug === b.slug || s.slug.endsWith(`-${b.slug}`)))
+      : onDisk.some((s) => normalizeTitle(s.name) === normalizeTitle(b.name));
+  parsed.backlog = parsed.backlog.filter((b) => {
+    if (shipped(b)) return false;
+    if (!markedDone(b)) return true;
+    const d = { name: cleanDoneName(b.name), slug: b.slug, date: opts.today || today() };
+    if (!known(d)) history.push(d);
+    return false;
+  });
+  history.sort((a, b) => (b.date || '').localeCompare(a.date || '') || (b.slug || '').localeCompare(a.slug || ''));
+  specs.done = history;
 
   const nextUp = resolveNextUp({ ...specs, backlog: parsed.backlog });
 

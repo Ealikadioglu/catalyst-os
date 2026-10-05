@@ -167,7 +167,7 @@ const DATA = {
   "roadmap": {
     "nextUp": { "name": "example-feature", "slug": "", "why": "The single most important thing next.", "command": "!/catalyze-spec \"seed prompt for the next feature\"" },
     "backlog": [
-      { "rank": 1, "name": "Two-Factor Auth", "slug": "two-factor-auth", "scope": "TOTP-based 2FA on login.", "doneWhen": "User enrolls + verifies TOTP.", "dependsOn": "user-auth", "priority": "high", "command": "!/catalyze-spec \"TOTP two-factor authentication on login\"" }
+      { "id": 1, "name": "Two-Factor Auth", "slug": "two-factor-auth", "scope": "TOTP-based 2FA on login.", "doneWhen": "User enrolls + verifies TOTP.", "dependsOn": "user-auth", "priority": "high", "command": "!/catalyze-spec \"TOTP two-factor authentication on login\"" }
     ],
     "planned": [ { "name": "Password Reset", "slug": "2026-06-28-password-reset", "scope": "Email-based reset with expiring tokens.", "command": "!/forge-spec @2026-06-28-password-reset" } ],
     "inProgress": [ { "name": "User Authentication", "slug": "2026-06-20-user-auth", "scope": "Login, session, protected routes.", "command": "!/audit-spec @2026-06-20-user-auth" } ],
@@ -203,7 +203,7 @@ function copyCmd(btn) {
 }
 
 function card(item, kind) {
-  const rank = item.rank ? `<span class="rank">#${h(item.rank)}</span>` : "";
+  const rank = item.id ? `<span class="rank">#${h(item.id)}</span>` : "";
   const scope = item.scope ? `<div class="scope">${h(item.scope)}</div>` : "";
   const done = item.doneWhen ? `<div class="done-line"><b>Done when:</b> ${h(item.doneWhen)}</div>` : "";
   const prio = item.priority ? `<span class="prio ${prioClass(item.priority)}">${h(item.priority)}</span>` : "";

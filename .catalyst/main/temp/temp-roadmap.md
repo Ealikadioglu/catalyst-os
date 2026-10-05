@@ -19,7 +19,7 @@ Resolution rule (closest to Done first):
   IF anything Audited      → that spec (seal it)
   ELSE IF In Progress      → that spec (finish it)
   ELSE IF Planned          → highest-priority Planned spec (forge it)
-  ELSE                     → Backlog #1 (catalyze it)
+  ELSE                     → top Backlog entry (catalyze it)
 -->
 
 **[spec-name]** — [one-line why this is next]
@@ -33,10 +33,13 @@ Resolution rule (closest to Done first):
 ## 🗂️ Backlog
 
 <!--
-Ideas we WILL build, not yet catalyzed. This is an ORDERED queue —
-the number IS the priority. #1 is what becomes "Next Up" once the board clears.
+Ideas we WILL build, not yet catalyzed. ORDERED queue: position is priority,
+the top entry becomes "Next Up" once the board clears.
+`### N.` is a permanent ID that `Depends on: #N` refers to. Never renumber;
+write new entries without a number and board.js assigns the next ID.
 Each entry must be ONE spec. If it needs more than ~5-8 tasks or spans
 multiple subsystems, split it into multiple backlog entries.
+Entries drop off once catalyzed or marked ✅. Free text between `---` is kept.
 -->
 
 ### 1. [Feature Name]

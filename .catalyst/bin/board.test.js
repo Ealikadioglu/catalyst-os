@@ -230,7 +230,7 @@ test('backlog entries are parsed with all fields', () => {
   const parsed = board.parseRoadmap(ROADMAP_WITH_BACKLOG);
   assert.strictEqual(parsed.backlog.length, 2);
   const b = parsed.backlog[0];
-  assert.strictEqual(b.rank, 1);
+  assert.strictEqual(b.id, 1);
   assert.strictEqual(b.name, 'Two-Factor Auth');
   assert.strictEqual(b.slug, 'two-factor-auth');
   assert.strictEqual(b.scope, 'TOTP-based 2FA on login.');
@@ -257,10 +257,10 @@ test('sync rewrites managed sections and preserves backlog, vision, changelog ve
   assert.ok(md.includes('### 2. Audit Log'), 'backlog #2 preserved');
   assert.ok(md.includes('| SSO | Enterprise single sign-on | two-factor-auth |'), 'vision preserved');
   assert.ok(md.includes('Initial roadmap created'), 'changelog preserved');
-  assert.ok(md.includes('| Setup | `2026-08-01-setup` | 2026-08-05 |'), 'done table regenerated from disk');
-  assert.ok(!md.includes('`2026-01-01-old`'), 'stale done row dropped');
+  assert.ok(md.includes('| Setup | `2026-08-01-setup` | 2026-08-05 |'), 'done row added from disk');
+  assert.ok(md.includes('| Old | `2026-01-01-old` | 2026-01-02 |'), 'existing done row kept');
   assert.strictEqual(result.counts.inProgress, 1);
-  assert.strictEqual(result.counts.done, 1);
+  assert.strictEqual(result.counts.done, 2);
 });
 
 test('a backlog entry whose slug was catalyzed drops off the backlog', () => {
@@ -269,8 +269,54 @@ test('a backlog entry whose slug was catalyzed drops off the backlog', () => {
   board.sync(root, { by: '/catalyze-spec' });
   const md = fs.readFileSync(path.join(root, '.catalyst', 'main', 'roadmap.md'), 'utf8');
   assert.ok(!md.includes('### 1. Two-Factor Auth'), 'catalyzed entry removed from backlog');
-  assert.ok(md.includes('### 1. Audit Log'), 'remaining backlog renumbered');
+  assert.ok(md.includes('### 2. Audit Log'), 'remaining entry keeps its ID');
   assert.ok(md.includes('!/forge-spec @2026-09-02-two-factor-auth'), 'appears as Planned');
+});
+
+test('IDs are permanent: new entries get a fresh ID, never a graduated one', () => {
+  const roadmap = ROADMAP_WITH_BACKLOG.replace('## 📋 Planned', '### Rate Limits\n**Catalyze as:** `rate-limits`\n\n---\n\n## 📋 Planned');
+  const root = fixture({ roadmap });
+  spec(root, '2026-09-02-audit-log', { 'spec.md': SPEC_MD('Audit Log') });
+  board.sync(root, { by: '/catalyze-spec' });
+  const p = path.join(root, '.catalyst', 'main', 'roadmap.md');
+  let md = fs.readFileSync(p, 'utf8');
+  assert.ok(md.includes('### 1. Two-Factor Auth') && md.includes('### 3. Rate Limits'));
+  fs.writeFileSync(p, md.replace('## 📋 Planned', '### Webhooks\n\n---\n\n## 📋 Planned'));
+  board.sync(root, { by: '/plan-project' });
+  md = fs.readFileSync(p, 'utf8');
+  assert.ok(md.includes('### 4. Webhooks'), 'next ID survives graduation of #2');
+});
+
+test('backlog intro and free text between entries survive graduation', () => {
+  const roadmap = ROADMAP_WITH_BACKLOG
+    .replace('## 🗂️ Backlog\n', '## 🗂️ Backlog\n\nOur own intro.\n')
+    .replace('---\n\n### 2. Audit Log', '---\n\n> ### Track B: Compliance\n> Ships after auth.\n\n---\n\n### 2. Audit Log');
+  const root = fixture({ roadmap });
+  spec(root, '2026-09-02-two-factor-auth', { 'spec.md': SPEC_MD('Two-Factor Auth') });
+  board.sync(root, { by: '/catalyze-spec' });
+  const md = fs.readFileSync(path.join(root, '.catalyst', 'main', 'roadmap.md'), 'utf8');
+  assert.ok(md.includes('Our own intro.'));
+  assert.ok(md.includes('> ### Track B: Compliance\n> Ships after auth.\n\n---\n\n### 2. Audit Log'));
+});
+
+test('done rows for specs no longer on disk are kept; reopened specs leave Done', () => {
+  const roadmap = ROADMAP_WITH_BACKLOG.replace('| Old | `2026-01-01-old` | 2026-01-02 |', '| Old | `2026-01-01-old` | 2026-01-02 |\n| Back | `2026-01-03-back` | 2026-01-04 |');
+  const root = fixture({ roadmap });
+  spec(root, '2026-01-03-back', { 'spec.md': SPEC_MD('Back') });
+  board.sync(root, { by: '/sync-project' });
+  const md = fs.readFileSync(path.join(root, '.catalyst', 'main', 'roadmap.md'), 'utf8');
+  assert.ok(md.includes('| Old | `2026-01-01-old` | 2026-01-02 |'));
+  assert.ok(!md.includes('| Back |'));
+});
+
+test('slugless entries graduate when marked ✅ or matched by spec name', () => {
+  const roadmap = ROADMAP_WITH_BACKLOG.replace('## 📋 Planned', '### 3. Dark Mode ✅ Done\n\n---\n\n### 4. Search\n\n---\n\n## 📋 Planned');
+  const root = fixture({ roadmap });
+  spec(root, '2026-09-03-search', { 'spec.md': SPEC_MD('Search') });
+  board.sync(root, { by: '/sync-project', today: '2026-09-04' });
+  const md = fs.readFileSync(path.join(root, '.catalyst', 'main', 'roadmap.md'), 'utf8');
+  assert.ok(!md.includes('### 3. Dark Mode') && !md.includes('### 4. Search'));
+  assert.ok(md.includes('| Dark Mode |  | 2026-09-04 |'), 'marked entry recorded in Done');
 });
 
 test('missing roadmap.md is a no-op unless --init', () => {

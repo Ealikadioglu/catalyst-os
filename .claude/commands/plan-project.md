@@ -32,7 +32,7 @@ Plan the future of the project: maintain `roadmap.md` as a **queue of specs grou
    - What's the single most important thing next?
    - What's blocking progress?
    - In what order should the backlog be built?
-6. **Order the Backlog** — it is a ranked queue; #1 is what becomes Next Up once the board clears
+6. **Order the Backlog** — it is a ranked queue by position; the top entry becomes Next Up once the board clears
 7. **Write only the Backlog and Vision sections** of `roadmap.md` (template: `.catalyst/main/temp/temp-roadmap.md`). If the file does not exist yet, write just those two sections under the template header.
 8. **Run the board script** — it classifies on-disk specs, resolves `▶ Next Up`, fills the lifecycle sections, and regenerates the dashboard:
 
@@ -42,7 +42,7 @@ Plan the future of the project: maintain `roadmap.md` as a **queue of specs grou
 
 ## State Detection & Next Up
 
-Handled entirely by `board.js` (rules in the `spec-lifecycle-board` skill): five states — 🗂️ Backlog · 📋 Planned · 🔨 In Progress · 🔬 Audited · ✅ Done — detected from each spec folder's files, and Next Up = the spec closest to Done (Audited → In Progress → Planned → Backlog #1). You do not compute any of this.
+Handled entirely by `board.js` (rules in the `spec-lifecycle-board` skill): five states — 🗂️ Backlog · 📋 Planned · 🔨 In Progress · 🔬 Audited · ✅ Done — detected from each spec folder's files, and Next Up = the spec closest to Done (Audited → In Progress → Planned → top of Backlog). You do not compute any of this.
 
 ## Granularity Guardrail
 
@@ -54,7 +54,7 @@ Before writing any entry, check its size:
 
 ## Backlog Ordering
 
-The Backlog is a **ranked queue** — the number is the priority. Order by:
+The Backlog is a **ranked queue** — position is the priority, the `### N.` number is a permanent ID. Reorder by moving entries; never renumber, since `Depends on: #N`, wave plans, and changelogs point at those IDs. Write new entries as `### Name` without a number and `board.js` assigns the next free ID. Mark a slugless entry finished with ✅ in its title and it moves to Done. Order by:
 1. Dependencies (a spec can't precede what it depends on — note `Depends on:` per entry)
 2. Unblocking value (what makes the product usable / lets other work proceed)
 3. Priority label (🔴 → 🟢)

@@ -24,9 +24,9 @@ Backlog → Planned → In Progress → Audited → Done (sealed)
 | 🔬 **Audited** | Validated, awaiting seal | `validation.md` contains `Overall Status: PASS` | `!/seal-spec @{slug}` |
 | ✅ **Done** | Sealed / archived | Folder is in `.catalyst/specs/completed/` | (none) |
 
-`▶ Next Up` = the spec closest to Done (Audited → In Progress → Planned → Backlog #1).
+`▶ Next Up` = the spec closest to Done (Audited → In Progress → Planned → top of Backlog).
 
-A Backlog entry graduates automatically the moment a spec folder whose slug ends in its `Catalyze as` slug appears on disk.
+A Backlog entry graduates automatically the moment a spec folder whose slug ends in its `Catalyze as` slug appears on disk. A slugless entry graduates when a spec with the same title appears, or when its title is marked ✅ (it is then recorded in Done). Backlog `### N.` numbers are permanent IDs and are never renumbered; free text between `---` separators and the Backlog intro are kept. Done rows are merged with disk, never dropped.
 
 ## Update the Board — the only step
 

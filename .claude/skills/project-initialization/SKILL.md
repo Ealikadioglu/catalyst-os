@@ -80,7 +80,7 @@ Create in `.catalyst/main/`:
 
 - Seed the **🗂️ Backlog** with 3-6 ordered spec entries derived from the mission/TODOs. Each gets a `Catalyze as: {slug}` hint, a one-line **Scope**, a **Done when** acceptance line, `Depends on:`, and a ready-to-run `!/catalyze-spec "..."` seed prompt.
 - Order the Backlog as a ranked queue (dependencies first, then unblocking value, then priority).
-- Set **▶ Next Up** to Backlog #1 (a fresh project has nothing In Progress yet).
+- Set **▶ Next Up** to the top Backlog entry (a fresh project has nothing In Progress yet). Backlog `### N.` numbers are permanent IDs; never renumber them.
 - Leave 📋 Planned / 🔨 In Progress / 🔬 Audited / ✅ Done empty (a fresh project has no specs yet).
 - Granularity guardrail: if a backlog idea would need more than ~5-8 tasks or spans multiple subsystems, split it into multiple entries.
 - After writing `roadmap.md` (Backlog + Vision are all you author), run `node .catalyst/bin/board.js --by "/catalyze-project" --init`. It fills the lifecycle sections from disk and generates `.catalyst/dashboard.html`. Point the user to the dashboard — double-click to open in a browser. Never write `dashboard.html` yourself.
