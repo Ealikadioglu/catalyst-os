@@ -1,6 +1,6 @@
 # /sync-project
 
-Sync all spec statuses with reality. Scans active specs, detects completed work, updates tasks.md, and archives finished specs.
+Sync all spec statuses with reality. Scans active specs, detects completed work, updates tasks.md, archives finished specs, and reconciles the foundation docs in `.catalyst/main/` with what shipped.
 
 > **Use when:** You forgot to `/audit-spec` and `/seal-spec` for one or more specs, or want to catch up on housekeeping.
 
@@ -17,6 +17,7 @@ Sync all spec statuses with reality. Scans active specs, detects completed work,
 # List all active specs
 echo "=== ACTIVE SPECS ===" && ls -d .catalyst/specs/*/ 2>/dev/null || echo "No active specs"
 echo "=== COMPLETED SPECS ===" && ls -d .catalyst/specs/completed/*/ 2>/dev/null || echo "No completed specs"
+echo "=== FOUNDATION DOCS ===" && ls .catalyst/main/*.md 2>/dev/null || echo "No foundation docs"
 echo "=== GIT STATUS ===" && git status --short
 echo "=== RECENT COMMITS ===" && git log --oneline -15
 ```

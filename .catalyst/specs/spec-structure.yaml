@@ -148,6 +148,9 @@ spec_schema:
       key_decisions:        # Strategic choices with rationale
         - type: string
 
+    sync:
+      foundation_synced: date  # Set by /sync-project once this spec's changes are reconciled into .catalyst/main/
+
   example: |
     ---
     spec: 2025-01-11-user-auth

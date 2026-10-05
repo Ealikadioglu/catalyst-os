@@ -38,7 +38,7 @@ The canonical workflow order:
 |------|------------|
 | `/seal-spec` | Full ceremony — git commit, branch management, archive, library |
 | `/archive-spec` | Lightweight — archive + library, no git ceremony |
-| `/sync-project` | Batch — scan all specs, archive completed ones at once |
+| `/sync-project` | Batch — scan all specs, archive completed ones, reconcile `.catalyst/main/` docs |
 
 ## Specs
 

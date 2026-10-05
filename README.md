@@ -135,7 +135,7 @@ Without this, skills are optional documentation. With it, they're mandatory proc
 | `spec-approval` | `/seal-spec` | Final verification and archival |
 | `spec-archival` | `/archive-spec` | Lightweight completion and archival |
 | `project-initialization` | `/catalyze-project` | Workspace detection + foundation docs |
-| `project-sync` | `/sync-project` | Batch sync and archive specs |
+| `project-sync` | `/sync-project` | Batch sync, archive specs, reconcile foundation docs |
 | `spec-update` | `/update-spec` | Modify spec during planning phase |
 
 ---
@@ -239,7 +239,7 @@ Guardians (Quality)
 | `/audit-spec @slug` | Quality checks | validation.md, handoff.md |
 | `/seal-spec @slug` | Finalize | Commit + Archive |
 | `/archive-spec @slug` | Lightweight archive | Archive (no git ceremony) |
-| `/sync-project` | Batch sync spec statuses | Sync report + archives |
+| `/sync-project` | Batch sync spec statuses + foundation drift | Sync report + archives + foundation doc updates |
 | `/discard-spec @slug "reason"` | Discard implementation | Status: REJECTED |
 | `/status-spec @slug` | Check progress | Current status |
 | `/update-spec @slug "change"` | Modify spec (planning phase) | Updated spec.md |

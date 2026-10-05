@@ -1,6 +1,6 @@
 ---
 name: project-sync
-description: Scan every active spec, detect which are actually complete, update their tasks, and archive the finished ones. Use for /sync-project or to catch up when audit and seal were skipped.
+description: Scan every active spec, detect which are actually complete, update their tasks, archive the finished ones, and reconcile the foundation docs in .catalyst/main/ with what shipped. Use for /sync-project or to catch up when audit and seal were skipped.
 ---
 
 # Project Sync
@@ -10,7 +10,7 @@ description: Scan every active spec, detect which are actually complete, update 
 
 ## Purpose
 
-Scan all active specs, detect which ones are actually complete, update their tasks.md, and move finished specs to the completed folder. This is a housekeeping command for catching up when `/audit-spec` and `/seal-spec` were skipped.
+Scan all active specs, detect which ones are actually complete, update their tasks.md, and move finished specs to the completed folder. Then bring the foundation docs (`mission.md`, `architecture.md`, `tech-stack.md`, `conventions.md`, `concerns.md`) in line with what those specs changed. This is a housekeeping command for catching up when `/audit-spec` and `/seal-spec` were skipped.
 
 ## Skills Referenced
 
@@ -91,7 +91,48 @@ For each spec the user confirms:
 
 4. Check for library extraction (same keyword matching as `/archive-spec`)
 
-### Phase 5: Update Roadmap + Dashboard
+### Phase 5: Foundation Drift
+
+Completed specs change the project, but nothing else carries those changes into `.catalyst/main/`. This phase does.
+
+**Candidates:** every spec in `.catalyst/specs/completed/` whose `spec.md` frontmatter has no `foundation_synced` field. That includes specs archived in Phase 4 and older ones that went through `/seal-spec` or `/archive-spec`. Read the frontmatter only, not the body.
+
+**Compare** each candidate against the foundation docs:
+
+| Frontmatter field | Check against | Drift looks like |
+|-------------------|---------------|------------------|
+| `key_decisions` | `architecture.md`, `tech-stack.md` | A decision that replaces or contradicts what the doc says (new datastore, auth model, service boundary) |
+| `provides` | `architecture.md`, `mission.md` | A new subsystem or capability the docs never mention |
+| `patterns_established` | `conventions.md`, `tech-stack.md` | A library or pattern now in use but not listed, or one listed that was replaced |
+| `key_files` | `architecture.md` | A new top-level module or directory missing from the structure section |
+| `issues_resolved` | `concerns.md` | A concern still open that a spec closed |
+
+Then do one reality check outside the specs: compare the dependency manifests (`package.json`, `pubspec.yaml`, `pyproject.toml`, `go.mod`, etc.) against `tech-stack.md`. A major framework, datastore, or service added or removed without a spec is still drift.
+
+**Present** a drift report grouped by file. Each item names the doc, the stale or missing line, the proposed replacement, and the spec that caused it:
+
+```
+FOUNDATION DRIFT
+================
+architecture.md
+  ~ "Single Postgres instance" → "Postgres + Redis for sessions and queues"   (2026-08-02-job-queue)
+  + Notifications service (src/notifications/)                               (2026-08-20-notifications)
+tech-stack.md
+  - Prisma → Drizzle                                                          (2026-09-01-orm-migration)
+mission.md
+  ? Spec 2026-09-10-b2b-teams adds team accounts; mission names only solo users. Review with /mission.
+```
+
+Ask the user which items to apply. Apply the accepted ones as edits in place: replace the stale line, do not append a changelog under it.
+
+**Rules:**
+- **`mission.md` is flag-only.** Never edit it here. Product direction is a planning decision; report the mismatch and point to `/mission`.
+- Edit existing sections; create a new section only when no existing one fits. Do not rewrite a doc wholesale.
+- Do not touch `roadmap.md`. Phase 6 owns it.
+- After the user answers, add `foundation_synced: YYYY-MM-DD` to the frontmatter of every candidate spec, including those with no drift or with rejected items, so the next run skips them.
+- No candidates and no manifest drift: print `Foundation docs in sync.` and move on.
+
+### Phase 6: Update Roadmap + Dashboard
 
 ```bash
 node .catalyst/bin/board.js --by "/sync-project"
@@ -118,6 +159,10 @@ Flagged: 1 stale spec
 └── 2026-01-05-legacy-migration (no activity 45 days)
 
 Library: Added authentication.md, payment-integration.md
+
+Foundation: 4 items applied (architecture.md +2, tech-stack.md +1, concerns.md +1)
+├── Flagged for /mission: 1
+└── Marked foundation_synced: 5 specs
 
 Board synced by /sync-project: 3 backlog · 1 planned · 0 in progress · 0 audited · 5 done
 Next Up: Password Reset → !/forge-spec @2026-06-28-password-reset
