@@ -78,9 +78,16 @@ function parseFrontmatter(md) {
   const m = md.match(/^---\r?\n([\s\S]*?)\r?\n---/);
   const fm = {};
   if (!m) return { fm, body: md };
+  let listKey = null;
   for (const line of m[1].split(/\r?\n/)) {
     const kv = line.match(/^([A-Za-z_][\w-]*):\s*(.*)$/);
-    if (kv) fm[kv[1]] = kv[2].trim().replace(/^["']|["']$/g, '');
+    const item = line.match(/^\s*-\s+(.*)$/);
+    if (kv) {
+      fm[kv[1]] = kv[2].trim().replace(/^["']|["']$/g, '');
+      listKey = fm[kv[1]] ? null : kv[1];
+    } else if (item && listKey) {
+      fm[listKey] = fm[listKey] ? `${fm[listKey]}, ${item[1].trim()}` : item[1].trim();
+    }
   }
   return { fm, body: md.slice(m[0].length) };
 }
@@ -135,7 +142,17 @@ function readSpec(dir, slug) {
   const scope =
     firstParagraphAfter(body, /^##\s+(overview|summary|tl;dr)/i) ||
     firstParagraphAfter(body.replace(/^#\s.+$/m, ''), null);
-  return { slug, name, scope: truncate(scope, 180), fm };
+  return { slug, name, scope: truncate(scope, 180), requires: parseList(fm.requires), fm };
+}
+
+/** `[a, b]`, `a, b`, or a single value → array of trimmed strings. */
+function parseList(raw) {
+  if (!raw) return [];
+  return raw
+    .replace(/^\[|\]$/g, '')
+    .split(',')
+    .map((x) => x.trim().replace(/^["'`]|["'`]$/g, ''))
+    .filter(Boolean);
 }
 
 function validationPassed(dir) {
@@ -144,14 +161,15 @@ function validationPassed(dir) {
   return /overall\s+status[^\n]*\bPASS(ED)?\b/i.test(v) || /READY FOR APPROVAL/i.test(v);
 }
 
+/** `fromMtime` marks a guess: a fresh clone stamps every file with today. */
 function sealedDate(dir, fm) {
   for (const k of ['sealed', 'completed', 'archived', 'sealed_on', 'completed_on', 'date']) {
-    if (fm[k] && /^\d{4}-\d{2}-\d{2}/.test(fm[k])) return fm[k].slice(0, 10);
+    if (fm[k] && /^\d{4}-\d{2}-\d{2}/.test(fm[k])) return { date: fm[k].slice(0, 10), fromMtime: false };
   }
   try {
-    return fs.statSync(path.join(dir, 'spec.md')).mtime.toISOString().slice(0, 10);
+    return { date: fs.statSync(path.join(dir, 'spec.md')).mtime.toISOString().slice(0, 10), fromMtime: true };
   } catch {
-    return '';
+    return { date: '', fromMtime: true };
   }
 }
 
@@ -180,7 +198,8 @@ function scanSpecs(root) {
     const dir = path.join(doneDir, slug);
     const s = readSpec(dir, slug);
     if (!s) continue;
-    out.done.push({ name: s.name, slug, date: sealedDate(dir, s.fm) });
+    const sealed = sealedDate(dir, s.fm);
+    out.done.push({ name: s.name, slug, date: sealed.date, guessed: sealed.fromMtime, requires: s.requires });
   }
   out.done.sort((a, b) => (b.date || '').localeCompare(a.date || '') || b.slug.localeCompare(a.slug));
 
@@ -561,6 +580,139 @@ function renderDashboard(template, data) {
 }
 
 // ---------------------------------------------------------------------------
+// roadmap.json — flat, machine-readable view for autopilot orchestrators.
+// Derived from roadmap.md + disk; roadmap.md stays the planning source.
+// ---------------------------------------------------------------------------
+
+/** Read the few project-config.yaml keys the JSON exposes (no YAML dependency). */
+function readConfig(root) {
+  const yaml = readIf(path.join(root, '.catalyst', 'main', 'project-config.yaml')) || '';
+  const cfg = {};
+  let block = '';
+  for (const line of yaml.split(/\r?\n/)) {
+    const m = line.match(/^(\s*)([A-Za-z_][\w-]*):\s*(.*?)\s*(?:#.*)?$/);
+    if (!m) continue;
+    const value = m[3].replace(/^["']|["']$/g, '');
+    if (!m[1]) {
+      block = m[2];
+      if (value) cfg[block] = value;
+    } else if (m[1].length === 2) {
+      cfg[`${block}.${m[2]}`] = value;
+    }
+  }
+  return cfg;
+}
+
+const shortId = (slug) => slug.replace(/^\d{4}-\d{2}-\d{2}-/, '');
+const slugify = (s) => normalizeTitle(s).replace(/[\s/]+/g, '-');
+const bare = (cmd) => (cmd || '').replace(/^!/, '');
+
+function buildRoadmapJson(root, parsed, specs, nextUp, opts) {
+  const cfg = readConfig(root);
+  const ids = new Map(); // backlog `#N` → id
+  for (const b of parsed.backlog) ids.set(b.id, b.slug || slugify(b.name));
+
+  const items = [
+    ...[...specs.done]
+      .sort((a, b) => (a.date || '').localeCompare(b.date || ''))
+      .map((d) => ({
+        id: d.slug ? shortId(d.slug) : slugify(d.name),
+        status: 'done',
+        title: d.name,
+        requires: d.requires || [],
+        folder: d.slug && exists(path.join(root, '.catalyst', 'specs', 'completed', d.slug)) ? `completed/${d.slug}` : null,
+        sealed: d.date || null,
+      })),
+    ...[['audited', specs.audited], ['in-progress', specs.inProgress], ['planned', specs.planned]].flatMap(([status, list]) =>
+      list.map((s) => ({
+        id: shortId(s.slug),
+        status,
+        title: s.name,
+        goal: s.scope || '',
+        requires: s.requires || [],
+        folder: s.slug,
+        command: bare(s.command),
+        ...(status === 'planned' ? { autopilot_command: `/forge-spec-worktree @${s.slug}` } : {}),
+      }))
+    ),
+    ...parsed.backlog.map((b) => ({
+      id: ids.get(b.id),
+      status: 'backlog',
+      title: b.name,
+      goal: b.scope,
+      done_when: b.doneWhen,
+      priority: b.priority || null,
+      requires: b.dependsOn
+        .split(/[,;]|\band\b/)
+        .map((t) => t.trim())
+        .filter((t) => t && !/^(nothing|none|-|—|n\/a)$/i.test(t))
+        .map((t) => {
+          const n = t.match(/#(\d+)/);
+          if (n) return ids.get(parseInt(n[1], 10)) || t;
+          return t.replace(/`/g, '');
+        }),
+      command: bare(b.command),
+    })),
+    ...parsed.vision.map((v) => ({
+      id: slugify(v.goal),
+      status: 'vision',
+      title: v.goal,
+      goal: v.description,
+      requires: parseList(v.prereq),
+    })),
+  ];
+
+  // Resolve every `requires` to a known id; anything unresolvable blocks readiness.
+  const byId = new Map(items.map((i) => [i.id, i]));
+  const resolve = (ref) => {
+    const key = shortId(ref);
+    if (byId.has(key)) return key;
+    if (byId.has(slugify(ref))) return slugify(ref);
+    const hit = items.find((i) => i.id.endsWith(`-${key}`) || key.endsWith(`-${i.id}`));
+    return hit ? hit.id : null;
+  };
+  for (const item of items) {
+    const unresolved = [];
+    item.requires = item.requires
+      .map((r) => {
+        const id = resolve(r);
+        if (!id) unresolved.push(r);
+        return id;
+      })
+      .filter(Boolean);
+    if (item.status === 'done' || item.status === 'vision') continue;
+    const waiting = item.requires.filter((r) => byId.get(r).status !== 'done');
+    item.ready = !waiting.length && !unresolved.length;
+    if (!item.ready) item.blocked_by = [...waiting, ...unresolved];
+  }
+
+  const context = {};
+  const rel = (...p) => path.join('.catalyst', ...p);
+  for (const [key, file] of Object.entries({ ...DOCS, roadmap: 'roadmap.md', projectConfig: 'project-config.yaml' })) {
+    if (exists(path.join(root, '.catalyst', 'main', file))) context[key.replace(/[A-Z]/g, (c) => `_${c.toLowerCase()}`)] = rel('main', file);
+  }
+  if (cfg.plan && exists(path.join(root, cfg.plan))) context.plan = cfg.plan;
+  if (exists(path.join(root, '.catalyst', 'references'))) context.references = rel('references');
+
+  const { project, tagline } = projectIdentity(root, readIf(path.join(root, '.catalyst', 'main', 'mission.md')));
+  const next = nextUp && items.find((i) => (nextUp.slug ? i.id === shortId(nextUp.slug) || i.folder === nextUp.slug : i.title === nextUp.name));
+  return {
+    schema: 1,
+    project,
+    summary: tagline,
+    generated: opts.today || today(),
+    generated_by: opts.by || 'board.js',
+    context,
+    autopilot: {
+      base_branch: cfg['autopilot.branch'] || cfg['git.development_branch'] || null,
+      auto_merge: /^(true|on|yes)$/i.test(cfg['autopilot.auto_merge'] || ''),
+    },
+    next: next ? { id: next.id, command: next.status === 'planned' ? next.autopilot_command : next.command } : null,
+    specs: items,
+  };
+}
+
+// ---------------------------------------------------------------------------
 // Sync
 // ---------------------------------------------------------------------------
 
@@ -580,7 +732,12 @@ function sync(root, opts = {}) {
   const active = new Set([...specs.planned, ...specs.inProgress, ...specs.audited].map((s) => s.slug));
   const history = [...specs.done];
   const known = (d) => history.some((h) => (d.slug ? h.slug === d.slug : !h.slug && normalizeTitle(h.name) === normalizeTitle(d.name)));
-  for (const d of parsed.done) if (!active.has(d.slug) && !known(d)) history.push(d);
+  for (const d of parsed.done) {
+    const disk = d.slug && history.find((h) => h.slug === d.slug);
+    if (disk && disk.guessed && d.date) disk.date = d.date;
+    else if (!disk && !active.has(d.slug) && !known(d)) history.push(d);
+  }
+  for (const h of history) delete h.guessed;
 
   // A Backlog entry graduates once a spec carries its slug (or, slugless, its
   // name), or once the planner marks it done; a marked one with no spec joins Done.
@@ -611,9 +768,18 @@ function sync(root, opts = {}) {
     fs.writeFileSync(dashboardPath, renderDashboard(template, buildData(root, parsed, specs, nextUp, opts)));
   }
 
+  // Opt-in: written once roadmap.json exists (created by /roadmap-json, i.e. --json).
+  let jsonPath = path.join(mainDir, 'roadmap.json');
+  if (opts.json || exists(jsonPath)) {
+    fs.writeFileSync(jsonPath, JSON.stringify(buildRoadmapJson(root, parsed, specs, nextUp, opts), null, 2) + '\n');
+  } else {
+    jsonPath = null;
+  }
+
   return {
     roadmap: roadmapPath,
     dashboard: dashboardPath,
+    json: jsonPath,
     nextUp,
     counts: {
       backlog: parsed.backlog.length,
@@ -636,6 +802,7 @@ function parseArgs(argv) {
     if (a === '--by') opts.by = argv[++i];
     else if (a === '--root') opts.root = argv[++i];
     else if (a === '--init') opts.init = true;
+    else if (a === '--json') opts.json = true;
     else if (a === '--quiet' || a === '-q') opts.quiet = true;
     else if (a === '--help' || a === '-h') opts.help = true;
   }
@@ -645,11 +812,12 @@ function parseArgs(argv) {
 function cli(argv = process.argv.slice(2)) {
   const opts = parseArgs(argv);
   if (opts.help) {
-    console.log(`Usage: node .catalyst/bin/board.js [--by "/command"] [--init] [--root <dir>] [--quiet]
+    console.log(`Usage: node .catalyst/bin/board.js [--by "/command"] [--init] [--json] [--root <dir>] [--quiet]
 
 Reconciles .catalyst/main/roadmap.md and .catalyst/dashboard.html with the spec
 folders on disk. Backlog + Vision sections are preserved; everything else is
-regenerated. --init creates roadmap.md when the project has none.`);
+regenerated. --init creates roadmap.md when the project has none. --json also
+writes .catalyst/main/roadmap.json; once it exists every run refreshes it.`);
     return 0;
   }
   const root = findRoot(opts.root || process.cwd());
@@ -671,9 +839,10 @@ regenerated. --init creates roadmap.md when the project has none.`);
   console.log(`Next Up: ${r.nextUp ? `${r.nextUp.name} → ${r.nextUp.command}` : 'nothing queued'}`);
   console.log(`roadmap:   ${rel(r.roadmap)}`);
   console.log(`dashboard: ${rel(r.dashboard)}`);
+  if (r.json) console.log(`json:      ${rel(r.json)}`);
   return 0;
 }
 
-module.exports = { findRoot, scanSpecs, parseRoadmap, resolveNextUp, renderRoadmap, renderDashboard, buildData, sync, cli };
+module.exports = { findRoot, scanSpecs, parseRoadmap, resolveNextUp, renderRoadmap, renderDashboard, buildData, buildRoadmapJson, sync, cli };
 
 if (require.main === module) process.exit(cli());

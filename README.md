@@ -245,6 +245,7 @@ Guardians (Quality)
 | `/update-spec @slug "change"` | Modify spec (planning phase) | Updated spec.md |
 | `/mission` | Create/update mission.md | mission.md |
 | `/plan-project` | Plan the backlog & next spec | roadmap.md |
+| `/roadmap-json` | Machine-readable roadmap for orchestrators | roadmap.json |
 | `/tech-stack` | Create/update tech-stack.md | tech-stack.md |
 
 ---
@@ -278,6 +279,10 @@ node .catalyst/bin/board.js --by "/forge-spec"
 
 Run `/plan-project` to re-plan the backlog (the one place a model edits `roadmap.md`), or `/sync-project` to reconcile after the fact. The lifecycle rules are defined once in the `spec-lifecycle-board` skill.
 
+### roadmap.json for orchestrators
+
+`/roadmap-json` adds `.catalyst/main/roadmap.json`, and from then on `board.js` refreshes it on every transition. It is a flat list with no Backlog/Done sections: each spec carries `status`, `requires`, and `ready` (all requirements done), plus `context` paths to the foundation docs and an `autopilot` block (`base_branch`, `auto_merge`) from `project-config.yaml`. An external orchestrator can read it, open a card per ready spec, and run `/catalyze-spec` or `/forge-spec-worktree` without parsing markdown. `roadmap.md` remains the planning source.
+
 > **v3.6.0 note:** versions 3.1–3.5 had the model read a 30 KB template and re-emit the dashboard by hand on every command. That was the largest single source of token spend in the framework and is gone.
 
 ---
@@ -293,7 +298,7 @@ Runs **forge → audit → seal** to completion in an isolated git worktree with
 - Every decision point picks the option marked **Recommended** (or derives one: spec → conventions → codebase pattern → smallest scope) and logs it to `handoff.md ## Autopilot Decisions`. Nothing ends the turn to ask.
 - A failed audit gets **one** remediation pass and a re-audit.
 - The chain **halts** only for: three failures on one task, a second audit failure, a `git`/`gh` error, a secret in the diff, a destructive DB change, or unresolved Open Questions in the spec. A halt writes `## Autopilot Halt` with the exact resume command.
-- It ends with a pushed branch, a PR against your development branch, and the board synced.
+- It ends with a pushed branch, a PR against `autopilot.branch` (or your development branch when unset), and the board synced.
 
 Use plain `/forge-spec` when you want to stay in the loop between phases.
 

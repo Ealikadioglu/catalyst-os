@@ -112,7 +112,7 @@ Autopilot complete: {spec-slug}
 Mode:      direct | full DAG ({N} tasks, {M} agents)
 Commits:   RED {hash} · GREEN {hash} · seal {hash}
 Audit:     PASS (first run | after 1 remediation pass)
-PR:        {url}  (base: {development_branch})
+PR:        {url}  (base: {autopilot.branch or development_branch})
 Worktree:  {path}   — remove with: git worktree remove {path}
 Board:     {board.js summary line}
 

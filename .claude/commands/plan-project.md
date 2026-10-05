@@ -55,7 +55,7 @@ Before writing any entry, check its size:
 ## Backlog Ordering
 
 The Backlog is a **ranked queue** — position is the priority, the `### N.` number is a permanent ID. Reorder by moving entries; never renumber, since `Depends on: #N`, wave plans, and changelogs point at those IDs. Write new entries as `### Name` without a number and `board.js` assigns the next free ID. Mark a slugless entry finished with ✅ in its title and it moves to Done. Order by:
-1. Dependencies (a spec can't precede what it depends on — note `Depends on:` per entry)
+1. Dependencies (a spec can't precede what it depends on — note `Depends on:` per entry). Write dependencies as `Catalyze as` slugs (`Depends on: auth-accounts, order-request`): a slug still resolves after the entry graduates, and `roadmap.json` uses it to compute which specs are `ready`
 2. Unblocking value (what makes the product usable / lets other work proceed)
 3. Priority label (🔴 → 🟢)
 

@@ -86,7 +86,7 @@ Update spec.md status to COMPLETE.
 > If validation passed in Phase 1 and the commit succeeded in Phase 5, proceed straight through push → PR without pausing.
 > Only halt if a git/gh command returns an error.
 
-1. Read `git.development_branch` from `.catalyst/main/project-config.yaml` (e.g., `development`, `staging`)
+1. Read `git.development_branch` from `.catalyst/main/project-config.yaml` (e.g., `development`, `staging`). In an autopilot run (`handoff.md` has `**Mode:** AUTOPILOT`), use `autopilot.branch` instead when it is set
 2. Push the feature branch: `git push -u origin {branch-name}`
 3. **Immediately** create a PR targeting the development branch — do not wait for user input:
    ```

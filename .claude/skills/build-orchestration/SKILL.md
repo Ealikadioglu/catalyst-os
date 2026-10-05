@@ -56,7 +56,7 @@ PHASE 0: Setup
 ├── Read .catalyst/main/project-config.yaml
 ├── IF --worktree flag:
 │   ├── mkdir -p {worktree_path}
-│   ├── git worktree add {worktree_path}/{spec-slug} -b {branch_prefix}/{spec-slug} {development_branch}
+│   ├── git worktree add {worktree_path}/{spec-slug} -b {branch_prefix}/{spec-slug} {base_branch}
 │   ├── cd {worktree_path}/{spec-slug}
 │   └── Record worktree path in spec's handoff.md
 ├── ELSE (default):
@@ -132,10 +132,11 @@ Phase 6: Integration (Enforcer — cross-boundary tests)
 
 ### Phase 0: Git Setup
 
-1. Read `project-config.yaml` for `development_branch`, `branch_prefix`, and `worktree_path`
+1. Read `project-config.yaml` for `development_branch`, `branch_prefix`, `worktree_path`, and `autopilot.branch`
 2. IF `--worktree` flag (from `/forge-spec-worktree`):
+   - `base_branch` = `autopilot.branch` when set, else `development_branch`. If `autopilot.branch` does not exist yet, create it from `development_branch` and push it (`git branch {base_branch} {development_branch} && git push -u origin {base_branch}`)
    - `mkdir -p {worktree_path}` (default: `.catalyst/worktrees`)
-   - `git worktree add {worktree_path}/{spec-slug} -b {branch_prefix}/{spec-slug} {development_branch}`
+   - `git worktree add {worktree_path}/{spec-slug} -b {branch_prefix}/{spec-slug} {base_branch}`
    - `cd {worktree_path}/{spec-slug}` — all subsequent work happens here
    - Record `worktree: {worktree_path}/{spec-slug}` in the spec's `handoff.md`
    - `/forge-spec-worktree` also means **autopilot**: load the `autopilot` skill, mark `handoff.md` with `**Mode:** AUTOPILOT`, and after GATE 2 + board sync continue straight into `spec-validation` and `spec-approval` without returning to the user

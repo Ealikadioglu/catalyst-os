@@ -38,6 +38,7 @@ That command:
 - Scans `.catalyst/specs/` and classifies every spec with the table above
 - Rewrites the lifecycle sections of `.catalyst/main/roadmap.md` (Next Up, Planned, In Progress, Audited, Done) — **preserving Backlog, Vision, and every other section verbatim**
 - Regenerates `.catalyst/dashboard.html` from the template plus the raw `.catalyst/main` docs
+- Refreshes `.catalyst/main/roadmap.json` when the project opted in with `/roadmap-json`: one flat `specs[]` list with `status`, `requires`, and `ready` for orchestrators. Never edit it by hand
 - Prints a 4-line summary. Paste that summary into your report; do nothing else.
 
 If it prints `Board: skipped — no roadmap.md`, the project has never been planned. Say so in one line and move on. Do **not** create a roadmap on a transition — only `/plan-project` and `/catalyze-project` pass `--init`.

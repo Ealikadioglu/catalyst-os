@@ -376,6 +376,60 @@ test('template-less project still syncs roadmap and reports the missing template
 });
 
 // ---------------------------------------------------------------------------
+console.log('\nroadmap.json');
+
+test('roadmap.json is opt-in: written with --json, then refreshed on every sync', () => {
+  const root = fixture({ roadmap: ROADMAP_WITH_BACKLOG });
+  const json = path.join(root, '.catalyst', 'main', 'roadmap.json');
+  board.sync(root, { by: '/forge-spec' });
+  assert.ok(!fs.existsSync(json));
+  board.sync(root, { by: '/roadmap-json', json: true });
+  assert.ok(fs.existsSync(json));
+  spec(root, '2026-09-02-two-factor-auth', { 'spec.md': SPEC_MD('Two-Factor Auth') });
+  board.sync(root, { by: '/catalyze-spec' });
+  const j = JSON.parse(fs.readFileSync(json, 'utf8'));
+  assert.strictEqual(j.specs.find((s) => s.id === 'two-factor-auth').status, 'planned');
+});
+
+test('roadmap.json lists every spec flat, with requires resolved and readiness computed', () => {
+  const root = fixture({ roadmap: ROADMAP_WITH_BACKLOG });
+  spec(root, '2026-08-01-setup', { 'spec.md': SPEC_MD('Setup', 'sealed: 2026-08-05\nrequires:\n  - nothing-real\n') }, true);
+  board.sync(root, { by: '/roadmap-json', json: true, today: '2026-09-02' });
+  const j = JSON.parse(fs.readFileSync(path.join(root, '.catalyst', 'main', 'roadmap.json'), 'utf8'));
+  const by = Object.fromEntries(j.specs.map((s) => [s.id, s]));
+  assert.deepStrictEqual(j.specs.map((s) => s.status), ['done', 'done', 'backlog', 'backlog', 'vision']);
+  assert.strictEqual(by.setup.folder, 'completed/2026-08-01-setup');
+  assert.strictEqual(by.setup.sealed, '2026-08-05');
+  assert.strictEqual(by['two-factor-auth'].ready, true);
+  assert.deepStrictEqual(by['audit-log'].requires, ['two-factor-auth']);
+  assert.strictEqual(by['audit-log'].ready, false);
+  assert.deepStrictEqual(by['audit-log'].blocked_by, ['two-factor-auth']);
+  assert.deepStrictEqual(by.sso.requires, ['two-factor-auth']);
+  assert.deepStrictEqual(j.next, { id: 'two-factor-auth', command: '/catalyze-spec "TOTP two-factor authentication on login"' });
+  assert.strictEqual(j.context.roadmap, '.catalyst/main/roadmap.md');
+  assert.strictEqual(j.context.mission, '.catalyst/main/mission.md');
+});
+
+test('roadmap.json autopilot block reads project-config.yaml', () => {
+  const root = fixture({ roadmap: ROADMAP_WITH_BACKLOG });
+  const cfg = path.join(root, '.catalyst', 'main', 'project-config.yaml');
+  fs.writeFileSync(cfg, 'git:\n  development_branch: "development"\n');
+  let j = board.buildRoadmapJson(root, board.parseRoadmap(ROADMAP_WITH_BACKLOG), board.scanSpecs(root), null, {});
+  assert.deepStrictEqual(j.autopilot, { base_branch: 'development', auto_merge: false });
+  fs.writeFileSync(cfg, 'git:\n  development_branch: "development"\nautopilot:\n  branch: "pre-development"  # comment\n  auto_merge: true\n');
+  j = board.buildRoadmapJson(root, board.parseRoadmap(ROADMAP_WITH_BACKLOG), board.scanSpecs(root), null, {});
+  assert.deepStrictEqual(j.autopilot, { base_branch: 'pre-development', auto_merge: true });
+});
+
+test('a planned spec points autopilot at /forge-spec-worktree', () => {
+  const root = fixture({ roadmap: ROADMAP_WITH_BACKLOG });
+  spec(root, '2026-09-01-retry', { 'spec.md': SPEC_MD('Retry Truth') });
+  board.sync(root, { by: '/roadmap-json', json: true });
+  const j = JSON.parse(fs.readFileSync(path.join(root, '.catalyst', 'main', 'roadmap.json'), 'utf8'));
+  assert.deepStrictEqual(j.next, { id: 'retry', command: '/forge-spec-worktree @2026-09-01-retry' });
+});
+
+// ---------------------------------------------------------------------------
 console.log('\nproject root discovery');
 
 test('findRoot walks up from a nested directory and from a worktree', () => {
