@@ -8,7 +8,7 @@
 
 ```
 Command:    /catalyze-project
-Orchestrator: Catalyst (Opus)
+Orchestrator: Catalyst
 Agents:       Oracle, Seer, Scribe
 Output:       .catalyst/main/
 ```
@@ -189,12 +189,12 @@ Created:
 
 ## Agents Involved
 
-| Agent | Role | Model | What They Do |
-|-------|------|-------|--------------|
-| **Catalyst** | Orchestrator | Opus | Coordinates all phases |
-| **Oracle** | Requirements | Sonnet | Asks clarifying questions |
-| **Seer** | Analysis | Sonnet | Analyzes existing codebase |
-| **Scribe** | Documentation | Sonnet | Creates all markdown files |
+| Agent | Role | What They Do |
+|-------|------|--------------|
+| **Catalyst** | Orchestrator | Coordinates all phases |
+| **Oracle** | Requirements | Asks clarifying questions |
+| **Seer** | Analysis | Analyzes existing codebase |
+| **Scribe** | Documentation | Creates all markdown files |
 
 ---
 

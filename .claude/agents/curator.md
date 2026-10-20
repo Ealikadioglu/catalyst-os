@@ -11,7 +11,6 @@ description: >
   modifies schemas, migrations, or data. Building is the Alchemist's job.
 
   DO NOT audit database integrity yourself - delegate to Curator.
-model: sonnet
 effort: medium
 color: red
 skills:

@@ -8,7 +8,6 @@ description: >
   - Writing server-side code
 
   DO NOT implement backend code yourself - delegate to Smith.
-model: opus
 effort: medium
 color: green
 skills:

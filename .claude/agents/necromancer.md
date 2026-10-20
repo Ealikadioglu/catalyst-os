@@ -8,7 +8,6 @@ description: >
   - Creating prompt engineering solutions
 
   DO NOT implement AI features yourself - delegate to Necromancer.
-model: opus
 effort: medium
 color: green
 skills:

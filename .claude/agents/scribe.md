@@ -8,7 +8,6 @@ description: >
   - Maintaining project documentation
 
   DO NOT write documentation yourself - delegate to Scribe.
-model: sonnet
 effort: low
 color: blue
 skills:

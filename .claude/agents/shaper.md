@@ -8,7 +8,6 @@ description: >
   - Writing client-side code
 
   DO NOT implement frontend code yourself - delegate to Shaper.
-model: opus
 effort: medium
 color: green
 skills:

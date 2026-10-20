@@ -10,7 +10,7 @@
 Command:      /catalyze-spec "feature description"
 Unattended:   /catalyze-spec "feature description" --from /abs/plan.md
               (no questions, no approvals, no git; see spec-shaping → Unattended Mode)
-Orchestrator: Catalyst (Opus)
+Orchestrator: Catalyst
 Agents:       Oracle → [Seer + Scout + Surveyor] → Scribe
 Output:       .catalyst/specs/YYYY-MM-DD-{slug}/
 ```
@@ -238,14 +238,14 @@ Created: .catalyst/specs/2026-01-11-supabase-auth/
 
 ## Agents Involved
 
-| Agent | Role | Model | Execution |
-|-------|------|-------|-----------|
-| **Catalyst** | Orchestrator | Opus | Coordinates all |
-| **Oracle** | Requirements | Sonnet | Sequential (first) |
-| **Seer** | Codebase | Sonnet | Parallel |
-| **Scout** | Web Research | Sonnet | Parallel |
-| **Surveyor** | UI Research | Sonnet | Parallel |
-| **Scribe** | Documentation | Sonnet | Sequential (last) |
+| Agent | Role | Execution |
+|-------|------|-----------|
+| **Catalyst** | Orchestrator | Coordinates all |
+| **Oracle** | Requirements | Sequential (first) |
+| **Seer** | Codebase | Parallel |
+| **Scout** | Web Research | Parallel |
+| **Surveyor** | UI Research | Parallel |
+| **Scribe** | Documentation | Sequential (last) |
 
 ---
 

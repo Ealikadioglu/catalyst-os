@@ -16,6 +16,8 @@ This skill is the bootstrap — it tells you which other skills to load for the 
 
 Commands invoke skills. Skills define process. Agents execute within skill boundaries.
 
+Agents use the parent session's model; there is no per-role model selection.
+
 ## Spec Lifecycle
 
 The canonical workflow order:

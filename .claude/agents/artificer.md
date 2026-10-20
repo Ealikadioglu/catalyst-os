@@ -8,7 +8,6 @@ description: >
   - Writing platform channel / native integration code (iOS, Android)
 
   DO NOT implement mobile code yourself - delegate to Artificer.
-model: opus
 effort: medium
 color: green
 skills:

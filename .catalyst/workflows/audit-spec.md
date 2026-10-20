@@ -8,7 +8,7 @@
 
 ```
 Command:      /audit-spec @2026-01-11-supabase-auth
-Orchestrator: Arbiter (Opus)
+Orchestrator: Arbiter
 Agents:       [Enforcer + Sentinel + Inquisitor + Watcher (+ Curator for DB specs)] (parallel)
 Output:       validation.md, handoff.md
 ```
@@ -367,14 +367,14 @@ Action: Fix issues and re-run /audit-spec
 
 ## Agents Involved
 
-| Agent | Role | Model | Execution |
-|-------|------|-------|-----------|
-| **Arbiter** | Orchestrator | Opus | Coordinates |
-| **Enforcer** | Unit Tests | Sonnet | Parallel |
-| **Sentinel** | E2E Tests | Sonnet | Parallel |
-| **Inquisitor** | Code Quality | Sonnet | Parallel |
-| **Watcher** | Security | Sonnet | Parallel |
-| **Curator** | Schema Integrity (DB specs only, read-only) | Sonnet | Parallel |
+| Agent | Role | Execution |
+|-------|------|-----------|
+| **Arbiter** | Orchestrator | Coordinates |
+| **Enforcer** | Unit Tests | Parallel |
+| **Sentinel** | E2E Tests | Parallel |
+| **Inquisitor** | Code Quality | Parallel |
+| **Watcher** | Security | Parallel |
+| **Curator** | Schema Integrity (DB specs only, read-only) | Parallel |
 
 ---
 

@@ -8,7 +8,6 @@ description: >
   - Analyzing competitor interfaces
 
   DO NOT research UI patterns yourself - delegate to Surveyor.
-model: sonnet
 effort: low
 color: blue
 ---

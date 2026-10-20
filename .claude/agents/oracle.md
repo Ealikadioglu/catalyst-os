@@ -8,7 +8,6 @@ description: >
   - Scope boundaries need to be defined
 
   DO NOT gather requirements yourself - delegate to Oracle.
-model: sonnet
 effort: medium
 color: blue
 skills:

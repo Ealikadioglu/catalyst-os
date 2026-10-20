@@ -10,7 +10,6 @@ description: >
   analyze codebase, research best practices, and compile specifications.
 
   DO NOT shape specifications yourself - delegate to Catalyst.
-model: opus
 effort: medium
 color: purple
 skills:

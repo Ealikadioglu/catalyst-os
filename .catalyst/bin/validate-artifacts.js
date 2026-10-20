@@ -115,7 +115,7 @@ const agentFiles = listDir('.claude/agents').filter(f => f.endsWith('.md'));
 if (agentFiles.length === 0) {
   error('No agents found in .claude/agents/');
 } else {
-  const requiredFields = ['name', 'description', 'model'];
+  const requiredFields = ['name', 'description'];
   for (const file of agentFiles) {
     const content = readFile(`.claude/agents/${file}`);
     if (!content) {

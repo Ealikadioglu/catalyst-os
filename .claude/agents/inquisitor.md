@@ -8,7 +8,6 @@ description: >
   - Identifying potential improvements
 
   DO NOT review code yourself - delegate to Inquisitor.
-model: sonnet
 effort: medium
 color: red
 skills:

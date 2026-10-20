@@ -8,7 +8,7 @@
 
 ```
 Command:      /forge-spec @2026-01-11-supabase-auth
-Orchestrator: Forge-Master (Opus)
+Orchestrator: Forge-Master
 Agents:       Forger → Enforcer → Alchemist → Contracts → [Smith × N + Shaper × M] → Integration
 Output:       tasks.md (with Build DAG and progress)
 ```
@@ -432,14 +432,14 @@ Updated: .catalyst/specs/2026-01-11-supabase-auth/tasks.md
 
 ## Agents Involved
 
-| Agent | Role | Model | Phase | Execution |
-|-------|------|-------|-------|-----------|
-| **Forge-Master** | Orchestrator | Opus | All | Coordinates |
-| **Forger** | Task Breakdown (DAG) | Opus | 1 | Sequential |
-| **Enforcer** | Test Writer | Sonnet | 2, 6 | Sequential (blocking) |
-| **Alchemist** | Database | Opus | 3 | Sequential (foundation) |
-| **Smith** | Backend/Contracts | Opus | 4, 5 | Sequential then Parallel × N |
-| **Shaper** | Frontend | Opus | 5 | Parallel × M |
+| Agent | Role | Phase | Execution |
+|-------|------|-------|-----------|
+| **Forge-Master** | Orchestrator | All | Coordinates |
+| **Forger** | Task Breakdown (DAG) | 1 | Sequential |
+| **Enforcer** | Test Writer | 2, 6 | Sequential (blocking) |
+| **Alchemist** | Database | 3 | Sequential (foundation) |
+| **Smith** | Backend/Contracts | 4, 5 | Sequential then Parallel × N |
+| **Shaper** | Frontend | 5 | Parallel × M |
 
 ---
 

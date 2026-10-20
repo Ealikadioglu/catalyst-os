@@ -8,7 +8,6 @@ description: >
   - Querying external library documentation
 
   DO NOT analyze codebase yourself - delegate to Seer.
-model: sonnet
 effort: low
 color: blue
 ---

@@ -11,7 +11,6 @@ description: >
   security issues, verify schema integrity, and verify compliance.
 
   DO NOT validate implementations yourself - delegate to Arbiter.
-model: opus
 effort: medium
 color: purple
 skills:

@@ -8,7 +8,6 @@ description: >
   - Planning the build sequence
 
   DO NOT break down tasks yourself - delegate to Forger.
-model: opus
 effort: high
 color: green
 skills:

@@ -10,7 +10,6 @@ description: >
   to break down tasks, write tests first, and implement in dependency order.
 
   DO NOT implement features yourself - delegate to Forge-Master.
-model: opus
 effort: medium
 color: purple
 skills:
