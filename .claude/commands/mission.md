@@ -46,3 +46,5 @@ Create or update the project mission document.
 *Last updated: YYYY-MM-DD*
 ```
 
+
+**Arguments:** $ARGUMENTS

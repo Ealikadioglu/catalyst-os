@@ -48,3 +48,5 @@ echo "=== SECRETS (bundled mode only) ===" && test -f .catalyst/secrets.local.ya
 **Orchestrator:** Catalyst (the meeting persona lives in the ElevenLabs agent prompt; codebase investigation delegates to Seer/Scout via headless `claude -p`)
 
 **Process skills used:** `brainstorming`, `agent-delegation`
+
+**Arguments:** $ARGUMENTS

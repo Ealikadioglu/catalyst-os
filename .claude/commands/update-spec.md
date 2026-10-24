@@ -15,3 +15,5 @@ Update an existing specification with new requirements, scope changes, or clarif
 **Invoke skill:** `spec-update`
 
 **Process skills used:** `brainstorming`, `agent-delegation`
+
+**Arguments:** $ARGUMENTS

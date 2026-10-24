@@ -19,3 +19,5 @@ Shape a new specification from a feature request.
 **Orchestrator:** Catalyst (delegates to Oracle, Seer, Scout, Surveyor, Scribe)
 
 **Process skills used:** `brainstorming`, `agent-delegation` (with `--from`: `autopilot` instead of `brainstorming`)
+
+**Arguments:** $ARGUMENTS

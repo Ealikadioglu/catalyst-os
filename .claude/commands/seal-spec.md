@@ -34,3 +34,5 @@ Do **not** stop and ask for confirmation between phases. In particular, after `g
 - The working tree contains unexpected uncommitted state
 
 If everything is clean, the entire flow runs to completion and reports the PR URL at the end.
+
+**Arguments:** $ARGUMENTS

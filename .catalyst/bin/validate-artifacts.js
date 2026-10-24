@@ -162,6 +162,9 @@ if (cmdFiles.length === 0) {
     const content = readFile(`.claude/commands/${file}`);
     if (!content || content.trim().length < 10) {
       error(`${file} — empty or too short`);
+    } else if (!content.includes('$ARGUMENTS')) {
+      // Pi and Codex drop arguments a template never references; Claude Code appends them
+      error(`${file} — no $ARGUMENTS placeholder`);
     } else {
       ok(file.replace('.md', ''));
     }

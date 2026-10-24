@@ -27,3 +27,5 @@ echo "=== RECENT COMMITS ===" && git log --oneline -15
 **Invoke skill:** `project-sync`
 
 **Process skills used:** `verification-before-completion`
+
+**Arguments:** $ARGUMENTS

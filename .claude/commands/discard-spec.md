@@ -123,3 +123,5 @@ Be specific in rejection reasons:
 
 - Bad: "Tests are wrong"
 - Good: "Missing test for expired card scenario"
+
+**Arguments:** $ARGUMENTS

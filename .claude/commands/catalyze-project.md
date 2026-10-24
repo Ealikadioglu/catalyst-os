@@ -14,3 +14,5 @@ Initialize the project foundation. Creates project config and all 6 foundation d
 **Invoke skill:** `project-initialization`
 
 **Process skills used:** `brainstorming`, `agent-delegation`
+
+**Arguments:** $ARGUMENTS

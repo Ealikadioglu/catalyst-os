@@ -74,3 +74,5 @@ The Backlog is a **ranked queue** — position is the priority, the `### N.` num
 ## Dashboard
 
 `.catalyst/dashboard.html` is produced by the script call in step 8 — a whole-`.catalyst/main` control panel tabbed across **Roadmap / Mission / Tech Stack / Architecture / Concerns / Conventions**. Do not read the template or write the file yourself. Tell the user to double-click it.
+
+**Arguments:** $ARGUMENTS

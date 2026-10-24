@@ -32,3 +32,5 @@ Once `roadmap.json` exists, every lifecycle command refreshes it through the sam
 | `specs[]` | Every spec in one flat list: `id`, `status` (`done` · `audited` · `in-progress` · `planned` · `backlog` · `vision`), `title`, `goal`, `requires`, `ready`, `blocked_by`, `folder`, `sealed`, `command` |
 
 `ready: true` means every `requires` entry is `done`. An orchestrator may start any ready spec, not only `next`. Backlog entries keep their roadmap order.
+
+**Arguments:** $ARGUMENTS

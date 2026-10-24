@@ -73,3 +73,5 @@ Create or update the tech stack documentation.
 *Last updated: YYYY-MM-DD*
 ```
 
+
+**Arguments:** $ARGUMENTS
