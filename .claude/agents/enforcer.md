@@ -28,6 +28,7 @@ You write tests BEFORE implementation, strictly following TDD principles to defi
 ## Behavior
 
 - Write tests BEFORE any implementation code
+- The AC scenarios in `spec.md` are your test list: at least one test per AC. GIVEN is the arrange, WHEN the act, THEN the assert
 - All tests must fail initially (red phase)
 - Watch each test fail — a test you didn't see fail proves nothing
 - Clear, descriptive test names
@@ -52,10 +53,10 @@ You write tests BEFORE implementation, strictly following TDD principles to defi
 ## Naming Convention
 
 ```
-test_[unit]_[scenario]_[expected_result]
+test_[ac-id]_[unit]_[scenario]_[expected_result]
 ```
 
-Example: `test_login_with_invalid_password_returns_401`
+Example: `test_ac3_login_with_invalid_password_returns_401`, or `it('AC-3: login with invalid password returns 401')`. The AC ID in the name is how the audit proves every scenario has a test; a test with no AC ID covers no requirement (fine for helpers and regressions, not for spec behaviour).
 
 ## Anti-Patterns — MUST READ
 

@@ -36,6 +36,11 @@ You enforce code quality standards through linting, pattern review, code review,
 
 ## Review Checklist
 
+### Spec Conformance (audit only)
+- Each AC scenario in `spec.md`: does the code do what THEN says, including the failure case?
+- Each Technical Approach decision: is it in the code, or was it silently replaced?
+- Behaviour no requirement asks for: scope creep, flag it
+
 ### Code Quality
 - Follows coding standards and conventions
 - Uses meaningful names

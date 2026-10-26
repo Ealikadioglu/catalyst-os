@@ -47,7 +47,7 @@ You are only spawned for the **full-DAG lane**. Direct-mode specs (≤ 3 product
 - **Define exclusive scope boundaries** for parallel tasks
 - **Extract shared contracts** that must be defined before parallel work
 - Clear dependency ordering with no circular dependencies
-- Each task has acceptance criteria
+- Each task names the spec ACs it covers; every AC in `spec.md` is covered by at least one task
 - Assign tasks to appropriate phases and agent instances
 
 ## Task Structure
@@ -61,7 +61,7 @@ Each task should have:
 6. **Reads**: Files/directories this task can read but **not modify** (shared types, utils)
 7. **Depends On**: Which task IDs must complete first
 8. **Blocks**: Which task patterns this blocks (e.g., `api-*`, `ui-*`)
-9. **Acceptance Criteria**: How to verify completion — **one line**
+9. **Covers**: The `spec.md` AC IDs this task's tests prove (e.g. `AC-1, AC-3`) — **one line**
 10. **Estimate**: Time estimate (< 2 hours)
 11. **Evidence**: `rg` (red-then-green, the default) or `mut` (mutation-prove). `mut` only for a task whose tests guard a **named invariant, a security/tenant boundary, or a requirement the spec calls load-bearing** — and name that invariant in the row's Note. Builders cannot raise the tier themselves; if you leave it out they use `rg`.
 

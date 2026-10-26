@@ -192,17 +192,19 @@ Output:       .catalyst/specs/YYYY-MM-DD-{slug}/
 │  │  │ - As a user, I want to login with Google...        │  │   │
 │  │  │                                                    │  │   │
 │  │  │ ## Requirements                                    │  │   │
-│  │  │ ### Functional                                     │  │   │
-│  │  │ - [ ] REQ-001: Email/password authentication       │  │   │
-│  │  │ - [ ] REQ-002: OAuth with Google provider          │  │   │
+│  │  │ ### REQ-001: Email/password sign-up                │  │   │
+│  │  │ The system SHALL create an account from a valid    │  │   │
+│  │  │ email and password.                                │  │   │
 │  │  │                                                    │  │   │
-│  │  │ ### Non-Functional                                 │  │   │
-│  │  │ - [ ] SEC-001: Passwords never stored plaintext    │  │   │
-│  │  │ - [ ] PERF-001: Auth check < 50ms                  │  │   │
+│  │  │ #### AC-1: Valid email                             │  │   │
+│  │  │ - GIVEN no account for the email                   │  │   │
+│  │  │ - WHEN the user signs up                           │  │   │
+│  │  │ - THEN the account exists and they are signed in   │  │   │
 │  │  │                                                    │  │   │
-│  │  │ ## Acceptance Criteria                             │  │   │
-│  │  │ 1. User can sign up with valid email               │  │   │
-│  │  │ 2. Invalid login shows error message               │  │   │
+│  │  │ #### AC-2: Email already taken                     │  │   │
+│  │  │ - GIVEN an account for the email                   │  │   │
+│  │  │ - WHEN the user signs up                           │  │   │
+│  │  │ - THEN an error is shown, no second account exists │  │   │
 │  │  └────────────────────────────────────────────────────┘  │   │
 │  └──────────────────────────────────────────────────────────┘   │
 │                                                                 │

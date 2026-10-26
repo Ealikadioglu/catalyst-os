@@ -83,14 +83,14 @@ DO NOT CREATE:
 
 - Use clear, concise language
 - Be specific over vague
-- Make requirements testable
+- Make requirements testable: every requirement gets GIVEN/WHEN/THEN AC scenarios, and implementation detail stays out of Requirements (see *Requirement Rules* in `spec-shaping`)
 - Use checkboxes for tracking
 - Ensure nothing is lost from inputs
 - Structure information logically
 
 ## Document Types
 
-1. **spec.md**: Feature requirements, user stories, acceptance criteria
+1. **spec.md**: Feature requirements with their AC scenarios, user stories
 2. **research.md**: Codebase analysis, external research, decision log
 3. **Architecture notes**: Add to research.md under "## Decisions" section
 

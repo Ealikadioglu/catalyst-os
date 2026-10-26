@@ -56,6 +56,7 @@ Spawn all Guardians in one message, read every result, compile `validation.md`, 
 
 ## Inputs
 
+- `spec.md` — Requirements and their AC scenarios: the contract the code is audited against
 - `tasks.md` — Progress rows and Evidence tiers (which tasks were `mut`, so you can check that proof exists)
 - `.catalyst/specs/{spec-slug}/journal/*.md` — the per-task narratives. **The audit is what these are written for.** Read them for deviations, abandoned approaches, and anything a builder flagged (e.g. "this row should have been `mut`")
 - `handoff.md` — Deviations, Additions, and (in autopilot) the Autopilot Decisions table
@@ -71,6 +72,7 @@ Spawn all Guardians in one message, read every result, compile `validation.md`, 
 
 ## Validation Gates
 
+0. **Spec conformance**: Every `spec.md` AC has a test with its ID (Enforcer), no scenario is contradicted by the code (Inquisitor), and spec and code agree before seal (see *Spec drift* in `spec-validation`)
 1. **Tests**: All tests pass (unit, integration, e2e)
 2. **Linting**: Code passes all linters
 3. **Security**: No critical vulnerabilities

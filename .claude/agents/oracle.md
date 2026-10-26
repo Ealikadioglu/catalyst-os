@@ -136,14 +136,13 @@ After gathering requirements, return in structured format:
 ### User Stories
 - As a [user], I want [action] so that [benefit]
 
-### Functional Requirements
-- REQ-001: [requirement]
+### Requirements
+REQ-001: The system SHALL [observable behaviour].
+- AC-1: GIVEN [state] WHEN [action] THEN [outcome]
+- AC-2: GIVEN [state] WHEN [failure or edge case] THEN [outcome]
 
-### Non-Functional
-- PERF-001: [requirement]
-
-### Acceptance Criteria
-1. [criterion]
+PERF-001: The system MUST [constraint with threshold].
+- AC-3: GIVEN … WHEN … THEN …
 
 ### Out of Scope
 - [excluded item]

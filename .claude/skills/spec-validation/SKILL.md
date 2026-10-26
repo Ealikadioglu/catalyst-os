@@ -15,7 +15,17 @@ description: Validate a finished implementation for test coverage, code quality,
 
 ## Purpose
 
-Orchestrate comprehensive validation: TDD compliance, unit tests, E2E tests, code quality, and security scanning.
+Orchestrate comprehensive validation: TDD compliance, spec conformance, unit tests, E2E tests, code quality, and security scanning.
+
+Spec conformance is the question the other checks miss: not "is the code good" but "did it build what `spec.md` says". Three parts:
+
+| Part | Question | Owner | Fails the audit when |
+|------|----------|-------|----------------------|
+| **Completeness** | Does every AC in `spec.md` have a test carrying its ID? | Enforcer | Any AC has no test |
+| **Correctness** | Does the code do what each scenario says, including its failure case? | Inquisitor | The code contradicts a scenario |
+| **Coherence** | Do Technical Approach decisions show up in the code? Does the code do things no requirement asks for? | Inquisitor | Never; concern only |
+
+A spec whose Requirements say `No behaviour change.` is complete when its guard AC holds (the existing suite is green, or the named command's output is unchanged).
 
 ## Skills Referenced
 
@@ -98,17 +108,19 @@ A finding you cannot point at is not a finding."
 
 Spawn all Guardians in parallel:
 
-**Enforcer** (Unit Tests):
+**Enforcer** (Unit Tests + Completeness):
 - Run all unit tests
 - Check coverage thresholds
 - Verify test quality
+- **AC coverage**: list every AC ID in `spec.md`, grep the test files for each, report `N/N covered` and every AC with no test
 
 **Sentinel** (E2E Tests):
 - Run full E2E test suite
 - Test user flows
 - Capture screenshots on failure
 
-**Inquisitor** (Code Quality + Simplification):
+**Inquisitor** (Code Quality + Correctness + Simplification):
+- **Spec conformance**: read `spec.md` Requirements and Technical Approach, then the diff. Report each scenario the code contradicts (correctness), each Technical Approach decision absent from the code, and each behaviour no requirement asks for (coherence)
 - Run linters
 - Code review checks
 - Documentation gaps — and the opposite: **comment budget** per `.claude/rules/code-comments.md` (docblocks ≤ 15 lines, why-only, no decision records in code; flag any file where comments exceed ~20% of the production diff)
@@ -136,6 +148,8 @@ Spawn all Guardians in parallel:
 
 Create `validation.md` with results from all Guardians.
 
+**Spec drift.** When code and `spec.md` disagree, decide which one is true before writing the verdict. If the code is wrong, it is a FAIL like any other. If the code is right and the spec is stale (a deviation logged in `handoff.md` or a journal, or a hand edit the user confirms), spawn Scribe to update the requirement and its ACs to what shipped, then record it under Drift. Never seal with the two disagreeing: the next spec in this domain reads `spec.md`, not the code.
+
 ### Phase 6: Generate handoff.md (On Success)
 
 If all validation passes, create handoff.md with:
@@ -155,6 +169,12 @@ If all validation passes, create handoff.md with:
 - [x] Tests written before implementation
 - [x] All tasks have tests
 - [x] All tests pass
+
+## Spec Conformance
+- Completeness: N/N ACs have a test (missing: none)
+- Correctness: PASS/FAIL — scenarios the code contradicts
+- Coherence: PASS/CONCERNS — approach decisions not in the code, behaviour no requirement asks for
+- Drift: none | spec.md updated for {REQ-ID}: {one line}
 
 ## Test Results
 ### Unit Tests (Enforcer)

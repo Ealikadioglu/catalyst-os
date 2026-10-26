@@ -13,7 +13,8 @@ files:
     updated_by: [scribe, arbiter]
     note: |
       Frontmatter enables cross-spec context assembly.
-      Body contains requirements and acceptance criteria.
+      Body contains requirements, each with GIVEN/WHEN/THEN AC scenarios
+      (AC-n, numbered across the spec). Rules: spec-shaping "Requirement Rules".
       Optional `plan: <absolute path>` records the plan file of a --from run.
 
   research.md:

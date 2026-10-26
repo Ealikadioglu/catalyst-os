@@ -206,15 +206,24 @@ Spawn Scribe:
 
 ## Requirements
 
-### Functional
-- [ ] REQ-001: Description
+### REQ-001: {Name}
+The system SHALL {observable behaviour}.
 
-### Non-Functional
-- [ ] PERF-001: Response time < 200ms
-- [ ] SEC-001: Data encrypted at rest
+#### AC-1: {scenario name}
+- GIVEN {starting state}
+- WHEN {action}
+- THEN {observable outcome}
 
-## Acceptance Criteria
-1. [Verifiable criterion]
+#### AC-2: {failure or edge case}
+- GIVEN {starting state}
+- WHEN {action}
+- THEN {observable outcome}
+
+### SEC-001: {Name}
+The system MUST {constraint, with a threshold where one applies}.
+
+#### AC-3: {scenario name}
+- GIVEN / WHEN / THEN
 
 ## Technical Approach
 [Based on research findings]
@@ -226,6 +235,14 @@ Spawn Scribe:
 - [Any remaining unknowns]
 ```
 
+### Requirement Rules
+
+- **Requirements are a behaviour contract**: what a user, caller, or downstream system can observe — inputs, outputs, errors, limits. If the implementation could change without changing that behaviour, the line belongs in Technical Approach or `tasks.md`. No file, class, function, or library names under Requirements.
+- **Every requirement has at least one AC scenario**, and one covers the failure or edge case when there is one. A requirement with no scenario cannot be tested, so it cannot be audited.
+- **AC IDs are numbered across the whole spec** (AC-1, AC-2, …) and never reused or renumbered. Tests put the AC ID in their name; the audit greps for it.
+- **IDs and strength:** `REQ-` functional; `PERF-`, `SEC-`, etc. non-functional. SHALL/MUST is absolute; SHOULD needs its exception stated.
+- **No behaviour change** (refactor, tooling, docs): write `No behaviour change.` under Requirements with one AC naming the guard (the existing suite stays green, or the command whose output must not change).
+
 ## Output
 
 ```
@@ -236,6 +253,12 @@ Created: .catalyst/specs/YYYY-MM-DD-{slug}/
 ├── research.md  <- Research findings
 ├── handoff.md   <- Living document
 └── assets/      <- UI references (if any)
+
+Review before forging (two minutes, in this order; stop at the first "no"):
+  1. Overview — is this the problem you asked for, with nothing extra in scope?
+  2. Requirements — could a tester check every SHALL, and does each have an AC that exercises it?
+  3. What is missing — is the case you care about most an AC?
+  4. Would you be fine if it built exactly this and nothing more?
 
 REMINDER: /forge-spec follows strict TDD
   1. Tests written FIRST (Enforcer)

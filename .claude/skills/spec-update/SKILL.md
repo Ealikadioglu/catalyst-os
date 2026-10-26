@@ -37,6 +37,16 @@ Update spec documentation (requirements, tasks, research) without continuing to 
 
 **If COMPLETE:** Cannot update — suggest new spec or reopen.
 
+**Update, or a new spec?** Ask three questions before classifying:
+
+| Test | Update this spec | Start a new spec |
+|------|------------------|------------------|
+| Intent | Same problem, refined | The problem itself changed ("add dark mode" → "full theming system") |
+| Overlap | Most of the existing requirements still stand | Most would be rewritten or replaced |
+| Completion | This spec cannot be called done without the change | This spec can ship as is; the new work stands alone |
+
+Any answer in the right column → recommend a new spec (`/catalyze-spec`), and say which test decided it. Shipping the MVP now and the rest later is an update that **shrinks** this spec, followed by a new spec for phase two.
+
 ### Phase 2: Gather Requirements (If Expanding/Clarifying)
 
 Spawn Oracle if requirements need discussion.
@@ -44,7 +54,8 @@ Spawn Oracle if requirements need discussion.
 ### Phase 3: Update Documentation (Scribe)
 
 Spawn Scribe to update spec.md:
-- Add/remove/modify requirements
+- Add/remove/modify requirements, each with its AC scenarios (*Requirement Rules* in `spec-shaping`)
+- New ACs take the next free number; a removed AC is struck through, never renumbered or reused, because tests carry the ID
 - Update Changelog section
 - Keep Status as IN_PROGRESS if implementation started
 

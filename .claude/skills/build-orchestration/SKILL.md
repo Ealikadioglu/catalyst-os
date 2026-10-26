@@ -162,7 +162,7 @@ Decide once, before spawning anyone. Read `spec.md` frontmatter (`provides`, `af
 ```
 1. Write tasks.md yourself: the lane line, one task row per behaviour (≤ 5 rows), Evidence tier per row, Current Session.
    No phases, no scope tables, no dependency graph.
-2. Load test-driven-development. Write the failing tests yourself. Run → all RED.
+2. Load test-driven-development. Write the failing tests yourself, at least one per spec AC, AC ID in the test name. Run → all RED.
 3. GATE 1: commit "test({scope}): write failing tests for {spec}"
 4. Implement yourself. Run → all GREEN. Refactor. Run → still GREEN.
 5. GATE 2: commit "feat({scope}): implement {spec}"

@@ -30,7 +30,7 @@ This is not a sign-off step. It is an interrogation step. The bar is "every bran
 ## Prerequisites
 
 - Target spec folder exists at `.catalyst/specs/{slug}/`.
-- `spec.md` exists with at minimum: Overview, Requirements, Acceptance Criteria, Technical Approach.
+- `spec.md` exists with at minimum: Overview, Requirements (with AC scenarios), Technical Approach.
 - `handoff.md` exists (create if missing — Catalyst should have left one).
 
 If any prerequisite is missing, STOP and tell the user to run or finish `/catalyze-spec` first.
@@ -47,7 +47,7 @@ Build a working list (kept in your head or a scratch section in `handoff.md`) of
 |--------|-----------------|
 | `spec.md` → Open Questions | Each one is an explicit branch. |
 | `spec.md` → Requirements | Vague verbs ("handle", "support", "manage") hide branches. |
-| `spec.md` → Acceptance Criteria | Missing thresholds, missing failure modes. |
+| `spec.md` → AC scenarios | A requirement with no scenario, no failure case, or no threshold. A class, file, or library named under Requirements (move it to Technical Approach). |
 | `spec.md` → Out of Scope | Anything that *could* be in scope but isn't justified. |
 | `spec.md` → Technical Approach | Library/framework choices without a stated reason. |
 | `research.md` | Findings the spec didn't actually use. |
@@ -83,7 +83,7 @@ After **each** resolved question, update the spec immediately. Do not batch.
 | Answer type | Goes in |
 |-------------|---------|
 | Removes an unknown | Delete from Open Questions |
-| Adds a verifiable behavior | Append to Acceptance Criteria |
+| Adds a verifiable behavior | New AC scenario under its requirement (next free AC number) |
 | Tightens scope | Add to Requirements or Out of Scope |
 | Picks a library/pattern | Update Technical Approach |
 | Reframes the problem | Update Overview / User Stories |
