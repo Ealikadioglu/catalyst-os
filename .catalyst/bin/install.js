@@ -316,7 +316,7 @@ async function install() {
 
   ${yellow}What gets installed:${reset}
     ${dim}<harness-dir>/${reset}        Agents, skills, rules, and commands/prompts
-    ${dim}.catalyst/${reset}            Spec templates, project config, and bin/board.js (dashboard generator)
+    ${dim}.catalyst/${reset}            Spec templates, project config, bin/board.js (dashboard generator), and bin/VERSION
     ${dim}AGENTS.md${reset}             Universal instructions, architecture, and agent registry
 
   ${yellow}Example:${reset}
@@ -364,6 +364,11 @@ async function install() {
   if (copyFileWithRewrite(path.join(src, '.catalyst/bin/board.js'), path.join(cwd, '.catalyst/bin/board.js'))) {
     console.log(`  ${green}✓${reset} Installed .catalyst/bin/board.js (board + dashboard generator)`);
   }
+
+  // Framework-owned: the installed version, rewritten on every (re)install.
+  fs.mkdirSync(path.join(cwd, '.catalyst/bin'), { recursive: true });
+  fs.writeFileSync(path.join(cwd, '.catalyst/bin/VERSION'), `${pkg.version}\n`);
+  console.log(`  ${green}✓${reset} Wrote .catalyst/bin/VERSION (${pkg.version})`);
 
   // Framework-owned document templates (roadmap, dashboard, mission, etc.):
   const tempSrc = path.join(src, '.catalyst', 'main', 'temp');
