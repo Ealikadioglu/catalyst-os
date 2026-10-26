@@ -1,5 +1,9 @@
 # Changelog
 
+## 3.14.1
+
+- The installer writes the installed version to `.catalyst/bin/VERSION` and rewrites it on every install. `cat .catalyst/bin/VERSION` shows which Catalyst version a project runs.
+
 ## 3.14.0
 
 - Requirements in `spec.md` now carry GIVEN/WHEN/THEN scenarios. Each requirement has at least one `AC-n` scenario, numbered across the spec and never reused. The separate Acceptance Criteria list is gone. Requirements describe observable behaviour only; class, file and library names go in Technical Approach. A refactor writes `No behaviour change.` with one guard AC.
