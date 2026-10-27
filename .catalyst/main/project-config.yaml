@@ -33,14 +33,14 @@ git:
     red_phase: "test({scope}): write failing tests for {spec}"
     green_phase: "feat({scope}): implement {spec}"
 
-# Autopilot (/forge-spec-worktree, and orchestrators reading roadmap.json)
+# Autopilot (/forge-spec-worktree and /forge-wave)
 autopilot:
   # Branch autopilot PRs target. Empty = git.development_branch.
   # A separate branch (e.g. "pre-development") keeps unattended work off
   # development until someone promotes it.
   branch: ""
-  # For external orchestrators only: true lets them merge autopilot PRs.
-  # Catalyst itself never merges.
+  # true lets /forge-wave merge autopilot PRs into `branch` (required for it
+  # to run). /forge-spec-worktree itself never merges.
   auto_merge: false
 
 # Voice meetings (/meet-spec) — optional.

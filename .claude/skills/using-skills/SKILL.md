@@ -58,7 +58,8 @@ Skills tell you HOW. User instructions tell you WHAT.
 | **project-initialization** | `.claude/skills/project-initialization/SKILL.md` | `/catalyze-project` — setting up a new project |
 | **spec-update** | `.claude/skills/spec-update/SKILL.md` | `/update-spec` — modifying an existing spec |
 | **project-sync** | `.claude/skills/project-sync/SKILL.md` | `/sync-project` — batch sync, archive specs, reconcile foundation docs |
-| **spec-lifecycle-board** | `.claude/skills/spec-lifecycle-board/SKILL.md` | After any spec transition, `/plan-project`, or `/roadmap-json` — run `node .catalyst/bin/board.js`; never hand-write the board |
+| **wave-orchestration** | `.claude/skills/wave-orchestration/SKILL.md` | `/forge-wave` — build one roadmap wave unattended, spec by spec, in herdr + pi |
+| **spec-lifecycle-board** | `.claude/skills/spec-lifecycle-board/SKILL.md` | After any spec transition, or `/plan-project` — run `node .catalyst/bin/board.js`; never hand-write the board |
 
 ### Domain Skills (technologist companions)
 

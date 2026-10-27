@@ -376,57 +376,70 @@ test('template-less project still syncs roadmap and reports the missing template
 });
 
 // ---------------------------------------------------------------------------
-console.log('\nroadmap.json');
+console.log('\nwaves');
 
-test('roadmap.json is opt-in: written with --json, then refreshed on every sync', () => {
-  const root = fixture({ roadmap: ROADMAP_WITH_BACKLOG });
-  const json = path.join(root, '.catalyst', 'main', 'roadmap.json');
-  board.sync(root, { by: '/forge-spec' });
-  assert.ok(!fs.existsSync(json));
-  board.sync(root, { by: '/roadmap-json', json: true });
-  assert.ok(fs.existsSync(json));
+const WAVES = `## 🌊 Waves
+
+### Wave 1
+**Goal:** Secure sign-in end to end.
+
+1. \`setup\`
+2. \`two-factor-auth\`
+3. \`audit-log\`
+4. \`ghost\`
+
+---
+
+`;
+const withWaves = (md) => md.replace('## 🗂️ Backlog', `${WAVES}## 🗂️ Backlog`);
+
+test('waves render a state per spec in order and survive a re-sync', () => {
+  const root = fixture({ roadmap: withWaves(ROADMAP_WITH_BACKLOG) });
+  spec(root, '2026-08-01-setup', { 'spec.md': SPEC_MD('Setup', 'sealed: 2026-08-05\n') }, true);
   spec(root, '2026-09-02-two-factor-auth', { 'spec.md': SPEC_MD('Two-Factor Auth') });
   board.sync(root, { by: '/catalyze-spec' });
-  const j = JSON.parse(fs.readFileSync(json, 'utf8'));
-  assert.strictEqual(j.specs.find((s) => s.id === 'two-factor-auth').status, 'planned');
+  board.sync(root, { by: '/forge-spec' });
+  const md = fs.readFileSync(path.join(root, '.catalyst', 'main', 'roadmap.md'), 'utf8');
+  assert.strictEqual((md.match(/## 🌊 Waves/g) || []).length, 1);
+  assert.ok(md.includes('**Goal:** Secure sign-in end to end.'));
+  assert.ok(md.includes('**Status:** 1/4 done · next: `two-factor-auth`'));
+  assert.ok(md.includes('1. ✅ `setup` — Setup'));
+  assert.ok(md.includes('2. 📋 `two-factor-auth` — Two-Factor Auth'));
+  assert.ok(md.includes('3. 🗂️ `audit-log` — Audit Log'));
+  assert.ok(md.includes('4. ❓ `ghost` — not in Backlog or specs'));
+  assert.ok(md.indexOf('## 🌊 Waves') < md.indexOf('## 🗂️ Backlog'));
 });
 
-test('roadmap.json lists every spec flat, with requires resolved and readiness computed', () => {
-  const root = fixture({ roadmap: ROADMAP_WITH_BACKLOG });
-  spec(root, '2026-08-01-setup', { 'spec.md': SPEC_MD('Setup', 'sealed: 2026-08-05\nrequires:\n  - nothing-real\n') }, true);
-  board.sync(root, { by: '/roadmap-json', json: true, today: '2026-09-02' });
-  const j = JSON.parse(fs.readFileSync(path.join(root, '.catalyst', 'main', 'roadmap.json'), 'utf8'));
-  const by = Object.fromEntries(j.specs.map((s) => [s.id, s]));
-  assert.deepStrictEqual(j.specs.map((s) => s.status), ['done', 'done', 'backlog', 'backlog', 'vision']);
-  assert.strictEqual(by.setup.folder, 'completed/2026-08-01-setup');
-  assert.strictEqual(by.setup.sealed, '2026-08-05');
-  assert.strictEqual(by['two-factor-auth'].ready, true);
-  assert.deepStrictEqual(by['audit-log'].requires, ['two-factor-auth']);
-  assert.strictEqual(by['audit-log'].ready, false);
-  assert.deepStrictEqual(by['audit-log'].blocked_by, ['two-factor-auth']);
-  assert.deepStrictEqual(by.sso.requires, ['two-factor-auth']);
-  assert.deepStrictEqual(j.next, { id: 'two-factor-auth', command: '/catalyze-spec "TOTP two-factor authentication on login"' });
-  assert.strictEqual(j.context.roadmap, '.catalyst/main/roadmap.md');
-  assert.strictEqual(j.context.mission, '.catalyst/main/mission.md');
+test('waveReport gives the next spec, its command, and what each spec waits on', () => {
+  const root = fixture({ roadmap: withWaves(ROADMAP_WITH_BACKLOG) });
+  fs.writeFileSync(
+    path.join(root, '.catalyst', 'main', 'project-config.yaml'),
+    'autopilot:\n  branch: "pre-development"  # comment\n  auto_merge: true\n'
+  );
+  spec(root, '2026-08-01-setup', { 'spec.md': SPEC_MD('Setup', 'sealed: 2026-08-05\n') }, true);
+  const w = board.waveReport(root, 1);
+  assert.strictEqual(w.baseBranch, 'pre-development');
+  assert.strictEqual(w.autoMerge, true);
+  assert.deepStrictEqual(w.items.map((i) => i.state), ['done', 'backlog', 'backlog', 'unknown']);
+  assert.strictEqual(w.next.slug, 'two-factor-auth');
+  assert.strictEqual(w.next.command, '/catalyze-spec "TOTP two-factor authentication on login"');
+  assert.deepStrictEqual(w.items[2].waitingOn, ['two-factor-auth']);
 });
 
-test('roadmap.json autopilot block reads project-config.yaml', () => {
-  const root = fixture({ roadmap: ROADMAP_WITH_BACKLOG });
-  const cfg = path.join(root, '.catalyst', 'main', 'project-config.yaml');
-  fs.writeFileSync(cfg, 'git:\n  development_branch: "development"\n');
-  let j = board.buildRoadmapJson(root, board.parseRoadmap(ROADMAP_WITH_BACKLOG), board.scanSpecs(root), null, {});
-  assert.deepStrictEqual(j.autopilot, { base_branch: 'development', auto_merge: false });
-  fs.writeFileSync(cfg, 'git:\n  development_branch: "development"\nautopilot:\n  branch: "pre-development"  # comment\n  auto_merge: true\n');
-  j = board.buildRoadmapJson(root, board.parseRoadmap(ROADMAP_WITH_BACKLOG), board.scanSpecs(root), null, {});
-  assert.deepStrictEqual(j.autopilot, { base_branch: 'pre-development', auto_merge: true });
+test('a planned wave spec points at /forge-spec-worktree; a missing wave is an error', () => {
+  const root = fixture({ roadmap: withWaves(ROADMAP_WITH_BACKLOG) });
+  spec(root, '2026-09-02-two-factor-auth', { 'spec.md': SPEC_MD('Two-Factor Auth') });
+  spec(root, '2026-08-01-setup', { 'spec.md': SPEC_MD('Setup', 'sealed: 2026-08-05\n') }, true);
+  const w = board.waveReport(root, 1);
+  assert.strictEqual(w.next.command, '/forge-spec-worktree @2026-09-02-two-factor-auth');
+  assert.ok(board.waveReport(root, 9).error);
 });
 
-test('a planned spec points autopilot at /forge-spec-worktree', () => {
+test('a roadmap without waves renders no Waves section', () => {
   const root = fixture({ roadmap: ROADMAP_WITH_BACKLOG });
-  spec(root, '2026-09-01-retry', { 'spec.md': SPEC_MD('Retry Truth') });
-  board.sync(root, { by: '/roadmap-json', json: true });
-  const j = JSON.parse(fs.readFileSync(path.join(root, '.catalyst', 'main', 'roadmap.json'), 'utf8'));
-  assert.deepStrictEqual(j.next, { id: 'retry', command: '/forge-spec-worktree @2026-09-01-retry' });
+  board.sync(root, { by: '/forge-spec' });
+  const md = fs.readFileSync(path.join(root, '.catalyst', 'main', 'roadmap.md'), 'utf8');
+  assert.ok(!md.includes('Waves'));
 });
 
 // ---------------------------------------------------------------------------

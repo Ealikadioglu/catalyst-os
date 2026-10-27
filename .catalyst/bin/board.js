@@ -8,6 +8,7 @@
  *
  *   node .catalyst/bin/board.js --by "/forge-spec"
  *   node .catalyst/bin/board.js --by "/plan-project" --init   # create roadmap.md if missing
+ *   node .catalyst/bin/board.js --wave 1                       # one wave's state, for /forge-wave
  *
  * State detection (single source of truth, mirrored in the
  * `spec-lifecycle-board` skill):
@@ -18,8 +19,8 @@
  *   Audited      validation.md says Overall Status: PASS         → /seal-spec
  *   Done         folder lives in .catalyst/specs/completed/      → (none)
  *
- * Planning judgment (Backlog order, Vision) is human/model-owned: those
- * sections of roadmap.md are preserved verbatim. Backlog `### N.` numbers are
+ * Planning judgment (Waves, Backlog order, Vision) is human/model-owned: those
+ * sections of roadmap.md are preserved (Waves gets a status per spec). Backlog `### N.` numbers are
  * permanent IDs, not ranks. Done rows are merged, never dropped. Everything
  * else derivable from disk is regenerated. Exit 0 on success, 1 when no project root is found.
  */
@@ -226,6 +227,7 @@ function normalizeTitle(t) {
 function classifySection(title) {
   const n = normalizeTitle(title);
   if (n.includes('next up')) return 'nextUp';
+  if (/^waves?\b/.test(n)) return 'waves';
   if (n.includes('backlog')) return 'backlog';
   if (n.includes('in progress')) return 'inProgress';
   if (n.startsWith('planned')) return 'planned';
@@ -399,20 +401,54 @@ function parseDone(body) {
     .filter((d) => d.name && !/^_none yet_$/.test(d.name));
 }
 
+const WAVES_INTRO =
+  '<!--\nOrdered groups of specs run one after another by `/forge-wave <id>`. Planning-owned\n(`/plan-project`): write `### Wave N`, a one- or two-sentence **Goal:**, and the specs as a\nnumbered list of `Catalyze as` slugs in build order. Wave numbers are permanent IDs.\nboard.js fills in the status of each spec; it never reorders or drops one.\n-->';
+const STATE_MARK = { done: '✅', audited: '🔬', inProgress: '🔨', planned: '📋', backlog: '🗂️', unknown: '❓' };
+
+/** `### Wave N` blocks: a goal and an ordered list of slugs. The intro comment is kept. */
+function parseWaves(body) {
+  const intro = [];
+  const waves = [];
+  let cur = null;
+  for (const line of body.split(/\r?\n/)) {
+    const head = line.match(/^###\s+Wave\s+(\d+)\b[\s:—–-]*(.*?)\s*$/i);
+    if (head) {
+      cur = { id: parseInt(head[1], 10), label: head[2], goal: '', slugs: [] };
+      waves.push(cur);
+      continue;
+    }
+    if (!cur) {
+      if (line.trim() !== '---') intro.push(line);
+      continue;
+    }
+    const goal = line.match(/^\*\*Goal:\*\*\s*(.+)$/i);
+    const item = line.match(/^\s*(?:\d+\.|[-*])\s+(.+)$/);
+    if (goal) cur.goal = goal[1].trim();
+    else if (item) {
+      const tick = item[1].match(/`([^`]+)`/);
+      const slug = tick ? tick[1] : item[1].replace(/^[^\p{L}\p{N}]+/u, '').split(/\s/)[0];
+      if (slug) cur.slugs.push(slug.trim());
+    }
+  }
+  return { intro: intro.join('\n').trim() || WAVES_INTRO, waves };
+}
+
 /** Parse roadmap.md into planning-owned data + preserved raw sections. */
 function parseRoadmap(md) {
   const { header, sections } = splitSections(md || '');
   const backlogSection = sections.find((s) => s.kind === 'backlog');
   const visionSection = sections.find((s) => s.kind === 'vision');
   const doneSection = sections.find((s) => s.kind === 'done');
+  const wavesSection = sections.find((s) => s.kind === 'waves');
   const layout = parseBacklog(backlogSection ? backlogSection.body : '');
   return {
     header,
     backlog: layout.items.filter((i) => i.type === 'entry').map((i) => i.entry),
     backlogLayout: layout,
+    waves: wavesSection ? parseWaves(wavesSection.body) : null,
     done: doneSection ? parseDone(doneSection.body) : [],
     vision: visionSection ? parseVision(visionSection.body) : [],
-    preserved: sections.filter((s) => !['nextUp', 'planned', 'inProgress', 'audited', 'done'].includes(s.kind)),
+    preserved: sections.filter((s) => !['nextUp', 'waves', 'planned', 'inProgress', 'audited', 'done'].includes(s.kind)),
   };
 }
 
@@ -491,10 +527,11 @@ function renderDone(items) {
   return `## ✅ Done\n\n<!-- Sealed/archived specs (.catalyst/specs/completed/). Newest first. -->\n\n| Spec | Slug | Sealed |\n|------|------|--------|\n${rows}\n\n---`;
 }
 
-function renderRoadmap(parsed, specs, nextUp) {
+function renderRoadmap(parsed, specs, nextUp, waves) {
   const parts = [
     parsed.header || DEFAULT_HEADER,
     renderNextUp(nextUp),
+    ...(waves ? [renderWaves(parsed.waves, waves)] : []),
     renderBacklog(parsed.backlogLayout, parsed.backlog),
     renderSpecList('📋 Planned', '<!-- spec.md exists (catalyzed), no tasks.md yet. Ready to forge. -->', specs.planned, (s) =>
       `> Or \`!/forge-spec-worktree @${s.slug}\` to run forge → audit → seal unattended in an isolated worktree.`
@@ -546,7 +583,7 @@ function projectIdentity(root, mission) {
   return { project: project || path.basename(root), tagline: tagline || '' };
 }
 
-function buildData(root, parsed, specs, nextUp, opts) {
+function buildData(root, parsed, specs, nextUp, opts, waves) {
   const docs = {};
   for (const [key, file] of Object.entries(DOCS)) {
     const md = readIf(path.join(root, '.catalyst', 'main', file));
@@ -561,6 +598,13 @@ function buildData(root, parsed, specs, nextUp, opts) {
     generatedBy: opts.by || 'board.js',
     roadmap: {
       nextUp: nextUp || null,
+      waves: (waves || []).map((w) => ({
+        id: w.id,
+        goal: w.goal,
+        done: w.done,
+        next: w.next ? w.next.slug : null,
+        specs: w.items.map((i) => ({ slug: i.slug, name: i.name, state: i.state })),
+      })),
       backlog: parsed.backlog.map(({ raw, ...b }) => b),
       planned: specs.planned.map(strip),
       inProgress: specs.inProgress.map(strip),
@@ -580,11 +624,10 @@ function renderDashboard(template, data) {
 }
 
 // ---------------------------------------------------------------------------
-// roadmap.json — flat, machine-readable view for autopilot orchestrators.
-// Derived from roadmap.md + disk; roadmap.md stays the planning source.
+// Waves — each slug resolved to its lifecycle state on disk.
 // ---------------------------------------------------------------------------
 
-/** Read the few project-config.yaml keys the JSON exposes (no YAML dependency). */
+/** Read the few project-config.yaml keys the board reports (no YAML dependency). */
 function readConfig(root) {
   const yaml = readIf(path.join(root, '.catalyst', 'main', 'project-config.yaml')) || '';
   const cfg = {};
@@ -603,112 +646,78 @@ function readConfig(root) {
   return cfg;
 }
 
-const shortId = (slug) => slug.replace(/^\d{4}-\d{2}-\d{2}-/, '');
-const slugify = (s) => normalizeTitle(s).replace(/[\s/]+/g, '-');
+const matchesSlug = (folder, slug) => folder === slug || folder.endsWith(`-${slug}`);
 const bare = (cmd) => (cmd || '').replace(/^!/, '');
 
-function buildRoadmapJson(root, parsed, specs, nextUp, opts) {
-  const cfg = readConfig(root);
-  const ids = new Map(); // backlog `#N` → id
-  for (const b of parsed.backlog) ids.set(b.id, b.slug || slugify(b.name));
+/** `Depends on:` → slugs; `#N` resolves through the Backlog's permanent IDs. */
+function backlogRequires(entry, backlog) {
+  return entry.dependsOn
+    .split(/[,;]|\band\b/)
+    .map((t) => t.trim())
+    .filter((t) => t && !/^(nothing|none|-|—|n\/a)$/i.test(t))
+    .map((t) => {
+      const n = t.match(/#(\d+)/);
+      if (!n) return t.replace(/`/g, '');
+      const hit = backlog.find((b) => b.id === parseInt(n[1], 10));
+      return hit && hit.slug ? hit.slug : t;
+    });
+}
 
-  const items = [
-    ...[...specs.done]
-      .sort((a, b) => (a.date || '').localeCompare(b.date || ''))
-      .map((d) => ({
-        id: d.slug ? shortId(d.slug) : slugify(d.name),
-        status: 'done',
-        title: d.name,
-        requires: d.requires || [],
-        folder: d.slug && exists(path.join(root, '.catalyst', 'specs', 'completed', d.slug)) ? `completed/${d.slug}` : null,
-        sealed: d.date || null,
-      })),
-    ...[['audited', specs.audited], ['in-progress', specs.inProgress], ['planned', specs.planned]].flatMap(([status, list]) =>
-      list.map((s) => ({
-        id: shortId(s.slug),
-        status,
-        title: s.name,
-        goal: s.scope || '',
-        requires: s.requires || [],
-        folder: s.slug,
-        command: bare(s.command),
-        ...(status === 'planned' ? { autopilot_command: `/forge-spec-worktree @${s.slug}` } : {}),
-      }))
-    ),
-    ...parsed.backlog.map((b) => ({
-      id: ids.get(b.id),
-      status: 'backlog',
-      title: b.name,
-      goal: b.scope,
-      done_when: b.doneWhen,
-      priority: b.priority || null,
-      requires: b.dependsOn
-        .split(/[,;]|\band\b/)
-        .map((t) => t.trim())
-        .filter((t) => t && !/^(nothing|none|-|—|n\/a)$/i.test(t))
-        .map((t) => {
-          const n = t.match(/#(\d+)/);
-          if (n) return ids.get(parseInt(n[1], 10)) || t;
-          return t.replace(/`/g, '');
-        }),
-      command: bare(b.command),
-    })),
-    ...parsed.vision.map((v) => ({
-      id: slugify(v.goal),
-      status: 'vision',
-      title: v.goal,
-      goal: v.description,
-      requires: parseList(v.prereq),
-    })),
-  ];
-
-  // Resolve every `requires` to a known id; anything unresolvable blocks readiness.
-  const byId = new Map(items.map((i) => [i.id, i]));
-  const resolve = (ref) => {
-    const key = shortId(ref);
-    if (byId.has(key)) return key;
-    if (byId.has(slugify(ref))) return slugify(ref);
-    const hit = items.find((i) => i.id.endsWith(`-${key}`) || key.endsWith(`-${i.id}`));
-    return hit ? hit.id : null;
+function resolveWaves(waves, specs, backlog) {
+  const find = (slug) => {
+    for (const [state, list] of [['audited', specs.audited], ['inProgress', specs.inProgress], ['planned', specs.planned]]) {
+      const s = list.find((x) => matchesSlug(x.slug, slug));
+      if (s) {
+        const command = state === 'planned' ? `/forge-spec-worktree @${s.slug}` : bare(s.command);
+        return { slug, state, name: s.name, folder: s.slug, requires: s.requires || [], command };
+      }
+    }
+    const d = specs.done.find((x) => x.slug && matchesSlug(x.slug, slug));
+    if (d) return { slug, state: 'done', name: d.name, folder: d.slug, requires: d.requires || [], command: '' };
+    const b = backlog.find((x) => x.slug === slug);
+    if (b) return { slug, state: 'backlog', name: b.name, folder: null, requires: backlogRequires(b, backlog), command: bare(b.command) };
+    return { slug, state: 'unknown', name: '', folder: null, requires: [], command: '' };
   };
-  for (const item of items) {
-    const unresolved = [];
-    item.requires = item.requires
-      .map((r) => {
-        const id = resolve(r);
-        if (!id) unresolved.push(r);
-        return id;
+  return waves.map((w) => {
+    const items = w.slugs.map(find);
+    const isDone = (slug) => specs.done.some((x) => x.slug && matchesSlug(x.slug, slug));
+    for (const i of items) i.waitingOn = i.state === 'done' ? [] : i.requires.filter((r) => !isDone(r));
+    const done = items.filter((i) => i.state === 'done').length;
+    const next = items.find((i) => i.state !== 'done') || null;
+    return { ...w, items, done, next };
+  });
+}
+
+function renderWaves(waves, resolved) {
+  const blocks = resolved.map((w) => {
+    const status = !w.items.length
+      ? '_no specs listed_'
+      : w.next
+        ? `${w.done}/${w.items.length} done · next: \`${w.next.slug}\``
+        : `${w.done}/${w.items.length} done · ✅ complete`;
+    const list = w.items
+      .map((i, n) => {
+        const note = i.state === 'unknown' ? ' — not in Backlog or specs' : i.name ? ` — ${i.name}` : '';
+        return `${n + 1}. ${STATE_MARK[i.state]} \`${i.slug}\`${note}`;
       })
-      .filter(Boolean);
-    if (item.status === 'done' || item.status === 'vision') continue;
-    const waiting = item.requires.filter((r) => byId.get(r).status !== 'done');
-    item.ready = !waiting.length && !unresolved.length;
-    if (!item.ready) item.blocked_by = [...waiting, ...unresolved];
-  }
+      .join('\n');
+    const head = `### Wave ${w.id}${w.label ? `: ${w.label}` : ''}`;
+    return [head, `**Goal:** ${w.goal || '_missing — /plan-project writes one_'}`, `**Status:** ${status}`, '', list].join('\n').replace(/\s+$/, '');
+  });
+  return `## 🌊 Waves\n\n${waves.intro}\n\n${blocks.join('\n\n')}\n\n---`;
+}
 
-  const context = {};
-  const rel = (...p) => path.join('.catalyst', ...p);
-  for (const [key, file] of Object.entries({ ...DOCS, roadmap: 'roadmap.md', projectConfig: 'project-config.yaml' })) {
-    if (exists(path.join(root, '.catalyst', 'main', file))) context[key.replace(/[A-Z]/g, (c) => `_${c.toLowerCase()}`)] = rel('main', file);
-  }
-  if (cfg.plan && exists(path.join(root, cfg.plan))) context.plan = cfg.plan;
-  if (exists(path.join(root, '.catalyst', 'references'))) context.references = rel('references');
-
-  const { project, tagline } = projectIdentity(root, readIf(path.join(root, '.catalyst', 'main', 'mission.md')));
-  const next = nextUp && items.find((i) => (nextUp.slug ? i.id === shortId(nextUp.slug) || i.folder === nextUp.slug : i.title === nextUp.name));
+/** One wave's state for /forge-wave: base branch, every spec in order, and the next one. */
+function waveReport(root, id) {
+  const r = sync(root, { by: `/forge-wave ${id}` });
+  if (r.skipped) return { error: `no roadmap.md — run /plan-project first` };
+  const wave = (r.waves || []).find((w) => w.id === id);
+  if (!wave) return { error: `wave ${id} is not in roadmap.md (## 🌊 Waves)` };
+  const cfg = readConfig(root);
   return {
-    schema: 1,
-    project,
-    summary: tagline,
-    generated: opts.today || today(),
-    generated_by: opts.by || 'board.js',
-    context,
-    autopilot: {
-      base_branch: cfg['autopilot.branch'] || cfg['git.development_branch'] || null,
-      auto_merge: /^(true|on|yes)$/i.test(cfg['autopilot.auto_merge'] || ''),
-    },
-    next: next ? { id: next.id, command: next.status === 'planned' ? next.autopilot_command : next.command } : null,
-    specs: items,
+    ...wave,
+    baseBranch: cfg['autopilot.branch'] || null,
+    autoMerge: /^(true|on|yes)$/i.test(cfg['autopilot.auto_merge'] || ''),
   };
 }
 
@@ -757,30 +766,23 @@ function sync(root, opts = {}) {
   specs.done = history;
 
   const nextUp = resolveNextUp({ ...specs, backlog: parsed.backlog });
+  const waves = parsed.waves ? resolveWaves(parsed.waves.waves, specs, parsed.backlog) : null;
 
   fs.mkdirSync(mainDir, { recursive: true });
-  fs.writeFileSync(roadmapPath, renderRoadmap(parsed, specs, nextUp));
+  fs.writeFileSync(roadmapPath, renderRoadmap(parsed, specs, nextUp, waves));
 
   let dashboardPath = null;
   const template = readIf(path.join(mainDir, 'temp', 'temp-dashboard.html'));
   if (template) {
     dashboardPath = path.join(root, '.catalyst', 'dashboard.html');
-    fs.writeFileSync(dashboardPath, renderDashboard(template, buildData(root, parsed, specs, nextUp, opts)));
-  }
-
-  // Opt-in: written once roadmap.json exists (created by /roadmap-json, i.e. --json).
-  let jsonPath = path.join(mainDir, 'roadmap.json');
-  if (opts.json || exists(jsonPath)) {
-    fs.writeFileSync(jsonPath, JSON.stringify(buildRoadmapJson(root, parsed, specs, nextUp, opts), null, 2) + '\n');
-  } else {
-    jsonPath = null;
+    fs.writeFileSync(dashboardPath, renderDashboard(template, buildData(root, parsed, specs, nextUp, opts, waves)));
   }
 
   return {
     roadmap: roadmapPath,
     dashboard: dashboardPath,
-    json: jsonPath,
     nextUp,
+    waves,
     counts: {
       backlog: parsed.backlog.length,
       planned: specs.planned.length,
@@ -802,7 +804,7 @@ function parseArgs(argv) {
     if (a === '--by') opts.by = argv[++i];
     else if (a === '--root') opts.root = argv[++i];
     else if (a === '--init') opts.init = true;
-    else if (a === '--json') opts.json = true;
+    else if (a === '--wave') opts.wave = parseInt(argv[++i], 10);
     else if (a === '--quiet' || a === '-q') opts.quiet = true;
     else if (a === '--help' || a === '-h') opts.help = true;
   }
@@ -812,12 +814,12 @@ function parseArgs(argv) {
 function cli(argv = process.argv.slice(2)) {
   const opts = parseArgs(argv);
   if (opts.help) {
-    console.log(`Usage: node .catalyst/bin/board.js [--by "/command"] [--init] [--json] [--root <dir>] [--quiet]
+    console.log(`Usage: node .catalyst/bin/board.js [--by "/command"] [--init] [--wave <id>] [--root <dir>] [--quiet]
 
 Reconciles .catalyst/main/roadmap.md and .catalyst/dashboard.html with the spec
 folders on disk. Backlog + Vision sections are preserved; everything else is
-regenerated. --init creates roadmap.md when the project has none. --json also
-writes .catalyst/main/roadmap.json; once it exists every run refreshes it.`);
+regenerated. --init creates roadmap.md when the project has none. --wave <id>
+syncs, then prints that wave's specs in order with their state and the next one.`);
     return 0;
   }
   const root = findRoot(opts.root || process.cwd());
@@ -825,6 +827,7 @@ writes .catalyst/main/roadmap.json; once it exists every run refreshes it.`);
     console.error('board.js: no .catalyst/main found from here upward — run inside a Catalyst project.');
     return 1;
   }
+  if (opts.wave) return printWave(root, opts.wave);
   const r = sync(root, opts);
   if (opts.quiet) return 0;
   if (r.skipped) {
@@ -839,10 +842,27 @@ writes .catalyst/main/roadmap.json; once it exists every run refreshes it.`);
   console.log(`Next Up: ${r.nextUp ? `${r.nextUp.name} → ${r.nextUp.command}` : 'nothing queued'}`);
   console.log(`roadmap:   ${rel(r.roadmap)}`);
   console.log(`dashboard: ${rel(r.dashboard)}`);
-  if (r.json) console.log(`json:      ${rel(r.json)}`);
   return 0;
 }
 
-module.exports = { findRoot, scanSpecs, parseRoadmap, resolveNextUp, renderRoadmap, renderDashboard, buildData, buildRoadmapJson, sync, cli };
+function printWave(root, id) {
+  const w = waveReport(root, id);
+  if (w.error) {
+    console.error(`board.js: ${w.error}`);
+    return 1;
+  }
+  const label = { done: 'done', audited: 'audited', inProgress: 'in progress', planned: 'planned', backlog: 'backlog', unknown: 'UNKNOWN' };
+  console.log(`Wave ${w.id}: ${w.goal || '(no goal)'}`);
+  console.log(`Base branch: ${w.baseBranch || '(autopilot.branch not set)'} · auto_merge: ${w.autoMerge}`);
+  w.items.forEach((i, n) => {
+    const wait = i.waitingOn.length ? `  waits on: ${i.waitingOn.join(', ')}` : '';
+    const cmd = i.command ? `  ${i.command}` : '';
+    console.log(`  ${n + 1}. ${label[i.state].padEnd(11)} ${i.slug}${cmd}${wait}`);
+  });
+  console.log(w.next ? `Next: ${w.next.slug}${w.next.command ? ` → ${w.next.command}` : ''}` : 'Next: nothing — wave complete');
+  return 0;
+}
+
+module.exports = { findRoot, scanSpecs, parseRoadmap, resolveNextUp, renderRoadmap, renderDashboard, buildData, waveReport, sync, cli };
 
 if (require.main === module) process.exit(cli());

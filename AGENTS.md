@@ -42,6 +42,13 @@ The canonical workflow order:
 | `/archive-spec` | Lightweight — archive + library, no git ceremony |
 | `/sync-project` | Batch — scan all specs, archive completed ones, reconcile `.catalyst/main/` docs |
 
+### Unattended Runs
+
+| Command | Runs |
+|---------|------|
+| `/forge-spec-worktree` | One shaped spec: forge → audit → seal → PR, in a worktree |
+| `/forge-wave <id>` | One roadmap wave, spec by spec: brief → catalyze → spec gate → forge → PR gate → merge, in herdr + pi |
+
 ## Specs
 
 Active specs live in `.catalyst/specs/YYYY-MM-DD-{slug}/`. Each spec has:

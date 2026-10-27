@@ -235,6 +235,7 @@ Guardians (Quality)
 | `/challenge-spec @slug` | Stress-test the spec before forging (optional) | spec.md (patched), handoff.md (Challenge Log) |
 | `/forge-spec @slug` | Implement feature | tasks.md (updated) |
 | `/forge-spec-worktree @slug` | **Unattended** forge → audit → seal in an isolated worktree | PR + archived spec |
+| `/forge-wave <id>` | **Unattended** run of a whole roadmap wave, spec by spec, in herdr + pi | Merged PRs + morning report |
 | `/primer-spec @slug` | Restore context (new conversation) | Brief status summary |
 | `/audit-spec @slug` | Quality checks | validation.md, handoff.md |
 | `/seal-spec @slug` | Finalize | Commit + Archive |
@@ -244,8 +245,7 @@ Guardians (Quality)
 | `/status-spec @slug` | Check progress | Current status |
 | `/update-spec @slug "change"` | Modify spec (planning phase) | Updated spec.md |
 | `/mission` | Create/update mission.md | mission.md |
-| `/plan-project` | Plan the backlog & next spec | roadmap.md |
-| `/roadmap-json` | Machine-readable roadmap for orchestrators | roadmap.json |
+| `/plan-project` | Plan waves, the backlog & next spec | roadmap.md |
 | `/tech-stack` | Create/update tech-stack.md | tech-stack.md |
 
 ---
@@ -279,9 +279,9 @@ node .catalyst/bin/board.js --by "/forge-spec"
 
 Run `/plan-project` to re-plan the backlog (the one place a model edits `roadmap.md`), or `/sync-project` to reconcile after the fact. The lifecycle rules are defined once in the `spec-lifecycle-board` skill.
 
-### roadmap.json for orchestrators
+### Waves
 
-`/roadmap-json` adds `.catalyst/main/roadmap.json`, and from then on `board.js` refreshes it on every transition. It is a flat list with no Backlog/Done sections: each spec carries `status`, `requires`, and `ready` (all requirements done), plus `context` paths to the foundation docs and an `autopilot` block (`base_branch`, `auto_merge`) from `project-config.yaml`. An external orchestrator can read it, open a card per ready spec, and run `/catalyze-spec` or `/forge-spec-worktree` without parsing markdown. `roadmap.md` remains the planning source.
+`/plan-project` can group Backlog specs into **waves**: a numbered group with a one- or two-sentence goal and its specs in build order, under `## 🌊 Waves` in `roadmap.md`. `board.js` marks each spec's state there and on the dashboard. `node .catalyst/bin/board.js --wave 1` prints one wave: every spec in order, its state, the command it needs next, and what it waits on.
 
 > **v3.6.0 note:** versions 3.1–3.5 had the model read a 30 KB template and re-emit the dashboard by hand on every command. That was the largest single source of token spend in the framework and is gone.
 
@@ -317,6 +317,15 @@ Use plain `/forge-spec` when you want to stay in the loop between phases.
 Without `--from`, `/catalyze-spec` is interactive as before.
 
 ---
+
+
+### Whole waves (`/forge-wave`)
+
+```
+/forge-wave 1
+```
+
+Builds every spec of wave 1 **one after another**, so each spec is catalyzed against the code the previous one merged. The session you start it in orchestrates; for each spec it writes a brief, opens a fresh herdr tab with a pi agent, has pi run `/catalyze-spec --from` and `/forge-spec-worktree`, gates the spec and the PR, and merges into `autopilot.branch`. Needs herdr, pi with `.pi/` installed, `autopilot.branch` set, and `autopilot.auto_merge: true`; it refuses to start otherwise. State and the morning report live in `.catalyst/waves/wave-<id>.md`.
 
 ## Cost Discipline
 

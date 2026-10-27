@@ -63,6 +63,11 @@
   .panel { display: none; } .panel.active { display: block; }
 
   .nextup { background: linear-gradient(135deg, color-mix(in srgb, var(--accent) 14%, var(--bg-elev)), var(--bg-elev)); border: 1px solid color-mix(in srgb, var(--accent) 40%, var(--border)); border-radius: var(--radius); padding: 20px 22px; margin: 8px 0 28px; }
+  .wave { background: var(--bg-elev); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px 18px; margin: 0 0 12px; }
+  .wave .goal { color: var(--text-dim); margin: 4px 0 8px; }
+  .wave ol { margin: 0; padding-left: 22px; } .wave li { margin: 3px 0; }
+  .wave li.done .mono { text-decoration: line-through; color: var(--text-dim); }
+  .dot.done { background: var(--done); } .dot.unknown { background: transparent; border: 1px solid var(--text-dim); }
   .nextup .tag { color: var(--accent); font-weight: 700; font-size: 13px; text-transform: uppercase; letter-spacing: 0.08em; }
   .nextup h2 { margin: 6px 0; font-size: 22px; letter-spacing: -0.02em; }
   .nextup .why { color: var(--text-dim); margin-bottom: 12px; }
@@ -219,6 +224,8 @@ function renderRoadmap(r) {
   if (!r) return "";
   const nu = r.nextUp;
   const nextUp = nu && nu.name ? `<div class="nextup"><div class="tag">▶ Next Up</div><h2>${h(nu.name)}</h2><div class="why">${h(nu.why)}</div>${cmdBlock(nu.command)}</div>` : "";
+  const stateCls = { inProgress: "inprogress" };
+  const waves = has(r.waves) ? `<h3 class="section">🌊 Waves</h3>${r.waves.map(w => `<div class="wave"><b>Wave ${h(w.id)}</b> <span class="count">${h(w.done)}/${w.specs.length}</span><div class="goal">${h(w.goal)}</div><ol>${w.specs.map(s => `<li class="${h(s.state)}"><span class="dot ${stateCls[s.state] || h(s.state)}"></span> <span class="mono">${h(s.slug)}</span> ${h(s.name)}</li>`).join("")}</ol></div>`).join("")}` : "";
   const board = `<div class="board">
     ${column("Backlog", "backlog", r.backlog, "backlog")}
     ${column("Planned", "planned", r.planned, "planned")}
@@ -227,7 +234,7 @@ function renderRoadmap(r) {
   </div>`;
   const done = has(r.done) ? `<h3 class="section">✅ Done — sealed</h3><div class="done-list">${r.done.map(s => `<div class="done-item"><span class="check">✓</span><span class="name">${h(s.name)}</span><span class="sslug">${h(s.slug)}</span><span class="date">${h(s.date||"")}</span></div>`).join("")}</div>` : "";
   const vision = has(r.vision) ? `<h3 class="section">Vision / Someday</h3><table><thead><tr><th>Goal</th><th>Description</th><th>Prerequisite Specs</th></tr></thead><tbody>${r.vision.map(v => `<tr><td>${h(v.goal)}</td><td>${h(v.description)}</td><td class="mono">${h(v.prereq)}</td></tr>`).join("")}</tbody></table>` : "";
-  return nextUp + board + done + vision;
+  return nextUp + waves + board + done + vision;
 }
 
 /* ---------- tiny markdown renderer for the doc tabs ---------- */

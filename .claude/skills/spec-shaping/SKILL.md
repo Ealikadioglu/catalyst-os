@@ -57,6 +57,7 @@ The plan is the product source of truth. Its decisions are given; never re-ask t
 | Phase | Change in unattended mode |
 |-------|---------------------------|
 | Start | Resolve the path (relative → against cwd; log it as a decision). Unreadable file → stop with one line: `error: cannot read plan <path>`. |
+| Slug | When the plan names one (`Catalyze as:` or `slug:`), the folder is `YYYY-MM-DD-{that slug}`, unchanged. The board and `/forge-wave` find the spec by it. |
 | 0–1 | Unchanged. |
 | 2 | Oracle runs in **plan-extraction mode** (prompt below). It asks nothing. |
 | 3–4 | Unchanged, parallel. |

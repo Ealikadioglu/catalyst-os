@@ -50,6 +50,24 @@ const HARNESS_CONFIGS = {
   },
 };
 
+// Files earlier versions installed and later ones dropped. Copying never deletes,
+// so a stale command would stay invocable after an update.
+const OBSOLETE_COMMANDS = ['roadmap-json.md'];
+const OBSOLETE_FILES = ['.catalyst/main/roadmap.json'];
+
+function removeObsolete(cwd, harnessKeys) {
+  const paths = [
+    ...harnessKeys.flatMap((h) => OBSOLETE_COMMANDS.map((f) => path.join(HARNESS_CONFIGS[h].dir, HARNESS_CONFIGS[h].commandsDir, f))),
+    ...OBSOLETE_FILES,
+  ];
+  for (const rel of paths) {
+    if (fs.existsSync(path.join(cwd, rel))) {
+      fs.unlinkSync(path.join(cwd, rel));
+      console.log(`  ${green}✓${reset} Removed obsolete ${rel}`);
+    }
+  }
+}
+
 /**
  * Parse CLI args
  */
@@ -354,6 +372,7 @@ async function install() {
   for (const h of targetHarnesses) {
     installHarness(h, src, cwd);
   }
+  removeObsolete(cwd, targetHarnesses);
 
   // Framework-owned config: always refresh on (re)install.
   if (copyFileWithRewrite(path.join(src, '.catalyst/specs/spec-structure.yaml'), path.join(cwd, '.catalyst/specs/spec-structure.yaml'))) {

@@ -30,6 +30,22 @@ Resolution rule (closest to Done first):
 
 ---
 
+## 🌊 Waves
+
+<!--
+Optional. Ordered groups of specs run one after another by `/forge-wave <id>`. Planning-owned
+(`/plan-project`): write `### Wave N`, a one- or two-sentence **Goal:**, and the specs as a
+numbered list of `Catalyze as` slugs in build order. Wave numbers are permanent IDs.
+board.js fills in the status of each spec; it never reorders or drops one.
+-->
+
+### Wave 1
+**Goal:** [the outcome a person would notice, in one or two sentences]
+
+1. `feature-slug`
+
+---
+
 ## 🗂️ Backlog
 
 <!--

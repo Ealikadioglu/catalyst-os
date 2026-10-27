@@ -1,5 +1,12 @@
 # Changelog
 
+## 3.15.0
+
+- New `/forge-wave <id>` runs one roadmap wave unattended. It builds the specs one after another, so each spec is catalyzed against the code the previous one merged. For each spec the session writes a brief, opens a fresh herdr tab with a pi agent, has pi run `/catalyze-spec --from` and `/forge-spec-worktree`, gates the spec and the PR, and merges into `autopilot.branch`. It refuses to start without herdr, pi, `gh`, a non-protected `autopilot.branch`, `autopilot.auto_merge: true`, or a clean checkout on that branch. State and the morning report live in `.catalyst/waves/wave-<id>.md`. The process is the new `wave-orchestration` skill.
+- `roadmap.md` has an optional `## 🌊 Waves` section that `/plan-project` writes: a numbered wave with a one- or two-sentence goal and its specs in build order. `board.js` marks each spec's state there and on the dashboard. `board.js --wave <id>` prints one wave: the specs in order, their state, the next command, and what each waits on.
+- `/roadmap-json` and `roadmap.json` are gone; waves in `roadmap.md` replace them. The installer now deletes files that earlier versions installed and later ones dropped, starting with the `roadmap-json` command and `roadmap.json`.
+- `/catalyze-spec --from` keeps the slug the plan names, so the board and `/forge-wave` find the spec.
+
 ## 3.14.1
 
 - The installer writes the installed version to `.catalyst/bin/VERSION` and rewrites it on every install. `cat .catalyst/bin/VERSION` shows which Catalyst version a project runs.
