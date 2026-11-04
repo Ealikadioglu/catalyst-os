@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.15.1
+
+- `/forge-wave` runs under herdr desktop. herdr desktop does not set `HERDR_ENV` and drives terminals through `hc` (herdr-core), so preflight refused to start. The `wave-orchestration` skill now picks a backend at preflight: hc when `HC_TERMINAL_ID` is set and `hc` is on PATH, otherwise the herdr CLI when `HERDR_ENV=1`. Each stage names an operation (start, send, read) with the command for both backends, so machines on the older herdr CLI keep working.
+- `autopilot.builder` picks the agent `/forge-wave` starts for each spec: `pi` (default), `claude`, or `codex`. `autopilot.builder_args` passes extra flags, such as a provider and model. Preflight checks that the builder is on PATH and that Catalyst is installed for it. Projects without the key keep using pi.
+- The installer warns when neither `hc` nor `herdr` is on PATH: `/forge-wave` needs one; nothing else does.
+
 ## 3.15.0
 
 - New `/forge-wave <id>` runs one roadmap wave unattended. It builds the specs one after another, so each spec is catalyzed against the code the previous one merged. For each spec the session writes a brief, opens a fresh herdr tab with a pi agent, has pi run `/catalyze-spec --from` and `/forge-spec-worktree`, gates the spec and the PR, and merges into `autopilot.branch`. It refuses to start without herdr, pi, `gh`, a non-protected `autopilot.branch`, `autopilot.auto_merge: true`, or a clean checkout on that branch. State and the morning report live in `.catalyst/waves/wave-<id>.md`. The process is the new `wave-orchestration` skill.

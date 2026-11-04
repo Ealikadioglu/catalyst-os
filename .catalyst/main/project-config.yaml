@@ -42,6 +42,11 @@ autopilot:
   # true lets /forge-wave merge autopilot PRs into `branch` (required for it
   # to run). /forge-spec-worktree itself never merges.
   auto_merge: false
+  # Agent /forge-wave starts for each spec: pi | claude | codex. Its Catalyst
+  # install must exist (.pi/, .claude/, .codex/).
+  builder: pi
+  # Extra flags for the builder, e.g. "--provider google --model gemini-2.5-pro".
+  builder_args: ""
 
 # Voice meetings (/meet-spec) — optional.
 # See .catalyst/voice/README.md for setup.

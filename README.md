@@ -235,7 +235,7 @@ Guardians (Quality)
 | `/challenge-spec @slug` | Stress-test the spec before forging (optional) | spec.md (patched), handoff.md (Challenge Log) |
 | `/forge-spec @slug` | Implement feature | tasks.md (updated) |
 | `/forge-spec-worktree @slug` | **Unattended** forge → audit → seal in an isolated worktree | PR + archived spec |
-| `/forge-wave <id>` | **Unattended** run of a whole roadmap wave, spec by spec, in herdr + pi | Merged PRs + morning report |
+| `/forge-wave <id>` | **Unattended** run of a whole roadmap wave, spec by spec, in a builder agent via hc or herdr | Merged PRs + morning report |
 | `/primer-spec @slug` | Restore context (new conversation) | Brief status summary |
 | `/audit-spec @slug` | Quality checks | validation.md, handoff.md |
 | `/seal-spec @slug` | Finalize | Commit + Archive |
@@ -325,7 +325,7 @@ Without `--from`, `/catalyze-spec` is interactive as before.
 /forge-wave 1
 ```
 
-Builds every spec of wave 1 **one after another**, so each spec is catalyzed against the code the previous one merged. The session you start it in orchestrates; for each spec it writes a brief, opens a fresh herdr tab with a pi agent, has pi run `/catalyze-spec --from` and `/forge-spec-worktree`, gates the spec and the PR, and merges into `autopilot.branch`. Needs herdr, pi with `.pi/` installed, `autopilot.branch` set, and `autopilot.auto_merge: true`; it refuses to start otherwise. State and the morning report live in `.catalyst/waves/wave-<id>.md`.
+Builds every spec of wave 1 **one after another**, so each spec is catalyzed against the code the previous one merged. The session you start it in orchestrates; for each spec it writes a brief, opens a fresh terminal with a builder agent (hc under herdr desktop, or the herdr CLI), has it run `/catalyze-spec --from` and `/forge-spec-worktree`, gates the spec and the PR, and merges into `autopilot.branch`. Needs hc or herdr, the builder from `autopilot.builder` (`pi` by default, or `claude` / `codex`, flags in `autopilot.builder_args`) with Catalyst installed for it, `autopilot.branch` set, and `autopilot.auto_merge: true`; it refuses to start otherwise. State and the morning report live in `.catalyst/waves/wave-<id>.md`.
 
 ## Cost Discipline
 

@@ -252,6 +252,19 @@ function detectInstalledHarnesses(cwd) {
   );
 }
 
+function onPath(bin) {
+  const exts = process.platform === 'win32' ? ['.exe', '.cmd', ''] : [''];
+  return (process.env.PATH || '').split(path.delimiter).some((dir) =>
+    exts.some((ext) => dir && fs.existsSync(path.join(dir, bin + ext)))
+  );
+}
+
+// /forge-wave drives its builder agents through hc (herdr desktop) or the herdr CLI.
+function warnIfNoHerdr() {
+  if (onPath('hc') || onPath('herdr')) return;
+  console.log(`  ${yellow}Warning:${reset} /forge-wave needs herdr (desktop app with ${cyan}hc${reset}, or the herdr CLI); neither is on PATH. Everything else works without it.`);
+}
+
 /**
  * Install agents, commands/prompts, skills, and rules for a specific harness
  */
@@ -445,6 +458,8 @@ async function install() {
     copyFileWithRewrite(agentsMdSrc, agentsMdDest, primaryDir, primaryCommandsDir);
     console.log(`  ${green}✓${reset} Installed AGENTS.md${primaryHarness !== 'claude' ? ` (configured for ${primaryDir}/)` : ''}`);
   }
+
+  warnIfNoHerdr();
 
   console.log(`
   ${green}Done!${reset}

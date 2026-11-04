@@ -47,7 +47,7 @@ The canonical workflow order:
 | Command | Runs |
 |---------|------|
 | `/forge-spec-worktree` | One shaped spec: forge → audit → seal → PR, in a worktree |
-| `/forge-wave <id>` | One roadmap wave, spec by spec: brief → catalyze → spec gate → forge → PR gate → merge, in herdr + pi |
+| `/forge-wave <id>` | One roadmap wave, spec by spec: brief → catalyze → spec gate → forge → PR gate → merge, in a builder agent via hc or herdr |
 
 ## Specs
 
